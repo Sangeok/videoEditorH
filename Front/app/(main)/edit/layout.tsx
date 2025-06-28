@@ -1,5 +1,6 @@
 import Button from "@/shared/ui/atoms/Button/ui/Button";
 import EditorHeader from "@/widgets/Edit/editor-header/ui/EditorHeader";
+import EditorSideBar from "@/widgets/Edit/editor-sidebar/ui/EditorSideBar";
 import { Download, Share2 } from "lucide-react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -9,81 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <EditorHeader />
 
       {/* Sidebar */}
-      <aside className="w-80 bg-gray-900 border-r border-gray-800 overflow-y-auto">
-        <div className="p-4">
-          {/* Text Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gray-800 rounded">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-lg font-medium">Text</h2>
-            </div>
-
-            <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 text-gray-400 hover:text-white transition-colors">
-              Add text
-            </button>
-          </div>
-
-          {/* Media Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gray-800 rounded">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-lg font-medium">Media</h2>
-            </div>
-          </div>
-
-          {/* Audio Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gray-800 rounded">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-lg font-medium">Audio</h2>
-            </div>
-          </div>
-
-          {/* Templates Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gray-800 rounded">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-lg font-medium">Templates</h2>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <EditorSideBar />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col items-center justify-center bg-gray-950 relative">

@@ -6,6 +6,7 @@ import { Download, Menu, MoveLeft, Share2 } from "lucide-react";
 import { useState } from "react";
 import Dropdown from "@/shared/ui/atoms/Dropdown/ui/Dropdown";
 import { MenuItem } from "../constants/MenuItem";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -14,7 +15,7 @@ export default function EditorHeader() {
 
   const HeaderLeftButton = [
     {
-      icon: <Menu />,
+      icon: <Menu size={18} />,
       label: "Menu",
       children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
       onClick: () => {
@@ -22,7 +23,7 @@ export default function EditorHeader() {
       },
     },
     {
-      icon: <MoveLeft />,
+      icon: <MoveLeft size={18} />,
       label: "Previous",
       onClick: () => {
         router.back();
@@ -44,18 +45,14 @@ export default function EditorHeader() {
   ];
 
   return (
-    <header className="col-span-2 bg-black border-b border-gray-800 px-4 py-3">
+    <header className="col-span-2 bg-black border-b border-white/20 px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {HeaderLeftButton.map((button) => (
-            <button
-              className="p-2 hover:bg-white/12 rounded cursor-pointer"
-              key={button.label}
-              onClick={button.onClick}
-            >
+            <IconButton key={button.label} onClick={button.onClick}>
               {button.icon}
               {button.children}
-            </button>
+            </IconButton>
           ))}
         </div>
 
