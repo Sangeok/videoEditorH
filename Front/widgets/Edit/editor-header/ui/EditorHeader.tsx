@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Button from "@/shared/ui/atoms/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { Download, Menu, MoveLeft, Share2 } from "lucide-react";
 import { useState } from "react";
-import Dropdown from "@/shared/ui/atoms/Dropdown";
+import Dropdown from "@/shared/ui/atoms/Dropdown/ui/Dropdown";
 import { MenuItem } from "../constants/MenuItem";
 
 export default function EditorHeader() {
@@ -15,7 +15,7 @@ export default function EditorHeader() {
   const HeaderLeftButton = [
     {
       icon: <Menu />,
-      label: "메뉴",
+      label: "Menu",
       children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
       onClick: () => {
         setIsOpen(!isOpen);
@@ -23,7 +23,7 @@ export default function EditorHeader() {
     },
     {
       icon: <MoveLeft />,
-      label: "이전",
+      label: "Previous",
       onClick: () => {
         router.back();
       },

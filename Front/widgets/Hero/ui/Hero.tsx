@@ -1,4 +1,4 @@
-import Button from "@/shared/ui/atoms/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import Link from "next/link";
 
 export default function Hero() {

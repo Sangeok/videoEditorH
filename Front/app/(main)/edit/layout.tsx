@@ -1,4 +1,4 @@
-import Button from "@/shared/ui/atoms/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import EditorHeader from "@/widgets/Edit/editor-header/ui/EditorHeader";
 import { Download, Share2 } from "lucide-react";
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto_Condensed } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +11,11 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const robotoCondensed = Roboto_Condensed({
+  subsets: ["latin"],
+  variable: "--font-roboto-condensed", // CSS 변수로 사용할 때
 });
 
 export const metadata: Metadata = {
@@ -24,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}>{children}</body>
+      <body
+        className={`${robotoCondensed.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-black`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
