@@ -1,7 +1,6 @@
-import Button from "@/shared/ui/atoms/Button/ui/Button";
 import EditorHeader from "@/widgets/Edit/editor-header/ui/EditorHeader";
-import EditorSideBar from "@/widgets/Edit/editor-sidebar/ui/EditorSideBar";
-import { Download, Share2 } from "lucide-react";
+import EditorSideBar from "@/widgets/Edit/editor-mainSidebar/ui/EditorMainSideBar";
+import EditorSubSideBar from "@/widgets/Edit/editor-subSidebar/ui/EditorSubSideBar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +9,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <EditorHeader />
 
       {/* Sidebar */}
-      <EditorSideBar />
+      <aside className="flex">
+        <EditorSideBar />
+        <EditorSubSideBar />
+      </aside>
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col items-center justify-center bg-gray-950 relative">
@@ -19,18 +21,35 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Upload Area */}
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-600 rounded-lg bg-gray-800/30">
           <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
-            <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            <svg
+              className="w-6 h-6 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-white mb-2">Click to upload</h3>
+          <h3 className="text-lg font-medium text-white mb-2">
+            Click to upload
+          </h3>
           <p className="text-gray-400 text-sm">Or drag and drop files here</p>
         </div>
 
         {/* Right Panel */}
         <div className="absolute right-0 top-1/2 transform -translate-y-1/2 p-4">
           <div className="bg-gray-800/80 rounded-lg p-4 text-center">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-8 h-8 text-gray-400 mx-auto mb-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -48,7 +67,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <button className="p-2 hover:bg-gray-800 rounded text-gray-400">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -60,7 +84,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="text-sm text-gray-400">Delete</span>
 
             <button className="p-2 hover:bg-gray-800 rounded text-gray-400 ml-4">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -72,7 +101,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="text-sm text-gray-400">Split</span>
 
             <button className="p-2 hover:bg-gray-800 rounded text-gray-400 ml-4">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -86,8 +120,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-4">
             <button className="p-2 hover:bg-gray-800 rounded">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
             <button className="p-2 hover:bg-gray-800 rounded bg-gray-800">
@@ -96,8 +140,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </svg>
             </button>
             <button className="p-2 hover:bg-gray-800 rounded">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
 
@@ -109,7 +163,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-2">
               <button className="p-2 hover:bg-gray-800 rounded">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -124,7 +183,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 defaultValue="50"
               />
               <button className="p-2 hover:bg-gray-800 rounded">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
