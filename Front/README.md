@@ -1,5 +1,7 @@
 # VideoEditorH 🎬
 
+> **Language**: **English** | [한국어](README.ko.md)
+
 A web-based video editing platform that enables anyone to create high-quality videos easily through an intuitive interface and powerful editing features.
 
 ## 🌟 Key Features
