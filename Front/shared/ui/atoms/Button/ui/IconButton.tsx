@@ -4,7 +4,10 @@ interface IconButtonProps extends React.ComponentProps<"button"> {
 
 export default function IconButton({ children, ...props }: IconButtonProps) {
   return (
-    <button className="p-2 hover:bg-white/12 rounded cursor-pointer" {...props}>
+    <button
+      className="p-2 hover:bg-white/12 rounded-lg cursor-pointer"
+      {...props}
+    >
       {children}
     </button>
   );
