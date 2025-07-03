@@ -3,16 +3,14 @@
 import useSideButtonStore from "@/entities/sideButton/useSideButtonStore";
 import TextEditSubSide from "./_component/TextEditSubSide";
 import VideoEditSubSide from "./_component/VideoEditSubSide";
-import ImageEditSubSide from "./_component/ImageEditSubSIde";
 import CaptionsEditSubSide from "./_component/CaptionsEditSubSide";
 import MusicEditSubSide from "./_component/MusiceEditSubSide";
+import ImageEditSubSide from "./_component/ImageEditSubSide";
 
 export default function EditorSubSideBar() {
   const activeSideButton = useSideButtonStore(
     (state) => state.activeSideButton
   );
-
-  console.log("activeSideButton", activeSideButton);
 
   const renderSubSideBar = () => {
     switch (activeSideButton) {
