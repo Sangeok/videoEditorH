@@ -1,5 +1,5 @@
-import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
-import Slider from "@/shared/ui/atoms/Slider/ui/Slider";
+import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import Slider from "@/src/shared/ui/atoms/Slider/ui/Slider";
 import { Copy, Split, Trash } from "lucide-react";
 
 const FooterItems = [
