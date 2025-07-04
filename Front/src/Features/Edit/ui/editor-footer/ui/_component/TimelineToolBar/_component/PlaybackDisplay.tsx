@@ -1,0 +1,33 @@
+import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import { SkipBack, SkipForward } from "lucide-react";
+import { Play } from "lucide-react";
+
+const PlaybackIcons = [
+  {
+    label: "Skip Back",
+    icon: <SkipBack size={15} />,
+  },
+  {
+    label: "Play",
+    icon: <Play size={15} />,
+  },
+  {
+    label: "Skip Forward",
+    icon: <SkipForward size={15} />,
+  },
+];
+
+export default function PlaybackDisplay() {
+  return (
+    <div className="flex items-center gap-4">
+      {PlaybackIcons.map((icon) => (
+        <IconButton key={icon.label}>{icon.icon}</IconButton>
+      ))}
+      <div className="flex items-center gap-2 text-xs">
+        <span className="font-mono text-white">00:00</span>
+        <span className="text-white/50">/</span>
+        <span className="font-mono text-white/50">00:01</span>
+      </div>
+    </div>
+  );
+}

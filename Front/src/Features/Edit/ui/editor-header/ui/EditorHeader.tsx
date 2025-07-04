@@ -5,8 +5,8 @@ import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { Download, Menu, MoveLeft, Share2 } from "lucide-react";
 import { useState } from "react";
 import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
-import { MenuItem } from "../constants/MenuItem";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import { MenuItem } from "../constants/MenuItem";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);

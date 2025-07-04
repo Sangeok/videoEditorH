@@ -5,7 +5,7 @@ import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import Tooltip from "@/src/shared/ui/atoms/Tooltip/ui/Tooltip";
 import useSideButtonStore, {
   ActiveSideButtonType,
-} from "@/src/Features/Edit/model/store/useSideButtonStore";
+} from "@/src/features/Edit/model/store/useSideButtonStore";
 
 const SideBarItems = [
   {
