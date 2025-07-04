@@ -15,7 +15,7 @@ const PlaybackIcons = [
     label: "Skip Forward",
     icon: <SkipForward size={15} />,
   },
-];
+] as const;
 
 export default function PlaybackDisplay() {
   return (
