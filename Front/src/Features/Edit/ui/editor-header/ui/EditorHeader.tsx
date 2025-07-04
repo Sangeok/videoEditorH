@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Button from "@/shared/ui/atoms/Button/ui/Button";
+import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { Download, Menu, MoveLeft, Share2 } from "lucide-react";
 import { useState } from "react";
-import Dropdown from "@/shared/ui/atoms/Dropdown/ui/Dropdown";
+import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
 import { MenuItem } from "../constants/MenuItem";
-import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
+import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -17,7 +17,13 @@ export default function EditorHeader() {
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
+      children: (
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          dropdownItems={MenuItem}
+        />
+      ),
       onClick: () => {
         setIsOpen(!isOpen);
       },

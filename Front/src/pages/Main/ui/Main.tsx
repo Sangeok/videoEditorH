@@ -1,4 +1,4 @@
-import Hero from "@/widgets/Hero/ui/Hero";
+import Hero from "@/src/widgets/Hero/ui/Hero";
 
 export default function Main() {
   return (

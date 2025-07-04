@@ -1,11 +1,11 @@
 "use client";
 
 import { Captions, Image as ImageIcon, Music, Type, Video } from "lucide-react";
-import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
-import Tooltip from "@/shared/ui/atoms/Tooltip/ui/Tooltip";
+import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import Tooltip from "@/src/shared/ui/atoms/Tooltip/ui/Tooltip";
 import useSideButtonStore, {
   ActiveSideButtonType,
-} from "@/Features/Edit/model/store/useSideButtonStore";
+} from "@/src/Features/Edit/model/store/useSideButtonStore";
 
 const SideBarItems = [
   {
