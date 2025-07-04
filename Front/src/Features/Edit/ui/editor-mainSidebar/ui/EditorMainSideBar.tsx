@@ -9,23 +9,23 @@ import useSideButtonStore, {
 
 const SideBarItems = [
   {
-    icon: <Type size={18} />,
+    icon: <Type size={15} />,
     label: "Text",
   },
   {
-    icon: <Video size={18} />,
+    icon: <Video size={15} />,
     label: "Video",
   },
   {
-    icon: <Captions size={18} />,
+    icon: <Captions size={15} />,
     label: "Captions",
   },
   {
-    icon: <ImageIcon size={18} />,
+    icon: <ImageIcon size={15} />,
     label: "Image",
   },
   {
-    icon: <Music size={18} />,
+    icon: <Music size={15} />,
     label: "Music",
   },
 ] as const;
@@ -36,7 +36,7 @@ export default function EditorSideBar() {
   );
 
   return (
-    <aside className="w-15 h-full bg-black border-r border-white/20 overflow-y-auto">
+    <aside className="w-12 h-full bg-black border-r border-white/20 overflow-y-auto">
       <div className="p-4">
         <div className="flex flex-col h-full w-full items-center justify-center gap-8">
           {SideBarItems.map((item) => (
