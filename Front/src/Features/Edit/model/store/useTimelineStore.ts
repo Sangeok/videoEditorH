@@ -35,7 +35,7 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
   // 초기 상태
   currentTime: 0,
   duration: 60, // 1분 기본값
-  zoom: 1.0, // 100%(0.1 ~ 10) => 0.1은 10% 1은 100% 10은 1000%
+  zoom: 1.0, // 100%(1 ~ 10) => 1은 100%(최소값) 10은 1000%(최대값)
   isPlaying: false,
   pixelsPerSecond: 20, // 기본값: 1초당 20픽셀
   timelineWidth: 800, // 기본값: 800px
@@ -53,13 +53,10 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
   },
 
   setZoom: (zoom: number) => {
-    const newZoom = Math.max(0.1, Math.min(10, zoom)); // 0.1x ~ 10x 제한
+    const newZoom = Math.max(1, Math.min(10, zoom)); // 1x ~ 10x 제한
 
-    // 극단적인 zoom 레벨에서의 부드러운 처리
-    const smoothZoom =
-      newZoom < 0.2
-        ? Math.round(newZoom * 100) / 100 // 낮은 zoom에서 더 정밀한 단계
-        : Math.round(newZoom * 10) / 10; // 일반적인 zoom에서 0.1 단위
+    // zoom 레벨 정밀도 처리
+    const smoothZoom = Math.round(newZoom * 10) / 10; // 0.1 단위로 반올림
 
     set({ zoom: smoothZoom });
     get().updateViewport();
@@ -78,7 +75,7 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
   updateViewport: () => {
     const { zoom, timelineWidth } = get();
     const basePixelsPerSecond = 20; // 1초 = 20px
-    const pixelsPerSecond = basePixelsPerSecond * zoom; // zoom 적용된 밀도도
+    const pixelsPerSecond = basePixelsPerSecond * zoom; // zoom 적용된 밀도
 
     // 뷰포트에 표시될 시간 범위 계산
     const viewportDuration = timelineWidth / pixelsPerSecond;
@@ -94,7 +91,7 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
 
   zoomIn: () => {
     const currentZoom = get().zoom;
-    get().setZoom(currentZoom * 1.2); // 1.2(20%) 증가 => 업계에서 이렇게 씀..
+    get().setZoom(currentZoom * 1.2); // 1.2(20%) 증가
   },
 
   zoomOut: () => {
@@ -103,7 +100,7 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
   },
 
   resetZoom: () => {
-    get().setZoom(1.0);
+    get().setZoom(1.0); // 기본값이자 최소값으로 리셋
   },
 }));
 

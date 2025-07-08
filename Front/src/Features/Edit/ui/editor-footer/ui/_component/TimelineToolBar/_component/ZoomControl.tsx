@@ -5,25 +5,25 @@ import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 
 export default function ZoomControl() {
-  const { zoom, zoomIn, zoomOut, setZoom, resetZoom } = useTimelineStore();
+  const { zoom, zoomIn, zoomOut, setZoom } = useTimelineStore();
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    // 슬라이더 값(0-100)을 zoom 레벨(0.1-10)로 변환 (로그 스케일)
-    const zoomLevel = Math.pow(10, (value / 100) * 2 - 1);
+    // 슬라이더 값(0-100)을 zoom 레벨(1-10)로 변환
+    const zoomLevel = 1 + (value / 100) * 9;
     setZoom(zoomLevel);
   };
 
-  // zoom 레벨(0.1-10)을 슬라이더 값(0-100)으로 변환
-  const sliderValue = ((Math.log10(zoom) + 1) / 2) * 100;
+  // zoom 레벨(1-10)을 슬라이더 값(0-100)으로 변환
+  const sliderValue = ((zoom - 1) / 9) * 100;
 
-  // 100% 버튼 클릭 시 리셋
-  const handleResetZoom = () => {
-    resetZoom();
-  };
+  // 100% 버튼 클릭 시 리셋 (최소값으로)
+  // const handleResetZoom = () => {
+  //   resetZoom();
+  // };
 
   // zoom 버튼 비활성화 상태 계산
-  const isZoomOutDisabled = zoom <= 0.1;
+  const isZoomOutDisabled = zoom <= 1;
   const isZoomInDisabled = zoom >= 10;
 
   return (
@@ -47,6 +47,7 @@ export default function ZoomControl() {
           type="range"
           min="0"
           max="100"
+          step="1"
           value={sliderValue}
           onChange={handleSliderChange}
           className="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer
@@ -65,20 +66,20 @@ export default function ZoomControl() {
         />
 
         {/* Zoom 레벨 표시 (클릭 시 리셋) */}
-        <button
+        {/* <button
           onClick={handleResetZoom}
           className="text-xs text-gray-300 min-w-[35px] text-center hover:text-white hover:bg-white/10 rounded px-1 py-0.5 transition-colors"
           title="Click to reset to 100%"
         >
           {Math.round(zoom * 100)}%
-        </button>
+        </button> */}
       </div>
 
       {/* Zoom In 버튼 */}
       <IconButton
         onClick={zoomIn}
         className={`p-1 hover:bg-white/10 rounded ${
-          isZoomInDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          isZoomInDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer "
         }`}
         disabled={isZoomInDisabled}
       >
