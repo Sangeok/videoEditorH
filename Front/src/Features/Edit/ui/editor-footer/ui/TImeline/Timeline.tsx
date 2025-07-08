@@ -1,4 +1,4 @@
-import TimelineRuler from "./_component/TimelineRuler";
+import TimelineRuler from "./TimelineRuler/TimelineRuler";
 import TextTimeline from "./TextTimeline/TextTimeline";
 
 export default function Timeline() {
