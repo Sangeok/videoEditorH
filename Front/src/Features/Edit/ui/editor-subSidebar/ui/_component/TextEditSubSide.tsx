@@ -1,11 +1,11 @@
-import { useProjectStore } from "@/src/entities/Project/useProjectStore";
+import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import TextArea from "@/src/shared/ui/atoms/TextArea/ui/TextArea";
 import { useState } from "react";
 
 export default function TextEditSubSide() {
   const [text, setText] = useState<string>("");
-  const { project, addTextElement } = useProjectStore();
+  const { addTextElement } = useMediaStore();
 
   const handleAddText = () => {
     const newText = {
@@ -14,8 +14,8 @@ export default function TextEditSubSide() {
       type: "text",
       positionX: 600,
       positionY: 500,
-      from_time: 0,
-      to_time: 10,
+      startTime: 0,
+      endTime: 10,
       font_size: 120,
       textAlign: "center",
       animation: "none",

@@ -1,298 +1,109 @@
 import { create } from "zustand";
 
-export interface TimelineElement {
-  id: string;
-  type: "video" | "audio" | "image" | "text";
-  name: string;
-  startTime: number; // seconds
-  duration: number; // seconds
-  trackIndex: number;
-  src?: string;
-  content?: string; // for text elements
-  volume?: number; // for audio/video elements
-  opacity?: number;
-  zIndex?: number;
-  position?: { x: number; y: number };
-  selected?: boolean;
+interface TimelineState {
+  // 기본 상태
+  currentTime: number; // 현재 재생 시간 (초)
+  duration: number; // 전체 지속 시간 (초)
+  zoom: number; // 줌 레벨 (1.0 = 100%)
+  isPlaying: boolean; // 재생 상태
+
+  // 뷰 관련 상태
+  pixelsPerSecond: number; // 1초당 픽셀 수
+  timelineWidth: number; // 타임라인 전체 너비
+  viewportStartTime: number; // 현재 뷰포트 시작 시간
+  viewportEndTime: number; // 현재 뷰포트 종료 시간
 }
 
-export interface TimelineTrack {
-  id: string;
-  name: string;
-  type: "video" | "audio" | "text" | "image";
-  locked: boolean;
-  visible: boolean;
-  elements: TimelineElement[];
-}
-
-interface TimelineStore {
-  // State
-  currentTime: number;
-  duration: number;
-  isPlaying: boolean;
-  zoom: number;
-  tracks: TimelineTrack[];
-  selectedElements: string[];
-  playbackRate: number;
-
-  // Actions
+interface TimelineActions {
+  // 기본 액션
   setCurrentTime: (time: number) => void;
   setDuration: (duration: number) => void;
-  setIsPlaying: (playing: boolean) => void;
   setZoom: (zoom: number) => void;
-  setPlaybackRate: (rate: number) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
 
-  // Track actions
-  addTrack: (track: Omit<TimelineTrack, "id">) => void;
-  removeTrack: (trackId: string) => void;
-  toggleTrackLock: (trackId: string) => void;
-  toggleTrackVisibility: (trackId: string) => void;
-
-  // Element actions
-  addElement: (element: Omit<TimelineElement, "id">) => void;
-  removeElement: (elementId: string) => void;
-  updateElement: (elementId: string, updates: Partial<TimelineElement>) => void;
-  selectElement: (elementId: string) => void;
-  selectMultipleElements: (elementIds: string[]) => void;
-  clearSelection: () => void;
-  duplicateElement: (elementId: string) => void;
-  splitElement: (elementId: string, splitTime: number) => void;
-  moveElement: (elementId: string, newStartTime: number, newTrackIndex?: number) => void;
+  // 뷰 관련 액션
+  setTimelineWidth: (width: number) => void;
+  updateViewport: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetZoom: () => void;
 }
 
+type TimelineStore = TimelineState & TimelineActions;
+
 const useTimelineStore = create<TimelineStore>((set, get) => ({
-  // Initial state
+  // 초기 상태
   currentTime: 0,
-  duration: 60, // 1 minute default
+  duration: 60, // 1분 기본값
+  zoom: 1.0, // 100%(0.1 ~ 10) => 0.1은 10% 1은 100% 10은 1000%
   isPlaying: false,
-  zoom: 1,
-  tracks: [
-    {
-      id: "track-1",
-      name: "Video Track",
-      type: "video",
-      locked: false,
-      visible: true,
-      elements: [
-        {
-          id: "element-1",
-          type: "video",
-          name: "Sample Video",
-          startTime: 2,
-          duration: 10,
-          trackIndex: 0,
-          volume: 0.8,
-          opacity: 1,
-          zIndex: 1,
-        },
-        {
-          id: "element-2",
-          type: "text",
-          name: "Title Text",
-          startTime: 15,
-          duration: 5,
-          trackIndex: 0,
-          content: "Sample Title",
-          opacity: 1,
-          zIndex: 2,
-        },
-      ],
-    },
-    {
-      id: "track-2",
-      name: "Audio Track",
-      type: "audio",
-      locked: false,
-      visible: true,
-      elements: [
-        {
-          id: "element-3",
-          type: "audio",
-          name: "Background Music",
-          startTime: 0,
-          duration: 30,
-          trackIndex: 1,
-          volume: 0.5,
-        },
-      ],
-    },
-  ],
-  selectedElements: [],
-  playbackRate: 1,
+  pixelsPerSecond: 20, // 기본값: 1초당 20픽셀
+  timelineWidth: 800, // 기본값: 800px
+  viewportStartTime: 0,
+  viewportEndTime: 40, // 기본값: 40초까지 표시
 
-  // Actions
-  setCurrentTime: (time) => set({ currentTime: Math.max(0, time) }),
-  setDuration: (duration) => set({ duration: Math.max(1, duration) }),
-  setIsPlaying: (playing) => set({ isPlaying: playing }),
-  setZoom: (zoom) => set({ zoom: Math.max(0.1, Math.min(10, zoom)) }),
-  setPlaybackRate: (rate) => set({ playbackRate: rate }),
-
-  // Track actions
-  addTrack: (track) => {
-    const newTrack: TimelineTrack = {
-      ...track,
-      id: `track-${Date.now()}`,
-      elements: [],
-    };
-    set((state) => ({
-      tracks: [...state.tracks, newTrack],
-    }));
+  // 기본 액션
+  setCurrentTime: (time: number) => {
+    set({ currentTime: Math.max(0, Math.min(time, get().duration)) });
   },
 
-  removeTrack: (trackId) => {
-    set((state) => ({
-      tracks: state.tracks.filter((track) => track.id !== trackId),
-    }));
+  setDuration: (duration: number) => {
+    set({ duration: Math.max(1, duration) });
+    get().updateViewport();
   },
 
-  toggleTrackLock: (trackId) => {
-    set((state) => ({
-      tracks: state.tracks.map((track) => (track.id === trackId ? { ...track, locked: !track.locked } : track)),
-    }));
+  setZoom: (zoom: number) => {
+    const newZoom = Math.max(0.1, Math.min(10, zoom)); // 0.1x ~ 10x 제한
+
+    // 극단적인 zoom 레벨에서의 부드러운 처리
+    const smoothZoom =
+      newZoom < 0.2
+        ? Math.round(newZoom * 100) / 100 // 낮은 zoom에서 더 정밀한 단계
+        : Math.round(newZoom * 10) / 10; // 일반적인 zoom에서 0.1 단위
+
+    set({ zoom: smoothZoom });
+    get().updateViewport();
   },
 
-  toggleTrackVisibility: (trackId) => {
-    set((state) => ({
-      tracks: state.tracks.map((track) => (track.id === trackId ? { ...track, visible: !track.visible } : track)),
-    }));
+  setIsPlaying: (isPlaying: boolean) => {
+    set({ isPlaying });
   },
 
-  // Element actions
-  addElement: (element) => {
-    const newElement: TimelineElement = {
-      ...element,
-      id: `element-${Date.now()}`,
-      selected: false,
-    };
-
-    set((state) => ({
-      tracks: state.tracks.map((track, index) =>
-        index === element.trackIndex ? { ...track, elements: [...track.elements, newElement] } : track
-      ),
-    }));
+  // 뷰 관련 액션
+  setTimelineWidth: (width: number) => {
+    set({ timelineWidth: width });
+    get().updateViewport();
   },
 
-  removeElement: (elementId) => {
-    set((state) => ({
-      tracks: state.tracks.map((track) => ({
-        ...track,
-        elements: track.elements.filter((el) => el.id !== elementId),
-      })),
-      selectedElements: state.selectedElements.filter((id) => id !== elementId),
-    }));
+  updateViewport: () => {
+    const { zoom, timelineWidth } = get();
+    const basePixelsPerSecond = 20; // 1초 = 20px
+    const pixelsPerSecond = basePixelsPerSecond * zoom; // zoom 적용된 밀도도
+
+    // 뷰포트에 표시될 시간 범위 계산
+    const viewportDuration = timelineWidth / pixelsPerSecond;
+    const viewportStartTime = 0; // 현재는 항상 0부터 시작
+    const viewportEndTime = viewportDuration;
+
+    set({
+      pixelsPerSecond,
+      viewportStartTime,
+      viewportEndTime,
+    });
   },
 
-  updateElement: (elementId, updates) => {
-    set((state) => ({
-      tracks: state.tracks.map((track) => ({
-        ...track,
-        elements: track.elements.map((el) => (el.id === elementId ? { ...el, ...updates } : el)),
-      })),
-    }));
+  zoomIn: () => {
+    const currentZoom = get().zoom;
+    get().setZoom(currentZoom * 1.2); // 1.2(20%) 증가 => 업계에서 이렇게 씀..
   },
 
-  selectElement: (elementId) => {
-    set({ selectedElements: [elementId] });
+  zoomOut: () => {
+    const currentZoom = get().zoom;
+    get().setZoom(currentZoom / 1.2);
   },
 
-  selectMultipleElements: (elementIds) => {
-    set({ selectedElements: elementIds });
-  },
-
-  clearSelection: () => {
-    set({ selectedElements: [] });
-  },
-
-  duplicateElement: (elementId) => {
-    const state = get();
-    const element = state.tracks.flatMap((track) => track.elements).find((el) => el.id === elementId);
-
-    if (element) {
-      const duplicatedElement: TimelineElement = {
-        ...element,
-        id: `element-${Date.now()}`,
-        startTime: element.startTime + element.duration,
-        selected: false,
-      };
-
-      set((state) => ({
-        tracks: state.tracks.map((track, index) =>
-          index === element.trackIndex ? { ...track, elements: [...track.elements, duplicatedElement] } : track
-        ),
-      }));
-    }
-  },
-
-  splitElement: (elementId, splitTime) => {
-    const state = get();
-    const trackIndex = state.tracks.findIndex((track) => track.elements.some((el) => el.id === elementId));
-
-    if (trackIndex === -1) return;
-
-    const element = state.tracks[trackIndex].elements.find((el) => el.id === elementId);
-
-    if (!element || splitTime <= element.startTime || splitTime >= element.startTime + element.duration) {
-      return;
-    }
-
-    const firstPart: TimelineElement = {
-      ...element,
-      duration: splitTime - element.startTime,
-    };
-
-    const secondPart: TimelineElement = {
-      ...element,
-      id: `element-${Date.now()}`,
-      startTime: splitTime,
-      duration: element.duration - (splitTime - element.startTime),
-    };
-
-    set((state) => ({
-      tracks: state.tracks.map((track, index) =>
-        index === trackIndex
-          ? {
-              ...track,
-              elements: track.elements.filter((el) => el.id !== elementId).concat([firstPart, secondPart]),
-            }
-          : track
-      ),
-    }));
-  },
-
-  moveElement: (elementId, newStartTime, newTrackIndex) => {
-    const state = get();
-    const currentTrackIndex = state.tracks.findIndex((track) => track.elements.some((el) => el.id === elementId));
-
-    if (currentTrackIndex === -1) return;
-
-    const element = state.tracks[currentTrackIndex].elements.find((el) => el.id === elementId);
-
-    if (!element) return;
-
-    const targetTrackIndex = newTrackIndex ?? currentTrackIndex;
-    const updatedElement = {
-      ...element,
-      startTime: Math.max(0, newStartTime),
-      trackIndex: targetTrackIndex,
-    };
-
-    set((state) => ({
-      tracks: state.tracks.map((track, index) => {
-        if (index === currentTrackIndex) {
-          return {
-            ...track,
-            elements: track.elements.filter((el) => el.id !== elementId),
-          };
-        }
-        if (index === targetTrackIndex) {
-          return {
-            ...track,
-            elements: [...track.elements, updatedElement],
-          };
-        }
-        return track;
-      }),
-    }));
+  resetZoom: () => {
+    get().setZoom(1.0);
   },
 }));
 
