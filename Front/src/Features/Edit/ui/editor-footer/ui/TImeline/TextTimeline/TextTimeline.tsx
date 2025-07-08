@@ -3,15 +3,16 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { TextElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
+import { timeToPixels } from "./lib/timeToPixels";
 
 export default function TextTimeline() {
   const { media } = useMediaStore();
   const { pixelsPerSecond } = useTimelineStore();
 
-  // 시간(초)을 픽셀로 변환하는 함수
-  const timeToPixels = (time: number) => {
-    return time * pixelsPerSecond;
-  };
+  // // 시간(초)을 픽셀로 변환하는 함수
+  // const timeToPixels = (time: number) => {
+  //   return time * pixelsPerSecond;
+  // };
 
   // 텍스트 요소 클릭 핸들러 (향후 선택 기능용)
   const handleTextClick = (textElement: TextElement) => {
@@ -23,9 +24,13 @@ export default function TextTimeline() {
       {/* 텍스트 요소들 */}
       <div className="relative h-full">
         {media.textElement.map((textElement) => {
-          const leftPosition = timeToPixels(textElement.startTime);
+          const leftPosition = timeToPixels(
+            textElement.startTime,
+            pixelsPerSecond
+          );
           const width = timeToPixels(
-            textElement.endTime - textElement.startTime
+            textElement.endTime - textElement.startTime,
+            pixelsPerSecond
           );
 
           return (

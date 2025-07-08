@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
-import { calculateTicks } from "../../../../utils/zoomUtils";
+import { calculateTicks } from "../../../utils/zoomUtils";
 
 interface TimelineRulerProps {
   className?: string;
