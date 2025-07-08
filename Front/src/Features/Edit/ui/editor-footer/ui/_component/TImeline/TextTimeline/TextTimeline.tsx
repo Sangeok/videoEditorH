@@ -20,13 +20,8 @@ export default function TextTimeline() {
 
   return (
     <div className="relative w-full h-16 bg-gray-800 border-b border-gray-700">
-      {/* 트랙 라벨 */}
-      <div className="absolute left-0 top-0 w-20 h-full bg-gray-700 border-r border-gray-600 flex items-center justify-center text-xs text-gray-300">
-        Text
-      </div>
-
       {/* 텍스트 요소들 */}
-      <div className="relative ml-20 h-full">
+      <div className="relative h-full">
         {media.textElement.map((textElement) => {
           const leftPosition = timeToPixels(textElement.startTime);
           const width = timeToPixels(

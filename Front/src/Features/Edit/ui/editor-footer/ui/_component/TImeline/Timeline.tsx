@@ -1,5 +1,5 @@
 import TimelineRuler from "./_component/TimelineRuler";
-import TextTimeline from "./TextTimeline";
+import TextTimeline from "./TextTimeline/TextTimeline";
 
 export default function Timeline() {
   return (
