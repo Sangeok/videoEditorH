@@ -4,9 +4,9 @@ import TrackPannel from "../../../../../features/Edit/ui/editor-footer/ui/TrackP
 
 export default function EditorFooter() {
   return (
-    <footer className="bg-black border-t border-white/20 h-full">
+    <footer className="bg-black border-t border-white/20 h-full flex flex-col">
       <TimelineToolBar />
-      <div className="flex">
+      <div className="flex flex-1">
         <TrackPannel />
         <Timeline />
       </div>

@@ -19,7 +19,7 @@ export default function TextTimeline() {
   };
 
   return (
-    <div className="relative w-full h-16 bg-zinc-800">
+    <div className="relative w-full h-16 bg-zinc-900">
       {/* 텍스트 요소들 */}
       <div className="relative h-full">
         {media.textElement.map((textElement) => {
@@ -35,7 +35,7 @@ export default function TextTimeline() {
           return (
             <div
               key={textElement.id}
-              className="absolute top-2 h-12 bg-blue-500 hover:bg-blue-600 border border-blue-400 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
+              className="absolute top-2 h-12 bg-gray-700 hover:bg-gray-800 border-1 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
               style={{
                 left: `${leftPosition}px`,
                 width: `${width}px`,
@@ -53,7 +53,7 @@ export default function TextTimeline() {
 
       {/* 빈 상태 메시지 */}
       {media.textElement.length === 0 && (
-        <div className="absolute left-20 top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
+        <div className="absolute top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
           There is no text element.
         </div>
       )}

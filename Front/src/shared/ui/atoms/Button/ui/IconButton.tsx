@@ -13,7 +13,7 @@ export default function IconButton({
   return (
     <button
       className={cn(
-        "p-2 hover:bg-white/12 rounded-lg cursor-pointer",
+        "p-2 hover:bg-white/20 rounded-lg cursor-pointer",
         isActive && "bg-gray-700"
       )}
       {...props}
