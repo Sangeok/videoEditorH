@@ -16,6 +16,7 @@ export default function TextEditSubSide() {
       positionY: 500,
       startTime: 0,
       endTime: 10,
+      duration: 10,
       font_size: 120,
       textAlign: "center",
       animation: "none",
