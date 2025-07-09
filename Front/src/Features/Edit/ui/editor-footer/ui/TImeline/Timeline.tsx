@@ -3,12 +3,12 @@ import TextTimeline from "./TextTimeline/TextTimeline";
 
 export default function Timeline() {
   return (
-    <div className="relative flex-1 flex flex-col border border-gray-700">
+    <div className="relative flex-1 flex flex-col border border-gray-700 overflow-x-auto">
       {/* 동적 Ruler */}
       <TimelineRuler />
 
       {/* 타임라인 메인 영역 */}
-      <div className="flex-1 bg-black rounded-b overflow-hidden">
+      <div className="flex-1 bg-black rounded-b">
         {/* 타임라인 트랙들이 들어갈 영역 */}
         <div className="h-full min-h-[100px] relative">
           <TextTimeline />
