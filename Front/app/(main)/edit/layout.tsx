@@ -1,4 +1,4 @@
-import EditorFooter from "@/src/widgets/Edit/ui/editor-footer/EditorFooter";
+import EditorFooter from "@/src/widgets/Edit/ui/editor-footer/ui/EditorFooter";
 import EditorHeader from "@/src/widgets/Edit/ui/editor-header/ui/EditorHeader";
 import EditorSideBar from "@/src/features/Edit/ui/editor-mainSidebar/ui/EditorMainSideBar";
 import EditorRightSidebar from "@/src/features/Edit/ui/editor-rightSidebar/ui/EditorRightSidebar";

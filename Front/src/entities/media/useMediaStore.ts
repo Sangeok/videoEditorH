@@ -16,6 +16,7 @@ interface MediaStore {
   media: Media;
   setMedia: (media: Media) => void;
   addTextElement: (textElement: TextElement) => void;
+  deleteTextElement: (textElementId: string) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set) => ({
@@ -30,12 +31,12 @@ export const useMediaStore = create<MediaStore>((set) => ({
         newTextElement = { ...textElement };
       } else {
         const lastElement = currentTextElements[currentTextElements.length - 1];
-        const defaultDuration = 3; // 기본 지속시간 3초
+        const cuttentElementDuration = lastElement.duration;
 
         newTextElement = {
           ...textElement,
           startTime: lastElement.endTime,
-          endTime: lastElement.endTime + defaultDuration,
+          endTime: lastElement.endTime + cuttentElementDuration,
         };
       }
 
@@ -46,6 +47,26 @@ export const useMediaStore = create<MediaStore>((set) => ({
         state.media.projectDuration,
         newTextElement.endTime
       );
+
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+  deleteTextElement: (textElementId: string) =>
+    set((state) => {
+      const updatedTextElements = state.media.textElement.filter(
+        (textElement) => textElement.id !== textElementId
+      );
+
+      // 삭제 후 남은 element들 중 가장 큰 endTime을 찾아 projectDuration 재계산
+      const newProjectDuration =
+        updatedTextElements.length > 0
+          ? Math.max(...updatedTextElements.map((element) => element.endTime))
+          : 0;
 
       return {
         media: {

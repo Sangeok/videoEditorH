@@ -6,6 +6,7 @@ export interface TextElement {
   positionY: number;
   startTime: number;
   endTime: number;
+  duration: number;
   font_size: number;
   textAlign: string;
   animation: string;

@@ -65,16 +65,6 @@ export const timeToPixels = (time: number, pixelsPerSecond: number): number => {
 };
 
 /**
- * 픽셀 위치를 시간으로 변환
- */
-export const pixelsToTime = (
-  pixels: number,
-  pixelsPerSecond: number
-): number => {
-  return pixels / pixelsPerSecond;
-};
-
-/**
  * 주어진 시간 범위에서 표시할 눈금들을 계산
  */
 export const calculateTicks = (
@@ -119,14 +109,4 @@ export const calculateTicks = (
   }
 
   return { majorTicks, minorTicks };
-};
-
-/**
- * zoom 레벨에 따른 권장 최소 픽셀 간격
- */
-export const getMinPixelSpacing = (zoom: number): number => {
-  if (zoom >= 4) return 10; // 높은 zoom에서는 조밀한 간격
-  if (zoom >= 2) return 20; // 중간 zoom
-  if (zoom >= 1) return 40; // 기본 zoom
-  return 60; // 낮은 zoom에서는 넓은 간격
 };

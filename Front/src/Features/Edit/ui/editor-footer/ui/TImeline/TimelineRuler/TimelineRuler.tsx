@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
-import { calculateTicks } from "../../../utils/zoomUtils";
+import { calculateTicks } from "../../../lib/zoomUtils";
 
 interface TimelineRulerProps {
   className?: string;
@@ -54,10 +54,10 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
   return (
     <div
       ref={rulerRef}
-      className={`relative h-8 bg-gray-900 border-b border-gray-700 overflow-hidden ${className}`}
+      className={`relative h-8 bg-black overflow-hidden ${className}`}
     >
       {/* 배경 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900" />
+      <div className="absolute inset-0 bg-black" />
 
       {/* 보조 눈금 */}
       {minorTicks.map(

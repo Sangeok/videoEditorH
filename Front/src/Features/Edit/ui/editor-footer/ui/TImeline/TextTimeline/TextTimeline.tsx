@@ -3,24 +3,23 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { TextElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
-import { timeToPixels } from "./lib/timeToPixels";
+import { timeToPixels } from "@/src/features/Edit/ui/editor-footer/lib/zoomUtils";
+import { useTimelineToolStore } from "@/src/features/Edit/model/store/useTimelieToolStore";
 
 export default function TextTimeline() {
-  const { media } = useMediaStore();
-  const { pixelsPerSecond } = useTimelineStore();
-
-  // // 시간(초)을 픽셀로 변환하는 함수
-  // const timeToPixels = (time: number) => {
-  //   return time * pixelsPerSecond;
-  // };
+  const { media, deleteTextElement } = useMediaStore();
+  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   // 텍스트 요소 클릭 핸들러 (향후 선택 기능용)
   const handleTextClick = (textElement: TextElement) => {
-    console.log("Text element clicked:", textElement);
+    if (isDelete) {
+      deleteTextElement(textElement.id);
+    }
   };
 
   return (
-    <div className="relative w-full h-16 bg-gray-800 border-b border-gray-700">
+    <div className="relative w-full h-16 bg-zinc-800">
       {/* 텍스트 요소들 */}
       <div className="relative h-full">
         {media.textElement.map((textElement) => {
@@ -46,9 +45,7 @@ export default function TextTimeline() {
               title={`${textElement.text} (${textElement.startTime}s - ${textElement.endTime}s)`}
             >
               {/* 텍스트 내용 (너비에 따라 조정) */}
-              <span className="truncate px-2">
-                {textElement.text || "Text"}
-              </span>
+              <span className="truncate px-2">{textElement.id || "Text"}</span>
             </div>
           );
         })}
@@ -57,7 +54,7 @@ export default function TextTimeline() {
       {/* 빈 상태 메시지 */}
       {media.textElement.length === 0 && (
         <div className="absolute left-20 top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
-          텍스트 요소가 없습니다. 텍스트를 추가해보세요.
+          There is no text element.
         </div>
       )}
     </div>
