@@ -1,15 +1,21 @@
 export interface TextElement {
   id: string;
-  text: string;
   type: string;
-  positionX: number;
-  positionY: number;
   startTime: number;
   endTime: number;
   duration: number;
-  font_size: number;
   textAlign: string;
+
+  text: string;
+  positionX: number;
+  positionY: number;
+  fontSize: number;
   animation: string;
+  textColor: string;
+  backgroundColor: string;
+  font: string;
+  width: number;
+  height: number;
 }
 
 export interface VideoElement {

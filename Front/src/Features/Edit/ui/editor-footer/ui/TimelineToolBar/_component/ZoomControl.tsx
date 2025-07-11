@@ -17,11 +17,6 @@ export default function ZoomControl() {
   // zoom 레벨(1-10)을 슬라이더 값(0-100)으로 변환
   const sliderValue = ((zoom - 1) / 9) * 100;
 
-  // 100% 버튼 클릭 시 리셋 (최소값으로)
-  // const handleResetZoom = () => {
-  //   resetZoom();
-  // };
-
   // zoom 버튼 비활성화 상태 계산
   const isZoomOutDisabled = zoom <= 1;
   const isZoomInDisabled = zoom >= 10;
@@ -64,15 +59,6 @@ export default function ZoomControl() {
                    [&::-moz-range-thumb]:cursor-pointer
                    [&::-moz-range-thumb]:border-none"
         />
-
-        {/* Zoom 레벨 표시 (클릭 시 리셋) */}
-        {/* <button
-          onClick={handleResetZoom}
-          className="text-xs text-gray-300 min-w-[35px] text-center hover:text-white hover:bg-white/10 rounded px-1 py-0.5 transition-colors"
-          title="Click to reset to 100%"
-        >
-          {Math.round(zoom * 100)}%
-        </button> */}
       </div>
 
       {/* Zoom In 버튼 */}

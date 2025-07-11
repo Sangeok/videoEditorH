@@ -3,8 +3,8 @@
 import useSideButtonStore from "@/src/features/Edit/model/store/useSideButtonStore";
 import TextEditSubSide from "./_component/TextEditSubSide";
 import VideoEditSubSide from "./_component/VideoEditSubSide";
-import CaptionsEditSubSide from "./_component/CaptionsEditSubSide";
-import MusicEditSubSide from "./_component/MusiceEditSubSide";
+import CaptionEditSubSide from "./_component/CaptionEditSubSide";
+import MusicEditSubSide from "./_component/MusicEditSubSide";
 import ImageEditSubSide from "./_component/ImageEditSubSide";
 
 export default function EditorSubSideBar() {
@@ -19,7 +19,7 @@ export default function EditorSubSideBar() {
       case "Video":
         return <VideoEditSubSide />;
       case "Captions":
-        return <CaptionsEditSubSide />;
+        return <CaptionEditSubSide />;
       case "Image":
         return <ImageEditSubSide />;
       case "Music":
