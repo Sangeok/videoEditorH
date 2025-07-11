@@ -10,15 +10,21 @@ export default function TextEditSubSide() {
   const handleAddText = () => {
     const newText = {
       id: crypto.randomUUID(),
-      text: text,
       type: "text",
-      positionX: 600,
-      positionY: 500,
       startTime: 0,
       endTime: 10,
       duration: 10,
-      font_size: 120,
       textAlign: "center",
+
+      text: text,
+      positionX: 600,
+      positionY: 500,
+      fontSize: 120,
+      textColor: "#000000",
+      backgroundColor: "#ffffff",
+      font: "Arial",
+      width: 100,
+      height: 100,
       animation: "none",
     };
     addTextElement(newText);

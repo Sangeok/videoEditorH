@@ -5,16 +5,22 @@ import { TextElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import { timeToPixels } from "@/src/features/Edit/ui/editor-footer/lib/zoomUtils";
 import { useTimelineToolStore } from "@/src/features/Edit/model/store/useTimelieToolStore";
+import { useSelectedTrackStore } from "@/src/features/Edit/model/store/useSelectedTrackStore";
 
 export default function TextTimeline() {
   const { media, deleteTextElement } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
 
   // 텍스트 요소 클릭 핸들러 (향후 선택 기능용)
   const handleTextClick = (textElement: TextElement) => {
     if (isDelete) {
       deleteTextElement(textElement.id);
+    } else {
+      setSelectedTrackAndId("Text", textElement.id);
     }
   };
 
