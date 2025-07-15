@@ -1,36 +1,64 @@
 "use client";
 
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import { formatTime } from "@/lib/utils";
-import { SkipBack, SkipForward } from "lucide-react";
-import { Play } from "lucide-react";
-
-const PlaybackIcons = [
-  {
-    label: "Skip Back",
-    icon: <SkipBack size={15} />,
-  },
-  {
-    label: "Play",
-    icon: <Play size={15} />,
-  },
-  {
-    label: "Skip Forward",
-    icon: <SkipForward size={15} />,
-  },
-] as const;
+import { SkipBack, SkipForward, Play, Pause } from "lucide-react";
 
 export default function PlaybackDisplay() {
   const { media } = useMediaStore();
+  const { currentTime, isPlaying, duration, setCurrentTime, setIsPlaying } =
+    useTimelineStore();
+
+  // 재생/일시정지 토글
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  // 이전으로 건너뛰기 (5초)
+  const handleSkipBack = () => {
+    const newTime = Math.max(0, currentTime - 5);
+    setCurrentTime(newTime);
+  };
+
+  // 다음으로 건너뛰기 (5초)
+  const handleSkipForward = () => {
+    const newTime = Math.min(duration, currentTime + 5);
+    setCurrentTime(newTime);
+  };
+
+  const playbackControls = [
+    {
+      label: "Skip Back",
+      icon: <SkipBack size={15} />,
+      onClick: handleSkipBack,
+    },
+    {
+      label: isPlaying ? "Pause" : "Play",
+      icon: isPlaying ? <Pause size={15} /> : <Play size={15} />,
+      onClick: handlePlayPause,
+    },
+    {
+      label: "Skip Forward",
+      icon: <SkipForward size={15} />,
+      onClick: handleSkipForward,
+    },
+  ];
 
   return (
     <div className="flex items-center gap-4">
-      {PlaybackIcons.map((icon) => (
-        <IconButton key={icon.label}>{icon.icon}</IconButton>
+      {playbackControls.map((control) => (
+        <IconButton
+          key={control.label}
+          onClick={control.onClick}
+          title={control.label}
+        >
+          {control.icon}
+        </IconButton>
       ))}
       <div className="flex items-center gap-2 text-xs">
-        <span className="font-mono text-white">00:00</span>
+        <span className="font-mono text-white">{formatTime(currentTime)}</span>
         <span className="text-white/50">/</span>
         <span className="font-mono text-white/50">
           {formatTime(media.projectDuration)}
