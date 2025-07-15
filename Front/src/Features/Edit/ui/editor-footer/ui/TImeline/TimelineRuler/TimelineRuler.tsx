@@ -16,7 +16,9 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     viewportStartTime,
     viewportEndTime,
     currentTime,
+    duration,
     setTimelineWidth,
+    setCurrentTime,
   } = useTimelineStore();
 
   // 컴포넌트가 마운트되면 타임라인 너비를 측정하고 store에 저장
@@ -51,10 +53,24 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
   // 현재 시간 표시 위치 계산
   const currentTimePosition = currentTime * pixelsPerSecond;
 
+  // 클릭으로 시간 이동
+  const handleTimelineClick = (e: React.MouseEvent) => {
+    if (!rulerRef.current) return;
+
+    const rect = rulerRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickedTime = clickX / pixelsPerSecond;
+
+    // duration 범위 내에서만 이동
+    const clampedTime = Math.max(0, Math.min(clickedTime, duration));
+    setCurrentTime(clampedTime);
+  };
+
   return (
     <div
       ref={rulerRef}
-      className={`relative h-8 bg-black overflow-hidden ${className}`}
+      className={`relative h-8 bg-black overflow-hidden cursor-pointer ${className}`}
+      onClick={handleTimelineClick}
     >
       {/* 배경 */}
       <div className="absolute inset-0 bg-black" />
