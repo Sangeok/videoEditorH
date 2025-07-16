@@ -4,6 +4,7 @@ import { Media, TextElement } from "./types";
 export const initialMedia: Media = {
   // video duration
   projectDuration: 0,
+  fps: 30,
 
   textElement: [],
 
@@ -15,13 +16,15 @@ export const initialMedia: Media = {
 interface MediaStore {
   media: Media;
   setMedia: (media: Media) => void;
+  setFps: (fps: number) => void;
   addTextElement: (textElement: TextElement) => void;
   deleteTextElement: (textElementId: string) => void;
 }
 
-export const useMediaStore = create<MediaStore>((set) => ({
+export const useMediaStore = create<MediaStore>((set, get) => ({
   media: initialMedia,
   setMedia: (media) => set({ media }),
+  setFps: (fps) => set({ media: { ...get().media, fps } }),
   addTextElement: (textElement: TextElement) =>
     set((state) => {
       const currentTextElements = state.media.textElement;

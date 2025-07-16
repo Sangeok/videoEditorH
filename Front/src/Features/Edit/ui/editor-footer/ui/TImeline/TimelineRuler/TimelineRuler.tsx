@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import { calculateTicks } from "../../../lib/zoomUtils";
+import { useMediaStore } from "@/src/entities/media/useMediaStore";
 
 interface TimelineRulerProps {
   className?: string;
@@ -10,13 +11,14 @@ interface TimelineRulerProps {
 
 export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
   const rulerRef = useRef<HTMLDivElement>(null);
+
+  const { media } = useMediaStore();
+  const duration = media.projectDuration || 0;
   const {
     zoom,
     pixelsPerSecond,
     viewportStartTime,
     viewportEndTime,
-    currentTime,
-    duration,
     setTimelineWidth,
     setCurrentTime,
   } = useTimelineStore();
@@ -49,9 +51,6 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     zoom,
     pixelsPerSecond
   );
-
-  // 현재 시간 표시 위치 계산
-  const currentTimePosition = currentTime * pixelsPerSecond;
 
   // 클릭으로 시간 이동
   const handleTimelineClick = (e: React.MouseEvent) => {
@@ -103,25 +102,14 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
             }}
           >
             {/* 시간 라벨 */}
-            <span className="text-xs text-gray-300 mb-1 whitespace-nowrap">
+            <span className="text-xs text-gray-600 mb-1 whitespace-nowrap">
               {tick.label}
             </span>
             {/* 주 눈금 */}
-            <div className="w-px h-6 bg-gray-400" />
+            <div className="w-px h-6 bg-gray-600" />
           </div>
         )
       )}
-
-      {/* 현재 시간 인디케이터 */}
-      <div
-        className="absolute top-0 w-0.5 h-full bg-red-500 z-10"
-        style={{
-          left: `${currentTimePosition}px`,
-        }}
-      >
-        {/* 현재 시간 헤더 */}
-        <div className="absolute -top-1 -left-1 w-3 h-3 bg-red-500 rounded-full" />
-      </div>
 
       {/* 0초 기준선 */}
       <div className="absolute top-0 left-0 w-px h-full bg-white/50" />

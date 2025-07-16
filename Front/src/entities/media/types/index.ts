@@ -26,6 +26,7 @@ export interface VideoElement {
 
 export interface Media {
   projectDuration: number;
+  fps: number;
   textElement: TextElement[];
   //   videoElement: VideoElement[];
   //   audioElement: AudioElement[];

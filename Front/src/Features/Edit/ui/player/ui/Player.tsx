@@ -13,15 +13,7 @@ export default function Player() {
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
 
-  const { currentTime, isPlaying, setCurrentTime, setDuration } =
-    useTimelineStore();
-
-  // RemotionPlayer와 TimelineStore 동기화
-  useEffect(() => {
-    if (duration > 0) {
-      setDuration(duration);
-    }
-  }, [duration, setDuration]);
+  const { currentTime, isPlaying, setCurrentTime } = useTimelineStore();
 
   // Timeline의 재생 상태에 따라 RemotionPlayer 제어
   useEffect(() => {
@@ -44,16 +36,31 @@ export default function Player() {
 
   // 플레이어 상태를 주기적으로 동기화
   useEffect(() => {
+    if (!isPlaying) return;
+
+    let lastUpdateTime = -1; // 이전 값 추적
+
     const interval = setInterval(() => {
       if (playerRef.current) {
         const currentFrame = playerRef.current.getCurrentFrame();
         const timeInSeconds = currentFrame / fps;
-        setCurrentTime(timeInSeconds);
-      }
-    }, 100); // 100ms마다 업데이트
 
-    return () => clearInterval(interval);
-  }, [setCurrentTime]);
+        // 소수점 2자리로 반올림하여 정밀도 최적화
+        const roundedTime = Math.round(timeInSeconds * 100) / 100;
+
+        // 값이 실제로 변경될 때만 업데이트
+        if (roundedTime !== lastUpdateTime) {
+          lastUpdateTime = roundedTime;
+          setCurrentTime(roundedTime);
+        }
+      }
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+      lastUpdateTime = -1;
+    };
+  }, [setCurrentTime, isPlaying]);
 
   if (duration === 0) {
     return (
