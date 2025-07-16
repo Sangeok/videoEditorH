@@ -3,7 +3,6 @@ import { create } from "zustand";
 interface TimelineState {
   // 기본 상태
   currentTime: number; // 현재 재생 시간 (초)
-  duration: number; // 전체 지속 시간 (초)
   zoom: number; // 줌 레벨 (1.0 = 100%)
   isPlaying: boolean; // 재생 상태
 
@@ -17,7 +16,6 @@ interface TimelineState {
 interface TimelineActions {
   // 기본 액션
   setCurrentTime: (time: number) => void;
-  setDuration: (duration: number) => void;
   setZoom: (zoom: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
 
@@ -34,7 +32,6 @@ type TimelineStore = TimelineState & TimelineActions;
 const useTimelineStore = create<TimelineStore>((set, get) => ({
   // 초기 상태
   currentTime: 0,
-  duration: 60, // 1분 기본값
   zoom: 1.0, // 100%(1 ~ 10) => 1은 100%(최소값) 10은 1000%(최대값)
   isPlaying: false,
   pixelsPerSecond: 20, // 기본값: 1초당 20픽셀
@@ -44,12 +41,7 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
 
   // 기본 액션
   setCurrentTime: (time: number) => {
-    set({ currentTime: Math.max(0, Math.min(time, get().duration)) });
-  },
-
-  setDuration: (duration: number) => {
-    set({ duration: Math.max(1, duration) });
-    get().updateViewport();
+    set({ currentTime: Math.max(0, time) }); // 음수만 방지, 최대값 체크는 각 컴포넌트에서
   },
 
   setZoom: (zoom: number) => {

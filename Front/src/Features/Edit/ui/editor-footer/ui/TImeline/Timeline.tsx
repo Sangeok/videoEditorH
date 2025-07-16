@@ -1,5 +1,6 @@
 import TimelineRuler from "./TimelineRuler/TimelineRuler";
 import TextTimeline from "./TextTimeline/TextTimeline";
+import CurrentTimeIndicator from "./CurrentTimeIndicator";
 
 export default function Timeline() {
   return (
@@ -15,6 +16,8 @@ export default function Timeline() {
           {/* 향후 타임라인 트랙 컴포넌트들이 여기에 렌더링됩니다 */}
         </div>
       </div>
+
+      <CurrentTimeIndicator />
     </div>
   );
 }
