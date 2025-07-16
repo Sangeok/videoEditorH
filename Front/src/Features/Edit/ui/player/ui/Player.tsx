@@ -73,16 +73,22 @@ export default function Player() {
     );
   }
 
+  // height가 최소 400을 가지게 해야함. 그래야 화면 비율이 맞음. 근데 현재는 height 400을 가지면 짤림.
   return (
     <RemotionPlayer
       ref={playerRef}
       component={Composition}
-      inputProps={{}}
+      inputProps={{ textElements: media.textElement || [] }}
       durationInFrames={Math.floor(duration * fps) + 1}
-      compositionWidth={1920}
-      compositionHeight={1080}
+      compositionWidth={1080}
+      compositionHeight={1920}
       fps={fps}
-      style={{ width: "100%", height: "100%" }}
+      style={{
+        width: "225px",
+        height: "400px",
+        border: "2px solid #333",
+        borderRadius: "10px",
+      }}
       acknowledgeRemotionLicense={true}
       controls={false}
       clickToPlay={false}
