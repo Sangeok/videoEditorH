@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 import { Player as RemotionPlayer, PlayerRef } from "@remotion/player";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
-import Composition from "./_component/Sequence/Composition";
+import Composition from "./_component/Composition/ui";
 
 const fps = 30;
 
@@ -73,7 +73,6 @@ export default function Player() {
     );
   }
 
-  // height가 최소 400을 가지게 해야함. 그래야 화면 비율이 맞음. 근데 현재는 height 400을 가지면 짤림.
   return (
     <RemotionPlayer
       ref={playerRef}
@@ -85,9 +84,10 @@ export default function Player() {
       fps={fps}
       style={{
         width: "225px",
-        height: "400px",
+        height: "100%",
         border: "2px solid #333",
         borderRadius: "10px",
+        overflow: "hidden",
       }}
       acknowledgeRemotionLicense={true}
       controls={false}

@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </aside>
       </div>
 
-      <div className="h-80 shrink-0">
+      <div className="h-65 shrink-0">
         <EditorFooter />
       </div>
     </div>

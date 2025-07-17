@@ -36,23 +36,12 @@ export default function Composition({ textElements }: CompositionProps) {
                   fontFamily: textElement.font,
                   color: textElement.textColor,
                   backgroundColor: textElement.backgroundColor,
-                  textAlign: textElement.textAlign as
-                    | "left"
-                    | "center"
-                    | "right",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent:
-                    textElement.textAlign === "center"
-                      ? "center"
-                      : textElement.textAlign === "right"
-                      ? "flex-end"
-                      : "flex-start",
                   whiteSpace: "pre-wrap",
                   wordBreak: "break-word",
                   padding: "8px",
                   borderRadius: "4px",
-                  overflow: "hidden",
+                  zIndex: 1000,
                 }}
               >
                 {textElement.text || "No Text"}

@@ -4,7 +4,6 @@ export interface TextElement {
   startTime: number;
   endTime: number;
   duration: number;
-  textAlign: string;
 
   text: string;
   positionX: number;

@@ -14,17 +14,16 @@ export default function TextEditSubSide() {
       startTime: 0,
       endTime: 10,
       duration: 10,
-      textAlign: "center",
 
       text: text,
-      positionX: 600,
+      positionX: 425,
       positionY: 500,
       fontSize: 120,
-      textColor: "#000000",
-      backgroundColor: "#ffffff",
+      textColor: "#ffffff",
+      backgroundColor: "bg-transparent",
       font: "Arial",
-      width: 100,
-      height: 100,
+      width: 300,
+      height: 300,
       animation: "none",
     };
     addTextElement(newText);
