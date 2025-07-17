@@ -1,7 +1,6 @@
 import { TextElement } from "@/src/entities/media/types";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import Input from "@/src/shared/ui/atoms/Input/ui/Input";
-import { useState } from "react";
 
 interface TextEditRightSideProps {
   selectedTrackId: string | null;
@@ -10,21 +9,18 @@ interface TextEditRightSideProps {
 export default function TextEditRightSide({
   selectedTrackId,
 }: TextEditRightSideProps) {
-  const findTextElement = useMediaStore((state) =>
+  const { updateTextElement } = useMediaStore(); // updateTextElement 함수 가져오기
+  const textElement = useMediaStore((state) =>
     state.media.textElement.find((element) => element.id === selectedTrackId)
   );
 
-  const [textElement, setTextElement] = useState(findTextElement);
-
   const handleChangeTextElement = (field: keyof TextElement, value: number) => {
-    if (!textElement) return;
-    setTextElement({ ...textElement, [field]: value });
+    if (!selectedTrackId) return;
+    updateTextElement(selectedTrackId, { [field]: value }); // 스토어 직접 업데이트
   };
 
-  console.log(textElement);
-
   return (
-    <div className="w-full h-full flex flex-col  gap-2">
+    <div className="w-full h-full flex flex-col gap-2">
       <div className="flex flex-col items-center">
         <div className="flex flex-col gap-2 w-full">
           <h1>Text width</h1>
@@ -33,6 +29,15 @@ export default function TextEditRightSide({
             defaultValue={textElement?.width}
             onBlur={(e) =>
               handleChangeTextElement("width", Number(e.target.value))
+            }
+          />
+
+          <h1>Font Size</h1>
+          <Input
+            placeholder="Font Size"
+            defaultValue={textElement?.fontSize}
+            onBlur={(e) =>
+              handleChangeTextElement("fontSize", Number(e.target.value))
             }
           />
         </div>

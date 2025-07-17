@@ -19,6 +19,10 @@ interface MediaStore {
   setFps: (fps: number) => void;
   addTextElement: (textElement: TextElement) => void;
   deleteTextElement: (textElementId: string) => void;
+  updateTextElement: (
+    textElementId: string,
+    updates: Partial<TextElement>
+  ) => void; // 추가
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -79,4 +83,13 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
+  updateTextElement: (textElementId: string, updates: Partial<TextElement>) =>
+    set((state) => ({
+      media: {
+        ...state.media,
+        textElement: state.media.textElement.map((element) =>
+          element.id === textElementId ? { ...element, ...updates } : element
+        ),
+      },
+    })),
 }));

@@ -1,7 +1,11 @@
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
-import { ImageIcon, Music, Text, Video } from "lucide-react";
+import { Music, Type, Video } from "lucide-react";
 
 const TrackPannelItems = [
+  {
+    icon: <Type size={15} />,
+    label: "Text",
+  },
   {
     icon: <Music size={15} />,
     label: "Music",
@@ -9,14 +13,6 @@ const TrackPannelItems = [
   {
     icon: <Video size={15} />,
     label: "Video",
-  },
-  {
-    icon: <ImageIcon size={15} />,
-    label: "Image",
-  },
-  {
-    icon: <Text size={15} />,
-    label: "Text",
   },
 ] as const;
 
