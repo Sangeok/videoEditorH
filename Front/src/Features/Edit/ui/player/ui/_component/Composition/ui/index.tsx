@@ -1,5 +1,6 @@
 import { useVideoConfig, AbsoluteFill, Sequence } from "remotion";
 import { TextElement } from "@/src/entities/media/types";
+import DraggableText from "../../DraggableText";
 
 interface CompositionProps {
   textElements: TextElement[];
@@ -22,30 +23,12 @@ export default function Composition({ textElements }: CompositionProps) {
             key={textElement.id}
             from={fromFrame}
             durationInFrames={durationInFrames}
-            name={`Text: ${textElement.text.substring(0, 20)}...`} // 타임라인에서 보이는 이름
+            name={`Text: ${textElement.text.substring(0, 20)}...`}
           >
             <AbsoluteFill>
-              <div
-                style={{
-                  position: "absolute",
-                  left: `${textElement.positionX}px`,
-                  top: `${textElement.positionY}px`,
-                  width: `${textElement.width}px`,
-                  height: `${textElement.height}px`,
-                  fontSize: `${textElement.fontSize}px`,
-                  fontFamily: textElement.font,
-                  color: textElement.textColor,
-                  backgroundColor: textElement.backgroundColor,
-                  display: "flex",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  zIndex: 1000,
-                }}
-              >
+              <DraggableText element={textElement}>
                 {textElement.text || "No Text"}
-              </div>
+              </DraggableText>
             </AbsoluteFill>
           </Sequence>
         );
