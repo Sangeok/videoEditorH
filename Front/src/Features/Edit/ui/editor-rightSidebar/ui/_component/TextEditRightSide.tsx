@@ -14,7 +14,10 @@ export default function TextEditRightSide({
     state.media.textElement.find((element) => element.id === selectedTrackId)
   );
 
-  const handleChangeTextElement = (field: keyof TextElement, value: number) => {
+  const handleChangeTextElement = (
+    field: keyof TextElement,
+    value: number | string
+  ) => {
     if (!selectedTrackId) return;
     updateTextElement(selectedTrackId, { [field]: value }); // 스토어 직접 업데이트
   };
@@ -23,6 +26,13 @@ export default function TextEditRightSide({
     <div className="w-full h-full flex flex-col gap-2">
       <div className="flex flex-col items-center">
         <div className="flex flex-col gap-2 w-full">
+          <h1>Text Content</h1>
+          <Input
+            placeholder="Text Content"
+            defaultValue={textElement?.text}
+            onBlur={(e) => handleChangeTextElement("text", e.target.value)}
+          />
+
           <h1>Text width</h1>
           <Input
             placeholder="Text width"
