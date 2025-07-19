@@ -66,13 +66,12 @@ export default function Player() {
     return (
       <div className="flex flex-col items-center justify-center h-full w-full">
         <div className="text-2xl font-bold">No media</div>
-        <div className="text-sm text-gray-500">
-          Please add media to the project
-        </div>
+        <div className="text-sm text-gray-500">Please add media to the project</div>
       </div>
     );
   }
 
+  // compositionW,H : 실제 비디오 해상도
   return (
     <RemotionPlayer
       ref={playerRef}
@@ -89,6 +88,7 @@ export default function Player() {
         borderRadius: "10px",
         overflow: "hidden",
       }}
+      overflowVisible
       acknowledgeRemotionLicense={true}
       controls={false}
       clickToPlay={false}

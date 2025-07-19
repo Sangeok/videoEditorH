@@ -18,10 +18,7 @@ interface DragState {
   startPosY: number;
 }
 
-export default function DraggableText({
-  element,
-  children,
-}: DraggableTextProps) {
+export default function DraggableText({ element, children }: DraggableTextProps) {
   const { updateTextElement } = useMediaStore();
   const { isPlaying } = useTimelineStore();
 
@@ -63,15 +60,9 @@ export default function DraggableText({
       const scaleX = 1080 / 225;
       const scaleY = 1920 / ((225 * 1920) / 1080);
 
-      const newPosX = Math.max(
-        0,
-        Math.min(1080 - 100, dragState.startPosX + deltaX * scaleX)
-      );
-
-      const newPosY = Math.max(
-        0,
-        Math.min(1920 - 50, dragState.startPosY + deltaY * scaleY)
-      );
+      // 경계 제한 제거 - 자유로운 이동 허용
+      const newPosX = dragState.startPosX + deltaX * scaleX;
+      const newPosY = dragState.startPosY + deltaY * scaleY;
 
       updateTextElement(element.id, {
         positionX: newPosX,
@@ -112,34 +103,17 @@ export default function DraggableText({
         // 자동 크기 조정 - 핵심 수정사항
         width: "fit-content",
         height: "auto",
-        minWidth: "20px",
-        minHeight: "20px",
-        maxWidth: "600px", // 컴포지션 너비 고려
         fontSize: `${element.fontSize}px`,
         fontFamily: element.font,
         color: element.textColor,
         backgroundColor: element.backgroundColor,
         display: "inline-block",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word",
-        wordWrap: "break-word",
-        overflowWrap: "break-word",
-        padding: "50px",
+        padding: "10px",
+        whiteSpace: "nowrap",
         borderRadius: "4px",
-        lineHeight: "1.2",
         boxSizing: "border-box",
-        overflow: "visible",
-        cursor: isPlaying
-          ? "default"
-          : isHovered
-          ? "grab"
-          : dragState.isDragging
-          ? "grabbing"
-          : "grab",
-        border:
-          !isPlaying && (isHovered || dragState.isDragging)
-            ? "1px solid #ffffff"
-            : "none",
+        cursor: isPlaying ? "default" : isHovered ? "grab" : dragState.isDragging ? "grabbing" : "grab",
+        border: !isPlaying && (isHovered || dragState.isDragging) ? "1px solid #ffffff" : "none",
         userSelect: "none",
         zIndex: dragState.isDragging ? 1001 : 1000,
       }}
