@@ -15,7 +15,7 @@ export default function TextEditSubSide() {
       endTime: 10,
       duration: 10,
 
-      text: text,
+      text: text || "No Text",
       positionX: 425,
       positionY: 500,
       fontSize: 120,

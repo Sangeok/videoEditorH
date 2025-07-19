@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { TextElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
+import { useSelectedTrackStore } from "@/src/features/Edit/model/store/useSelectedTrackStore";
 
 interface DraggableTextProps {
   element: TextElement;
@@ -21,7 +22,11 @@ interface DragState {
 export default function DraggableText({ element, children }: DraggableTextProps) {
   const { updateTextElement } = useMediaStore();
   const { isPlaying } = useTimelineStore();
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
   const textRef = useRef<HTMLDivElement>(null);
+
+  console.log("element");
+  console.log(element);
 
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -82,6 +87,8 @@ export default function DraggableText({ element, children }: DraggableTextProps)
 
       e.preventDefault();
       e.stopPropagation();
+
+      setSelectedTrackAndId("Text", element.id);
 
       setDragState({
         isDragging: true,
@@ -309,7 +316,7 @@ export default function DraggableText({ element, children }: DraggableTextProps)
   const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
 
-  const displayText = element.text || "No Text";
+  const displayText = element.text;
 
   return (
     <div
