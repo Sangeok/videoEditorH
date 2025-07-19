@@ -26,7 +26,7 @@ export default function Composition({ textElements }: CompositionProps) {
           >
             {/* <div className="absolute right-0 bottom-0 text-9xl">hihi</div> */}
             <AbsoluteFill className="h-full">
-              <DraggableText element={textElement}>{textElement.text || "No Text"}</DraggableText>
+              <DraggableText element={textElement}>{textElement.text}</DraggableText>
             </AbsoluteFill>
           </Sequence>
         );
