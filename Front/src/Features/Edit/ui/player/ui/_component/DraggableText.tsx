@@ -8,7 +8,6 @@ import { useSelectedTrackStore } from "@/src/features/Edit/model/store/useSelect
 
 interface DraggableTextProps {
   element: TextElement;
-  children: React.ReactNode;
 }
 
 interface DragState {
@@ -19,14 +18,13 @@ interface DragState {
   startPosY: number;
 }
 
-export default function DraggableText({ element, children }: DraggableTextProps) {
+export default function DraggableText({ element }: DraggableTextProps) {
   const { updateTextElement } = useMediaStore();
   const { isPlaying } = useTimelineStore();
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
   const textRef = useRef<HTMLDivElement>(null);
-
-  console.log("element");
-  console.log(element);
 
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -81,6 +79,7 @@ export default function DraggableText({ element, children }: DraggableTextProps)
     }
   }, [isEditing]);
 
+  // start drag
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (isPlaying || isEditing) return;
@@ -101,6 +100,7 @@ export default function DraggableText({ element, children }: DraggableTextProps)
     [isPlaying, isEditing, element.positionX, element.positionY]
   );
 
+  // start edit
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       if (isPlaying) return;
@@ -108,8 +108,9 @@ export default function DraggableText({ element, children }: DraggableTextProps)
       e.preventDefault();
       e.stopPropagation();
 
-      // Step 1: 편집 시작 플래그 설정
+      // 편집 시작: 첫 번째 입력에서 전체 선택을 위한 플래그
       isEditingStartRef.current = true;
+      // 편집 모드 활성화
       setIsEditing(true);
       setEditingText(element.text || "");
     },
@@ -174,7 +175,14 @@ export default function DraggableText({ element, children }: DraggableTextProps)
         isEditingStartRef.current = false;
       }
     },
-    [isComposing, debouncedUpdate, updateTextElement, element.id, saveCursorPosition, restoreCursorPosition]
+    [
+      isComposing,
+      debouncedUpdate,
+      updateTextElement,
+      element.id,
+      saveCursorPosition,
+      restoreCursorPosition,
+    ]
   );
 
   const handleTextBlur = useCallback(
@@ -313,7 +321,8 @@ export default function DraggableText({ element, children }: DraggableTextProps)
     backgroundColor: element.backgroundColor,
   };
 
-  const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
+  const showBorder =
+    !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
 
   const displayText = element.text;
@@ -331,7 +340,9 @@ export default function DraggableText({ element, children }: DraggableTextProps)
         whiteSpace: "nowrap",
         borderRadius: "4px",
         boxSizing: "border-box",
-        border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
+        border: showBorder
+          ? `1px solid ${borderColor}`
+          : "1px solid transparent",
         cursor: isPlaying
           ? "default"
           : isEditing

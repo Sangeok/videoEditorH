@@ -1,6 +1,6 @@
 import TimelineRuler from "./TimelineRuler/TimelineRuler";
 import TextTimeline from "./TextTimeline/TextTimeline";
-import CurrentTimeIndicator from "./CurrentTimeIndicator";
+import CurrentTimeIndicator from "./_component/CurrentTimeIndicator";
 
 export default function Timeline() {
   return (
