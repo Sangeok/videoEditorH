@@ -12,6 +12,6 @@ export const PlayerService = {
   },
 
   getDurationInFrames: (duration: number, fps: number): number => {
-    return Math.floor(duration * fps) + 1; // ← 비즈니스 로직
+    return Math.floor(duration * fps) + 1;
   },
 };

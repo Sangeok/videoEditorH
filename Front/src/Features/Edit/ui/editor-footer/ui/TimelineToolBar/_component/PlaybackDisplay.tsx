@@ -9,12 +9,17 @@ import { SkipBack, SkipForward, Play, Pause } from "lucide-react";
 export default function PlaybackDisplay() {
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
+  const projectDuration = media.projectDuration || 0;
   const { currentTime, isPlaying, setCurrentTime, setIsPlaying } =
     useTimelineStore();
 
   // 재생/일시정지 토글
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    if (projectDuration > 0 && !isPlaying) {
+      setIsPlaying(true);
+    } else if (projectDuration > 0 && isPlaying) {
+      setIsPlaying(false);
+    }
   };
 
   // 이전으로 건너뛰기 (5초)

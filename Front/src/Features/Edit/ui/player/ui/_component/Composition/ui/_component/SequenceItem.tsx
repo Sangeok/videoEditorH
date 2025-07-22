@@ -1,62 +1,33 @@
 import { JSX } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
+import DraggableText from "./DraggableText";
+import { TextElement } from "@/src/entities/media/types";
 
 interface SequenceItemOptions {
-  handleTextChange?: (id: string, text: string) => void;
   fps: number;
-  editableTextId?: string | null;
-  currentTime?: number;
 }
-
-const fps = 30;
 
 export const SequenceItem: Record<
   string,
-  (item: any, options: SequenceItemOptions) => JSX.Element
+  (item: TextElement, options: SequenceItemOptions) => JSX.Element
 > = {
-  text: (item, options: SequenceItemOptions) => {
-    const fromFrame = Math.floor(item.startTime * fps);
-    const durationInFrames = Math.floor((item.endTime - item.startTime) * fps);
+  Text: (item: TextElement, options: SequenceItemOptions) => {
+    const textElement = item;
+    const fromFrame = Math.floor(textElement.startTime * options.fps);
+    const durationInFrames = Math.floor(
+      (textElement.endTime - textElement.startTime) * options.fps
+    );
 
     return (
       <Sequence
-        key={item.id}
+        key={textElement.id}
         from={fromFrame}
         durationInFrames={durationInFrames}
-        style={{ pointerEvents: "none", zIndex: 1000 }}
+        name={`Text: ${textElement.text.substring(0, 20)}...`}
+        style={{ height: "100%", border: "5px solid red" }}
       >
-        {/* positioning layer */}
-        <AbsoluteFill
-          style={{
-            position: "absolute",
-            left: `${item.positionX}px`,
-            top: `${item.positionY}px`,
-            width: `${item.width}px`,
-            height: `${item.height}px`,
-            fontSize: `${item.fontSize}px`,
-            fontFamily: item.font,
-            color: item.textColor,
-            backgroundColor: item.backgroundColor,
-          }}
-        >
-          {/* animation layer */}
-          {/* <Animated
-            style={calculateContainerStyles(details)}
-            animationIn={editableTextId === id ? null : animationIn}
-            animationOut={editableTextId === id ? null : animationOut}
-            durationInFrames={durationInFrames}
-          > */}
-          {/* text layer */}
-          {/* <TextLayer
-              key={id}
-              id={id}
-              content={details.text}
-              editable={editableTextId === id}
-              onChange={handleTextChange}
-              onBlur={onTextBlur}
-              style={calculateTextStyles(details)}
-            />
-          </Animated> */}
+        <AbsoluteFill className="h-full">
+          <DraggableText element={textElement} />
         </AbsoluteFill>
       </Sequence>
     );
