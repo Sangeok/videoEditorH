@@ -16,7 +16,11 @@ interface UsePlayerControllerReturn {
  * RemotionPlayer 제어를 담당하는 훅
  * 재생/일시정지, 시크 기능을 제공
  */
-export const usePlayerController = (): UsePlayerControllerReturn => {
+export const usePlayerController = ({
+  projectDuration,
+}: {
+  projectDuration: number;
+}): UsePlayerControllerReturn => {
   const playerRef = useRef<PlayerRef>(null);
   const isPlaying = useTimelineStore((state) => state.isPlaying);
 
@@ -32,7 +36,7 @@ export const usePlayerController = (): UsePlayerControllerReturn => {
   }, [isPlaying]);
 
   const play = () => {
-    if (playerRef.current) {
+    if (projectDuration > 0 && playerRef.current) {
       playerRef.current.play();
     }
   };

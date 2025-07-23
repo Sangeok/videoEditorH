@@ -16,8 +16,9 @@ export default function Player() {
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
   const fps = media.fps || 30;
+  const projectDuration = media.projectDuration || 0;
 
-  const playerController = usePlayerController();
+  const playerController = usePlayerController({ projectDuration });
 
   // Timeline과 Player 동기화
   usePlayerSync({

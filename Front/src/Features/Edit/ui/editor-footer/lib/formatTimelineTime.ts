@@ -1,16 +1,9 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 /**
  * 초 단위의 시간을 "mm:ss" 형식으로 포맷팅합니다
  * @param seconds - 초 단위의 시간
  * @returns "mm:ss" 형식의 문자열
  */
-export function formatTime(seconds: number): string {
+export function formatPlaybackTime(seconds: number): string {
   // 음수나 유효하지 않은 값 처리
   if (isNaN(seconds) || seconds < 0) {
     return "00:00";

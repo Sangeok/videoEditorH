@@ -45,7 +45,7 @@ export const getMinorTickInterval = (zoom: number): number => {
 /**
  * 시간을 포맷팅하여 문자열로 반환
  */
-export const formatTime = (seconds: number): string => {
+export const formatTimelineTime = (seconds: number): string => {
   if (seconds < 1) {
     return `${Math.round(seconds * 10) / 10}s`;
   } else if (seconds < 60) {
@@ -91,7 +91,7 @@ export const calculateTicks = (
     majorTicks.push({
       time,
       position: timeToPixels(time, pixelsPerSecond),
-      label: formatTime(time),
+      label: formatTimelineTime(time),
     });
   }
 
