@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
-import DraggableText from "./DraggableText";
+import DraggableText from "./DraggableText/ui/DraggableText";
 import { TextElement } from "@/src/entities/media/types";
 
 interface SequenceItemOptions {

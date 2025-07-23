@@ -3,8 +3,8 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
-import { formatTime } from "@/lib/utils";
 import { SkipBack, SkipForward, Play, Pause } from "lucide-react";
+import { formatPlaybackTime } from "../../../lib/formatTimelineTime";
 
 export default function PlaybackDisplay() {
   const { media } = useMediaStore();
@@ -64,10 +64,12 @@ export default function PlaybackDisplay() {
         </IconButton>
       ))}
       <div className="flex items-center gap-2 text-xs">
-        <span className="font-mono text-white">{formatTime(currentTime)}</span>
+        <span className="font-mono text-white">
+          {formatPlaybackTime(currentTime)}
+        </span>
         <span className="text-white/50">/</span>
         <span className="font-mono text-white/50">
-          {formatTime(media.projectDuration)}
+          {formatPlaybackTime(media.projectDuration)}
         </span>
       </div>
     </div>
