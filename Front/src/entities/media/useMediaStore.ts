@@ -19,10 +19,7 @@ interface MediaStore {
   setFps: (fps: number) => void;
   addTextElement: (textElement: TextElement) => void;
   deleteTextElement: (textElementId: string) => void;
-  updateTextElement: (
-    textElementId: string,
-    updates: Partial<TextElement>
-  ) => void; // 추가
+  updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void; // 추가
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -50,10 +47,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const updatedTextElements = [...currentTextElements, newTextElement];
 
       // projectDuration을 가장 마지막 요소의 endTime으로 업데이트
-      const newProjectDuration = Math.max(
-        state.media.projectDuration,
-        newTextElement.endTime
-      );
+      const newProjectDuration = Math.max(state.media.projectDuration, newTextElement.endTime);
 
       return {
         media: {
@@ -65,15 +59,11 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
     }),
   deleteTextElement: (textElementId: string) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.filter(
-        (textElement) => textElement.id !== textElementId
-      );
+      const updatedTextElements = state.media.textElement.filter((textElement) => textElement.id !== textElementId);
 
       // 삭제 후 남은 element들 중 가장 큰 endTime을 찾아 projectDuration 재계산
       const newProjectDuration =
-        updatedTextElements.length > 0
-          ? Math.max(...updatedTextElements.map((element) => element.endTime))
-          : 0;
+        updatedTextElements.length > 0 ? Math.max(...updatedTextElements.map((element) => element.endTime)) : 0;
 
       return {
         media: {
