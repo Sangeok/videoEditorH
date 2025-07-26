@@ -5,7 +5,6 @@ import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { useCurrentTimeIndicator } from "./useCurrentTimeIndicator";
 
 const CurrentTimeIndicator = memo(() => {
-  const indicatorRef = useRef<HTMLDivElement>(null);
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
 
@@ -20,31 +19,7 @@ const CurrentTimeIndicator = memo(() => {
     if (timelineContainer) {
       timelineContainer.setAttribute("data-timeline-container", "true");
     }
-
-    const ruler =
-      document.querySelector('[class*="ruler"]') ||
-      document.querySelector(".border-b") ||
-      document.querySelector(".bg-gray-800");
-    if (ruler) {
-      ruler.setAttribute("data-timeline-ruler", "true");
-    }
   }, []);
-
-  // 전체 높이 계산 (ruler + tracks 영역)
-  const totalHeight = useMemo(() => {
-    const rulerHeight = 32; // TimelineRuler 기본 높이
-    const tracksHeight = 100; // TextTimeline 최소 높이
-    return rulerHeight + tracksHeight;
-  }, []);
-
-  // 기본 스타일 계산
-  const indicatorStyle = useMemo(
-    () => ({
-      transform: `translateX(${leftPosition}px)`,
-      height: `${totalHeight}px`,
-    }),
-    [leftPosition, totalHeight]
-  );
 
   // 에러 처리 및 경계값 검증
   if (duration <= 0) {
@@ -57,13 +32,13 @@ const CurrentTimeIndicator = memo(() => {
 
   return (
     <div
-      ref={indicatorRef}
       className="absolute pointer-events-none z-[150]"
       style={{
         left: "0px", // transform으로 위치 조정하므로 기본값
         top: "0px",
         width: "2px",
-        ...indicatorStyle,
+        height: "100%",
+        transform: `translateX(${leftPosition}px)`,
       }}
     >
       {/* 세로 라인 */}
@@ -72,6 +47,7 @@ const CurrentTimeIndicator = memo(() => {
         style={{
           background: "#ffffff",
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+          height: "100%",
         }}
       />
 
