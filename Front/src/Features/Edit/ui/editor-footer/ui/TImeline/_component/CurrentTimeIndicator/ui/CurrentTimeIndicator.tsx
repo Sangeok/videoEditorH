@@ -2,7 +2,7 @@
 
 import { memo, useRef, useEffect, useMemo } from "react";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { useCurrentTimeIndicator } from "./useCurrentTimeIndicator";
+import { useCurrentTimeIndicator } from "../model/hooks/useCurrentTimeIndicator";
 
 const CurrentTimeIndicator = memo(() => {
   const { media } = useMediaStore();

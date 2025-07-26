@@ -19,6 +19,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "remotion": "^4.0.323",
+    "srt-parser-2": "^1.2.3",
     "tailwind-merge": "^3.3.1",
     "zustand": "^5.0.6"
   },
