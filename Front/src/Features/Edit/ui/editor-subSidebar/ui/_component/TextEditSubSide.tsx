@@ -12,8 +12,8 @@ export default function TextEditSubSide() {
       id: crypto.randomUUID(),
       type: "text",
       startTime: 0,
-      endTime: 10,
-      duration: 10,
+      endTime: 5,
+      duration: 5,
 
       text: text || "No Text",
       positionX: 425,
