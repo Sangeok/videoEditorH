@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { 
-  convertSRTToTextElements, 
-  parseSRTContent, 
-  readFileAsText 
+import {
+  convertSRTToTextElements,
+  parseSRTContent,
+  readFileAsText,
 } from "@/src/shared/lib/srtUtils";
 import { UploadState, CaptionUploadState } from "../types";
 
@@ -22,29 +22,35 @@ export function useCaptionUpload() {
     return true;
   }, []);
 
-  const processSRTFile = useCallback(async (file: File): Promise<void> => {
-    if (!validateSRTFile(file)) return;
+  const processSRTFile = useCallback(
+    async (file: File): Promise<void> => {
+      if (!validateSRTFile(file)) return;
 
-    setUploadState("uploading");
-    setErrorMessage("");
+      setUploadState("uploading");
+      setErrorMessage("");
 
-    try {
-      const srtContent = await readFileAsText(file);
-      const parsedEntries = parseSRTContent(srtContent);
-      const textElements = convertSRTToTextElements(parsedEntries);
+      try {
+        const srtContent = await readFileAsText(file);
 
-      textElements.forEach((element) => {
-        addTextElement(element);
-      });
+        const parsedEntries = parseSRTContent(srtContent);
+        const textElements = convertSRTToTextElements(parsedEntries);
 
-      setUploadedCount(textElements.length);
-      setUploadState("success");
-    } catch (error) {
-      console.error("Error processing SRT file:", error);
-      setErrorMessage("Failed to parse SRT file. Please check the file format.");
-      setUploadState("error");
-    }
-  }, [addTextElement, validateSRTFile]);
+        textElements.forEach((element) => {
+          addTextElement(element, true);
+        });
+
+        setUploadedCount(textElements.length);
+        setUploadState("success");
+      } catch (error) {
+        console.error("Error processing SRT file:", error);
+        setErrorMessage(
+          "Failed to parse SRT file. Please check the file format."
+        );
+        setUploadState("error");
+      }
+    },
+    [addTextElement, validateSRTFile]
+  );
 
   const resetUpload = useCallback(() => {
     setUploadState("idle");

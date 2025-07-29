@@ -11,7 +11,9 @@ export default function TextTimeline() {
   const { media, deleteTextElement } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
 
   // 텍스트 요소 클릭 핸들러 (향후 선택 기능용)
   const handleTextClick = (textElement: TextElement) => {
@@ -27,8 +29,14 @@ export default function TextTimeline() {
       {/* 텍스트 요소들 */}
       <div className="relative h-full">
         {media.textElement.map((textElement) => {
-          const leftPosition = timeToPixels(textElement.startTime, pixelsPerSecond);
-          const width = timeToPixels(textElement.endTime - textElement.startTime, pixelsPerSecond);
+          const leftPosition = timeToPixels(
+            textElement.startTime,
+            pixelsPerSecond
+          );
+          const width = timeToPixels(
+            textElement.endTime - textElement.startTime,
+            pixelsPerSecond
+          );
 
           return (
             <div
