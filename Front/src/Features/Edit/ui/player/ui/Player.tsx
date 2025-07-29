@@ -45,7 +45,7 @@ export default function Player() {
       style={{
         width: "225px",
         height: "100%",
-        border: "2px solid #333",
+        // border: "2px solid #333",
         borderRadius: "10px",
         overflow: "hidden",
       }}

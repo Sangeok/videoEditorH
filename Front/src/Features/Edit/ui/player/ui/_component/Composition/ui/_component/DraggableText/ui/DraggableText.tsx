@@ -12,13 +12,13 @@ export default function DraggableText({ element }: DraggableTextProps) {
   const setSelectedTrackAndId = useSelectedTrackStore(
     (state) => state.setSelectedTrackAndId
   );
-  
+
   const [isHovered, setIsHovered] = useState(false);
-  
+
   const handleSelect = useCallback(() => {
     setSelectedTrackAndId("Text", element.id);
   }, [setSelectedTrackAndId, element.id]);
-  
+
   const {
     isEditing,
     textRef,
@@ -45,7 +45,8 @@ export default function DraggableText({ element }: DraggableTextProps) {
   });
 
   // Style calculations
-  const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
+  const showBorder =
+    !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
   const getCursor = (): CursorType => {
     if (isPlaying) return "default";
@@ -62,13 +63,17 @@ export default function DraggableText({ element }: DraggableTextProps) {
         left: `${element.positionX}px`,
         top: `${element.positionY}px`,
         width: "fit-content",
+        maxWidth: "90%", // 최대 너비 제한 추가
         height: "auto",
         display: "inline-block",
         padding: "10px",
-        whiteSpace: "nowrap",
+        whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
+        wordWrap: "break-word", // 긴 단어 줄바꿈 허용
         borderRadius: "4px",
         boxSizing: "border-box",
-        border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
+        border: showBorder
+          ? `1px solid ${borderColor}`
+          : "1px solid transparent",
         cursor: getCursor(),
         userSelect: isEditing ? "text" : "none",
         zIndex: dragState.isDragging || isEditing ? 1001 : 1000,
@@ -96,12 +101,20 @@ export default function DraggableText({ element }: DraggableTextProps) {
             outline: "none",
             background: "transparent",
             minWidth: "1ch",
-            whiteSpace: "nowrap",
+            whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
+            wordWrap: "break-word", // 긴 단어 줄바꿈 허용
           }}
           suppressContentEditableWarning={true}
         />
       ) : (
-        <span style={{ whiteSpace: "nowrap" }}>{element.text}</span>
+        <span
+          style={{
+            whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
+            wordWrap: "break-word", // 긴 단어 줄바꿈 허용
+          }}
+        >
+          {element.text}
+        </span>
       )}
     </div>
   );

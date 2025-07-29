@@ -9,8 +9,10 @@ import { useSelectedTrackStore } from "@/src/features/Edit/model/store/useSelect
 
 export default function TextTimeline() {
   const { media, deleteTextElement } = useMediaStore();
+
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
+
   const setSelectedTrackAndId = useSelectedTrackStore(
     (state) => state.setSelectedTrackAndId
   );
