@@ -1,5 +1,5 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { createImageElement } from "../lib/imageElementFactory";
+import { createImageElement } from "../../lib/imageElementFactory";
 
 export function useImageProjectManagement() {
   const { media, addMediaElement, updateMediaElement, deleteMediaElement } =

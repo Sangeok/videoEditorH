@@ -14,7 +14,7 @@ export function useDragAndDrop() {
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isDragEnterOrOver(e.type)) {
       setDragActive(true);
     } else if (isDragLeave(e.type)) {
@@ -22,7 +22,10 @@ export function useDragAndDrop() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent, onFilesDropped: (files: FileList) => void) => {
+  const handleDrop = (
+    e: React.DragEvent,
+    onFilesDropped: (files: FileList) => void
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);

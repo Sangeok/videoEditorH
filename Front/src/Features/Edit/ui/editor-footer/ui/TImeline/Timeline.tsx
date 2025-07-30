@@ -1,6 +1,7 @@
 import TimelineRuler from "./TimelineRuler/TimelineRuler";
 import TextTimeline from "./TextTimeline/TextTimeline";
 import CurrentTimeIndicator from "./_component/CurrentTimeIndicator/ui/CurrentTimeIndicator";
+import MediaTimeline from "./MediaTimeline/ui";
 
 export default function Timeline() {
   return (
@@ -13,6 +14,7 @@ export default function Timeline() {
         {/* 타임라인 트랙들이 들어갈 영역 */}
         <div className="h-full min-h-[100px] relative">
           <TextTimeline />
+          <MediaTimeline />
           {/* 향후 타임라인 트랙 컴포넌트들이 여기에 렌더링됩니다 */}
         </div>
       </div>
