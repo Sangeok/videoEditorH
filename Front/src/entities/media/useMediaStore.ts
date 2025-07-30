@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Media, TextElement } from "./types";
+import { Media, MediaElement, TextElement } from "./types";
 
 export const initialMedia: Media = {
   // video duration
@@ -7,10 +7,7 @@ export const initialMedia: Media = {
   fps: 30,
 
   textElement: [],
-
-  //   videoElement: [],
-  //   audioElement: [],
-  //   imageElement: [],
+  mediaElement: [],
 };
 
 interface MediaStore {
@@ -23,6 +20,12 @@ interface MediaStore {
     textElementId: string,
     updates: Partial<TextElement>
   ) => void; // 추가
+  addMediaElement: (mediaElement: MediaElement) => void;
+  deleteMediaElement: (mediaElementId: string) => void;
+  updateMediaElement: (
+    mediaElementId: string,
+    updates: Partial<MediaElement>
+  ) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -91,6 +94,55 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         ...state.media,
         textElement: state.media.textElement.map((element) =>
           element.id === textElementId ? { ...element, ...updates } : element
+        ),
+      },
+    })),
+
+  addMediaElement: (mediaElement: MediaElement) =>
+    set((state) => {
+      const updatedMediaElements = [...state.media.mediaElement, mediaElement];
+      const newProjectDuration = Math.max(
+        state.media.projectDuration,
+        mediaElement.endTime
+      );
+
+      return {
+        media: {
+          ...state.media,
+          mediaElement: updatedMediaElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+  deleteMediaElement: (mediaElementId: string) =>
+    set((state) => {
+      const updatedMediaElements = state.media.mediaElement.filter(
+        (mediaElement) => mediaElement.id !== mediaElementId
+      );
+
+      const allElements = [...state.media.textElement, ...updatedMediaElements];
+      const newProjectDuration =
+        allElements.length > 0
+          ? Math.max(...allElements.map((element) => element.endTime))
+          : 0;
+
+      return {
+        media: {
+          ...state.media,
+          mediaElement: updatedMediaElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+  updateMediaElement: (
+    mediaElementId: string,
+    updates: Partial<MediaElement>
+  ) =>
+    set((state) => ({
+      media: {
+        ...state.media,
+        mediaElement: state.media.mediaElement.map((element) =>
+          element.id === mediaElementId ? { ...element, ...updates } : element
         ),
       },
     })),

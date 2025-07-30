@@ -4,7 +4,7 @@ import useSideButtonStore from "@/src/features/Edit/model/store/useSideButtonSto
 import TextEditSubSide from "./_component/TextEditSubSide";
 import VideoEditSubSide from "./_component/VideoEditSubSide";
 import MusicEditSubSide from "./_component/MusicEditSubSide";
-import ImageEditSubSide from "./_component/ImageEditSubSide";
+import ImageEditSubSide from "./_component/ImageEditSubSide/ui/index";
 import CaptionEditSubSide from "./_component/CaptionEditSubSide/ui/CaptionEditSubSide";
 
 export default function EditorSubSideBar() {
