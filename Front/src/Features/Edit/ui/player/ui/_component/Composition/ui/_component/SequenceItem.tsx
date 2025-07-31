@@ -9,17 +9,12 @@ interface SequenceItemOptions {
 
 export const SequenceItem: Record<
   string,
-  (
-    item: TextElement | MediaElement,
-    options: SequenceItemOptions
-  ) => JSX.Element
+  (item: TextElement | MediaElement, options: SequenceItemOptions) => JSX.Element
 > = {
   text: (item, options: SequenceItemOptions) => {
     const textElement = item as TextElement;
     const fromFrame = Math.floor(textElement.startTime * options.fps);
-    const durationInFrames = Math.floor(
-      (textElement.endTime - textElement.startTime) * options.fps
-    );
+    const durationInFrames = Math.floor((textElement.endTime - textElement.startTime) * options.fps);
 
     return (
       <Sequence
@@ -27,7 +22,7 @@ export const SequenceItem: Record<
         from={fromFrame}
         durationInFrames={durationInFrames}
         name={`Text: ${textElement.text.substring(0, 20)}...`}
-        style={{ height: "100%", border: "5px solid red" }}
+        style={{ height: "100%", border: "5px solid red", overflow: "hidden" }}
       >
         <AbsoluteFill className="h-full">
           <DraggableText element={textElement} />
@@ -39,9 +34,7 @@ export const SequenceItem: Record<
   image: (item, options: SequenceItemOptions) => {
     const imageElement = item as MediaElement;
     const fromFrame = Math.floor(imageElement.startTime * options.fps);
-    const durationInFrames = Math.floor(
-      (imageElement.endTime - imageElement.startTime) * options.fps
-    );
+    const durationInFrames = Math.floor((imageElement.endTime - imageElement.startTime) * options.fps);
 
     return (
       <Sequence
@@ -56,10 +49,7 @@ export const SequenceItem: Record<
           pointerEvents: "none",
         }}
       >
-        <AbsoluteFill
-          className="h-full"
-          style={{ zIndex: 100, overflow: "hidden" }}
-        >
+        <AbsoluteFill className="h-full" style={{ zIndex: 100, overflow: "hidden" }}>
           <Img
             style={{
               pointerEvents: "none",

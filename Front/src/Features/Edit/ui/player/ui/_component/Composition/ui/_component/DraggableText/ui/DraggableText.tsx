@@ -9,9 +9,7 @@ import { DraggableTextProps, CursorType } from "../model/types";
 
 export default function DraggableText({ element }: DraggableTextProps) {
   const { isPlaying } = useTimelineStore();
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -45,8 +43,7 @@ export default function DraggableText({ element }: DraggableTextProps) {
   });
 
   // Style calculations
-  const showBorder =
-    !isPlaying && (isHovered || dragState.isDragging || isEditing);
+  const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
   const getCursor = (): CursorType => {
     if (isPlaying) return "default";
@@ -56,6 +53,9 @@ export default function DraggableText({ element }: DraggableTextProps) {
     return "grab";
   };
 
+  console.log("element");
+  console.log(element);
+
   return (
     <div
       style={{
@@ -63,18 +63,16 @@ export default function DraggableText({ element }: DraggableTextProps) {
         left: `${element.positionX}px`,
         top: `${element.positionY}px`,
         width: "fit-content",
-        maxWidth: "90%", // 최대 너비 제한 추가
         height: "auto",
+        maxWidth: element?.maxWidth ? element?.maxWidth : "",
         display: "inline-block",
         padding: "10px",
-        whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
-        wordWrap: "break-word", // 긴 단어 줄바꿈 허용
+        whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
         borderRadius: "4px",
         boxSizing: "border-box",
-        border: showBorder
-          ? `1px solid ${borderColor}`
-          : "1px solid transparent",
+        border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
         cursor: getCursor(),
+        textAlign: "center",
         userSelect: isEditing ? "text" : "none",
         zIndex: dragState.isDragging || isEditing ? 1001 : 1000,
         fontSize: `${element.fontSize}px`,
@@ -101,16 +99,14 @@ export default function DraggableText({ element }: DraggableTextProps) {
             outline: "none",
             background: "transparent",
             minWidth: "1ch",
-            whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
-            wordWrap: "break-word", // 긴 단어 줄바꿈 허용
+            whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
           }}
           suppressContentEditableWarning={true}
         />
       ) : (
         <span
           style={{
-            whiteSpace: "pre-wrap", // nowrap에서 pre-wrap으로 변경
-            wordWrap: "break-word", // 긴 단어 줄바꿈 허용
+            whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
           }}
         >
           {element.text}

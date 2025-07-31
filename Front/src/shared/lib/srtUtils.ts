@@ -63,12 +63,14 @@ export function convertSRTToTextElements(parsedEntries: ParsedSRTEntry[]): TextE
     positionX: 50, // Center horizontally
     positionY: 80, // Bottom area for subtitles
     fontSize: 60,
+    maxWidth: "90%",
     animation: "none",
     textColor: "#ffffff",
     backgroundColor: "transparent",
     font: "Arial",
     width: 300,
     height: 50,
+    whiteSpace: "pre-wrap",
   }));
 }
 

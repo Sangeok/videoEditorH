@@ -15,6 +15,9 @@ export interface TextElement {
   font: string;
   width: number;
   height: number;
+
+  maxWidth?: string;
+  whiteSpace?: string;
 }
 
 export interface MediaElement {
