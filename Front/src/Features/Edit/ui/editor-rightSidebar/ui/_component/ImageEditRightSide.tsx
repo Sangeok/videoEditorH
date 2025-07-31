@@ -11,5 +11,7 @@ export default function ImageEditRightSide({
     state.media.mediaElement.find((element) => element.id === selectedTrackId)
   );
 
+  console.log("imageElement", imageElement);
+
   return <div>ImageEditRightSide</div>;
 }

@@ -1,7 +1,8 @@
 import { JSX } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
-import { TextElement } from "@/src/entities/media/types";
+import { MediaElement, TextElement } from "@/src/entities/media/types";
+import Image from "next/image";
 
 interface SequenceItemOptions {
   fps: number;
@@ -9,10 +10,13 @@ interface SequenceItemOptions {
 
 export const SequenceItem: Record<
   string,
-  (item: TextElement, options: SequenceItemOptions) => JSX.Element
+  (
+    item: TextElement | MediaElement,
+    options: SequenceItemOptions
+  ) => JSX.Element
 > = {
-  Text: (item: TextElement, options: SequenceItemOptions) => {
-    const textElement = item;
+  text: (item, options: SequenceItemOptions) => {
+    const textElement = item as TextElement;
     const fromFrame = Math.floor(textElement.startTime * options.fps);
     const durationInFrames = Math.floor(
       (textElement.endTime - textElement.startTime) * options.fps
@@ -28,6 +32,34 @@ export const SequenceItem: Record<
       >
         <AbsoluteFill className="h-full">
           <DraggableText element={textElement} />
+        </AbsoluteFill>
+      </Sequence>
+    );
+  },
+
+  image: (item, options: SequenceItemOptions) => {
+    const imageElement = item as MediaElement;
+    const fromFrame = Math.floor(imageElement.startTime * options.fps);
+    const durationInFrames = Math.floor(
+      (imageElement.endTime - imageElement.startTime) * options.fps
+    );
+
+    return (
+      <Sequence
+        key={imageElement.id}
+        from={fromFrame}
+        durationInFrames={durationInFrames}
+        name={`Image: ${imageElement.id}`}
+        style={{ height: "100%", border: "5px solid blue", zIndex: 100 }}
+      >
+        <AbsoluteFill className="h-full" style={{ zIndex: 100 }}>
+          <Image
+            src={imageElement.url}
+            alt={"image"}
+            width={1080}
+            height={1920}
+            className="object-cover w-full h-full"
+          />
         </AbsoluteFill>
       </Sequence>
     );
