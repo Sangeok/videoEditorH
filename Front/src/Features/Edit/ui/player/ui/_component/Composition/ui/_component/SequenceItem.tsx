@@ -1,8 +1,7 @@
 import { JSX } from "react";
-import { AbsoluteFill, Sequence } from "remotion";
+import { AbsoluteFill, Img, Sequence } from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
 import { MediaElement, TextElement } from "@/src/entities/media/types";
-import Image from "next/image";
 
 interface SequenceItemOptions {
   fps: number;
@@ -50,14 +49,26 @@ export const SequenceItem: Record<
         from={fromFrame}
         durationInFrames={durationInFrames}
         name={`Image: ${imageElement.id}`}
-        style={{ height: "100%", border: "5px solid blue", zIndex: 100 }}
+        style={{
+          height: "100%",
+          border: "5px solid blue",
+          zIndex: 100,
+          pointerEvents: "none",
+        }}
       >
-        <AbsoluteFill className="h-full" style={{ zIndex: 100 }}>
-          <Image
+        <AbsoluteFill
+          className="h-full"
+          style={{ zIndex: 100, overflow: "hidden" }}
+        >
+          <Img
+            style={{
+              pointerEvents: "none",
+              zIndex: 100,
+              width: "100%",
+              height: "auto",
+            }}
             src={imageElement.url}
             alt={"image"}
-            width={1080}
-            height={1920}
             className="object-cover w-full h-full"
           />
         </AbsoluteFill>
