@@ -18,12 +18,13 @@ export default function FileUploadArea({
   actions,
 }: FileUploadAreaProps) {
   const isUploading = uploadState === "uploading";
-  
+
   const containerClassName = `
-    border-2 border-dashed rounded-lg p-6 text-center transition-colors
-    ${isUploading 
-      ? "border-blue-500 bg-blue-500/10" 
-      : "border-gray-600 hover:border-gray-500"
+    border-2 border-dashed rounded-lg p-6 text-center transition-colors w-full"
+    ${
+      isUploading
+        ? "border-blue-500 bg-blue-500/10"
+        : "border-gray-600 hover:border-gray-500"
     }
   `;
 
@@ -40,7 +41,7 @@ export default function FileUploadArea({
         onChange={actions.handleFileChange}
         className="hidden"
       />
-      
+
       <UploadStateRenderer
         uploadState={uploadState}
         errorMessage={errorMessage}

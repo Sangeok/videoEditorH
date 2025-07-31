@@ -15,7 +15,11 @@ export default function Composition({ textElements }: CompositionProps) {
       {textElements.map((textElement) => {
         if (!textElement) return null;
         const trackItem = { ...textElement } as TextElement;
-        return SequenceItem["Text"](trackItem, { fps });
+        return SequenceItem["text"](trackItem, { fps });
+      })}
+      {media.mediaElement.map((mediaElement) => {
+        if (!mediaElement) return null;
+        return SequenceItem[mediaElement.type](mediaElement, { fps });
       })}
     </>
   );

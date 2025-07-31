@@ -17,17 +17,30 @@ export interface TextElement {
   height: number;
 }
 
-export interface VideoElement {
+export interface MediaElement {
   id: string;
   startTime: number;
   endTime: number;
+  duration: number;
+  type: "video" | "image";
+
+  url: string;
+  width: number;
+  height: number;
+  opacity: number;
+  rotate: string;
+  visibility: "visible" | "hidden";
+  top: number | string;
+  left: number | string;
+
+  // video only
+  volume: number;
+  speed: number;
 }
 
 export interface Media {
   projectDuration: number;
   fps: number;
   textElement: TextElement[];
-  //   videoElement: VideoElement[];
-  //   audioElement: AudioElement[];
-  //   imageElement: ImageElement[];
+  mediaElement: MediaElement[];
 }
