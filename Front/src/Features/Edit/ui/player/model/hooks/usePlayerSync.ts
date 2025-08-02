@@ -17,9 +17,16 @@ interface UsePlayerSyncProps {
 export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
   const { currentTime, isPlaying, setCurrentTime } = useTimelineStore();
   const lastUpdateTimeRef = useRef<number>(-1);
+  const isUpdatingFromPlayerRef = useRef<boolean>(false);
 
   // Timeline의 currentTime에 따라 RemotionPlayer 시간 이동
   useEffect(() => {
+    // 플레이어에서 오는 업데이트인 경우 seek하지 않음
+    if (isUpdatingFromPlayerRef.current) {
+      isUpdatingFromPlayerRef.current = false;
+      return;
+    }
+
     if (playerRef.current) {
       const frameToSeek = PlayerService.timeToFrame(currentTime, fps);
       playerRef.current.seekTo(frameToSeek);
@@ -39,6 +46,7 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
         // 값이 실제로 변경될 때만 업데이트
         if (roundedTime !== lastUpdateTimeRef.current) {
           lastUpdateTimeRef.current = roundedTime;
+          isUpdatingFromPlayerRef.current = true;
           setCurrentTime(roundedTime);
         }
       }
@@ -48,5 +56,5 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
       clearInterval(interval);
       lastUpdateTimeRef.current = -1;
     };
-  }, [setCurrentTime, isPlaying, fps, playerRef]);
+  }, [isPlaying, fps]);
 };

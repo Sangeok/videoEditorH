@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { AbsoluteFill, Img, Sequence } from "remotion";
+import { AbsoluteFill, Img, Sequence, useCurrentFrame, interpolate } from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
 import { MediaElement, TextElement } from "@/src/entities/media/types";
 
@@ -9,17 +9,12 @@ interface SequenceItemOptions {
 
 export const SequenceItem: Record<
   string,
-  (
-    item: TextElement | MediaElement,
-    options: SequenceItemOptions
-  ) => JSX.Element
+  (item: TextElement | MediaElement, options: SequenceItemOptions) => JSX.Element
 > = {
   text: (item, options: SequenceItemOptions) => {
     const textElement = item as TextElement;
     const fromFrame = Math.floor(textElement.startTime * options.fps);
-    const durationInFrames = Math.floor(
-      (textElement.endTime - textElement.startTime) * options.fps
-    );
+    const durationInFrames = Math.floor((textElement.endTime - textElement.startTime) * options.fps);
 
     return (
       <Sequence
@@ -27,7 +22,7 @@ export const SequenceItem: Record<
         from={fromFrame}
         durationInFrames={durationInFrames}
         name={`Text: ${textElement.text.substring(0, 20)}...`}
-        style={{ height: "100%", border: "5px solid red" }}
+        style={{ height: "100%", border: "5px solid red", overflow: "hidden" }}
       >
         <AbsoluteFill className="h-full">
           <DraggableText element={textElement} />
@@ -39,9 +34,59 @@ export const SequenceItem: Record<
   image: (item, options: SequenceItemOptions) => {
     const imageElement = item as MediaElement;
     const fromFrame = Math.floor(imageElement.startTime * options.fps);
-    const durationInFrames = Math.floor(
-      (imageElement.endTime - imageElement.startTime) * options.fps
-    );
+    const durationInFrames = Math.floor((imageElement.endTime - imageElement.startTime) * options.fps);
+
+    const ImageWithFade = () => {
+      const frame = useCurrentFrame();
+      
+      let opacity = 1;
+      
+      // Calculate fade in opacity
+      if (imageElement.fadeIn) {
+        const fadeInFrames = Math.floor((imageElement.fadeInDuration || 0.5) * options.fps);
+        opacity = interpolate(frame, [0, fadeInFrames], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
+      }
+      
+      // Calculate fade out opacity
+      if (imageElement.fadeOut) {
+        const fadeOutFrames = Math.floor((imageElement.fadeOutDuration || 0.5) * options.fps);
+        const fadeOutStartFrame = durationInFrames - fadeOutFrames;
+        const fadeOutOpacity = interpolate(frame, [fadeOutStartFrame, durationInFrames], [1, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
+        opacity = Math.min(opacity, fadeOutOpacity);
+      }
+
+      return (
+        <AbsoluteFill
+          className="h-full"
+          style={{
+            zIndex: 100,
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            opacity,
+          }}
+        >
+          <Img
+            style={{
+              pointerEvents: "none",
+              zIndex: 100,
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+            }}
+            src={imageElement.url}
+            alt={"image"}
+          />
+        </AbsoluteFill>
+      );
+    };
 
     return (
       <Sequence
@@ -56,22 +101,7 @@ export const SequenceItem: Record<
           pointerEvents: "none",
         }}
       >
-        <AbsoluteFill
-          className="h-full"
-          style={{ zIndex: 100, overflow: "hidden" }}
-        >
-          <Img
-            style={{
-              pointerEvents: "none",
-              zIndex: 100,
-              width: "100%",
-              height: "auto",
-            }}
-            src={imageElement.url}
-            alt={"image"}
-            className="object-cover w-full h-full"
-          />
-        </AbsoluteFill>
+        <ImageWithFade />
       </Sequence>
     );
   },

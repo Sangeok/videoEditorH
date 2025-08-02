@@ -15,6 +15,9 @@ export interface TextElement {
   font: string;
   width: number;
   height: number;
+
+  maxWidth?: string;
+  whiteSpace?: string;
 }
 
 export interface MediaElement {
@@ -32,6 +35,12 @@ export interface MediaElement {
   visibility: "visible" | "hidden";
   top: number | string;
   left: number | string;
+
+  // fade effects
+  fadeIn: boolean;
+  fadeOut: boolean;
+  fadeInDuration: number;
+  fadeOutDuration: number;
 
   // video only
   volume: number;
