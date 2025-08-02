@@ -1,12 +1,25 @@
 import { useRef, useEffect } from "react";
 
+type DropdownPosition = "top" | "bottom" | "left" | "right";
+type DropdownSize = "sm" | "md" | "lg";
+
 interface DropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   dropdownItems: any[];
+  handleSelectEvent?: (item: string) => void;
+  position?: DropdownPosition; // 위치 옵션 추가
+  size?: DropdownSize;
 }
 
-export default function Dropdown({ isOpen, setIsOpen, dropdownItems }: DropdownProps) {
+export default function Dropdown({
+  isOpen,
+  setIsOpen,
+  dropdownItems,
+  handleSelectEvent,
+  position = "bottom", // 기본값은 아래쪽
+  size = "md",
+}: DropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,13 +38,47 @@ export default function Dropdown({ isOpen, setIsOpen, dropdownItems }: DropdownP
     };
   }, [isOpen, setIsOpen]);
 
+  // 위치에 따른 CSS 클래스 결정
+  const getPositionClasses = (position: DropdownPosition): string => {
+    switch (position) {
+      case "top":
+        return "bottom-full left-0 mb-1";
+      case "bottom":
+        return "top-full left-0 mt-1";
+      case "left":
+        return "right-full top-0 mr-1";
+      case "right":
+        return "left-full top-0 ml-1";
+      default:
+        return "top-full left-0 mt-1";
+    }
+  };
+
+  const getSizeClasses = (size: DropdownSize): string => {
+    switch (size) {
+      case "sm":
+        return "w-32";
+      case "md":
+        return "w-48";
+      case "lg":
+        return "w-56";
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-48 bg-black dark-border z-50 shadow-lg rounded-md overflow-hidden">
+        <div
+          className={`absolute ${getPositionClasses(position)} ${getSizeClasses(
+            size
+          )} bg-black dark-border z-50 shadow-lg rounded-md overflow-hidden`}
+        >
           {dropdownItems.map((item) => (
             <div
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                handleSelectEvent?.(item.name);
+              }}
               key={item.id}
               className="text-white py-2 px-2 cursor-pointer transition-colors duration-200 text-sm"
             >

@@ -36,6 +36,12 @@ export interface MediaElement {
   top: number | string;
   left: number | string;
 
+  // fade effects
+  fadeIn: boolean;
+  fadeOut: boolean;
+  fadeInDuration: number;
+  fadeOutDuration: number;
+
   // video only
   volume: number;
   speed: number;

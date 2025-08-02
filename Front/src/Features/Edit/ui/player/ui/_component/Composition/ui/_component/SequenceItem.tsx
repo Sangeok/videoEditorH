@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { AbsoluteFill, Img, Sequence } from "remotion";
+import { AbsoluteFill, Img, Sequence, useCurrentFrame, interpolate } from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
 import { MediaElement, TextElement } from "@/src/entities/media/types";
 
@@ -36,19 +36,32 @@ export const SequenceItem: Record<
     const fromFrame = Math.floor(imageElement.startTime * options.fps);
     const durationInFrames = Math.floor((imageElement.endTime - imageElement.startTime) * options.fps);
 
-    return (
-      <Sequence
-        key={imageElement.id}
-        from={fromFrame}
-        durationInFrames={durationInFrames}
-        name={`Image: ${imageElement.id}`}
-        style={{
-          height: "100%",
-          border: "5px solid blue",
-          zIndex: 100,
-          pointerEvents: "none",
-        }}
-      >
+    const ImageWithFade = () => {
+      const frame = useCurrentFrame();
+      
+      let opacity = 1;
+      
+      // Calculate fade in opacity
+      if (imageElement.fadeIn) {
+        const fadeInFrames = Math.floor((imageElement.fadeInDuration || 0.5) * options.fps);
+        opacity = interpolate(frame, [0, fadeInFrames], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
+      }
+      
+      // Calculate fade out opacity
+      if (imageElement.fadeOut) {
+        const fadeOutFrames = Math.floor((imageElement.fadeOutDuration || 0.5) * options.fps);
+        const fadeOutStartFrame = durationInFrames - fadeOutFrames;
+        const fadeOutOpacity = interpolate(frame, [fadeOutStartFrame, durationInFrames], [1, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
+        opacity = Math.min(opacity, fadeOutOpacity);
+      }
+
+      return (
         <AbsoluteFill
           className="h-full"
           style={{
@@ -57,6 +70,7 @@ export const SequenceItem: Record<
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            opacity,
           }}
         >
           <Img
@@ -71,6 +85,23 @@ export const SequenceItem: Record<
             alt={"image"}
           />
         </AbsoluteFill>
+      );
+    };
+
+    return (
+      <Sequence
+        key={imageElement.id}
+        from={fromFrame}
+        durationInFrames={durationInFrames}
+        name={`Image: ${imageElement.id}`}
+        style={{
+          height: "100%",
+          border: "5px solid blue",
+          zIndex: 100,
+          pointerEvents: "none",
+        }}
+      >
+        <ImageWithFade />
       </Sequence>
     );
   },
