@@ -49,17 +49,26 @@ export const SequenceItem: Record<
           pointerEvents: "none",
         }}
       >
-        <AbsoluteFill className="h-full" style={{ zIndex: 100, overflow: "hidden" }}>
+        <AbsoluteFill
+          className="h-full"
+          style={{
+            zIndex: 100,
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Img
             style={{
               pointerEvents: "none",
               zIndex: 100,
-              width: "100%",
-              height: "auto",
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
             }}
             src={imageElement.url}
             alt={"image"}
-            className="object-cover w-full h-full"
           />
         </AbsoluteFill>
       </Sequence>
