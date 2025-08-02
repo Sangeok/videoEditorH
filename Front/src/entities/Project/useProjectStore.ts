@@ -9,6 +9,8 @@ interface ProjectStore {
 export const initialProject: ProjectType = {
   id: crypto.randomUUID(),
   name: "Untitled",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export const useProjectStore = create<ProjectStore>((set) => ({

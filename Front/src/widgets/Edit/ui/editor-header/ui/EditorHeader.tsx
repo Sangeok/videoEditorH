@@ -2,28 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import { Download, Menu, MoveLeft, Share2 } from "lucide-react";
+import { Download, Menu, MoveLeft, Save, Share2 } from "lucide-react";
 import { useState } from "react";
 import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import { MenuItem } from "../constants/MenuItem";
+import ProjectMenu from "@/src/features/Edit/ui/ProjectMenu/ui/ProjectMenu";
+import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleQuickSave = async () => {
+    setLoading(true);
+    try {
+      await ProjectPersistenceService.saveCurrentProject();
+      // You could add a toast notification here
+    } catch (error) {
+      console.error("Failed to save project:", error);
+    }
+    setLoading(false);
+  };
 
   const HeaderLeftButton = [
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: (
-        <Dropdown
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          dropdownItems={MenuItem}
-        />
-      ),
+      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
       onClick: () => {
         setIsOpen(!isOpen);
       },
@@ -39,9 +46,10 @@ export default function EditorHeader() {
 
   const HeaderRightButton = [
     {
-      icon: <Share2 size={16} />,
-      label: "Share",
-      onClick: () => {},
+      icon: <Save size={16} />,
+      label: "Save",
+      onClick: handleQuickSave,
+      disabled: loading,
     },
     {
       icon: <Download size={16} />,
@@ -62,7 +70,7 @@ export default function EditorHeader() {
           ))}
         </div>
 
-        <h1 className="font-semibold">Untitled video</h1>
+        <ProjectMenu />
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (
