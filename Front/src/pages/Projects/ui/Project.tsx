@@ -8,10 +8,13 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
+import Dialog from "@/src/shared/ui/atoms/Dialog/ui/Dialog";
+import ProjectManager from "@/src/features/Edit/ui/ProjectManager/ui/ProjectManager";
 
 export default function Project() {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showProjectManager, setShowProjectManager] = useState(false);
 
   const router = useRouter();
 
@@ -48,7 +51,7 @@ export default function Project() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="light" className="flex items-center gap-2">
+          <Button onClick={() => setShowProjectManager(true)} variant="light" className="flex items-center gap-2">
             <Plus size={16} /> New Project
           </Button>
         </div>
@@ -58,6 +61,10 @@ export default function Project() {
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>
+
+      <Dialog open={showProjectManager} onClose={() => setShowProjectManager(false)} title="New Project">
+        <ProjectManager onClose={() => setShowProjectManager(false)} />
+      </Dialog>
     </div>
   );
 }

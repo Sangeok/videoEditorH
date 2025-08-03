@@ -7,8 +7,8 @@ interface ProjectStore {
 }
 
 export const initialProject: ProjectType = {
-  id: crypto.randomUUID(),
-  name: "Untitled",
+  id: "",
+  name: "Loading...",
   createdAt: new Date(),
   updatedAt: new Date(),
 };

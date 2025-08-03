@@ -9,10 +9,16 @@ import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import { MenuItem } from "../constants/MenuItem";
 import ProjectMenu from "@/src/features/Edit/ui/ProjectMenu/ui/ProjectMenu";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
+import { useProjectStore } from "@/src/entities/Project/useProjectStore";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const { project } = useProjectStore();
+
+  console.log("project");
+  console.log(project);
+
   const router = useRouter();
 
   const handleQuickSave = async () => {
@@ -70,7 +76,10 @@ export default function EditorHeader() {
           ))}
         </div>
 
-        <ProjectMenu />
+        <span className="text-white text-sm mr-4">
+          {project.id ? project.name : "Loading..."}
+        </span>
+        {/* <ProjectMenu /> */}
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (

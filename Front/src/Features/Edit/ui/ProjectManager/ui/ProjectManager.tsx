@@ -8,6 +8,7 @@ import Input from "@/src/shared/ui/atoms/Input/ui/Input";
 import { useProjectStore } from "@/src/entities/Project/useProjectStore";
 import { SavedProject } from "@/src/shared/lib/indexedDB";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
+import { useRouter } from "next/navigation";
 
 interface ProjectManagerProps {
   onClose: () => void;
@@ -19,6 +20,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
   const [saveProjectName, setSaveProjectName] = useState("");
   const [loading, setLoading] = useState(false);
   const { project } = useProjectStore();
+  const router = useRouter();
 
   useEffect(() => {
     loadProjects();
@@ -55,6 +57,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
     try {
       const success = await ProjectPersistenceService.loadProject(projectId);
       if (success) {
+        router.push(`/edit/${projectId}`);
         onClose();
       } else {
         alert("Failed to load project. The project may be corrupted or no longer exist.");
@@ -93,7 +96,8 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
   const handleNewProject = async () => {
     setLoading(true);
     try {
-      await ProjectPersistenceService.createNewProject();
+      const newProjectId = await ProjectPersistenceService.createNewProject(saveProjectName);
+      router.push(`/edit/${newProjectId}`);
       onClose();
     } catch (error) {
       console.error("Failed to create new project:", error);
@@ -107,8 +111,20 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
 
   return (
     <div className="space-y-6">
+      <Input
+        value={saveProjectName}
+        onChange={(e) => setSaveProjectName(e.target.value)}
+        placeholder="Enter project name"
+      />
+
+      <div className="flex gap-3 justify-end">
+        <Button onClick={handleNewProject} className="flex items-center gap-2" disabled={loading}>
+          <Plus size={16} />
+          Create New Project
+        </Button>
+      </div>
       {/* Action Buttons */}
-      <div className="flex gap-3">
+      {/* <div className="flex gap-3">
         <Button
           onClick={() => {
             setSaveProjectName(project.name);
@@ -120,14 +136,10 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
           <Save size={16} />
           Save Project
         </Button>
-        <Button onClick={handleNewProject} className="flex items-center gap-2" disabled={loading}>
-          <Plus size={16} />
-          New Project
-        </Button>
-      </div>
+      </div> */}
 
       {/* Projects List */}
-      <div className="space-y-3">
+      {/* <div className="space-y-3">
         <h3 className="text-lg font-semibold text-white">Saved Projects</h3>
 
         {loading ? (
@@ -177,10 +189,10 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Save Dialog */}
-      <Dialog open={showSaveDialog} onClose={() => setShowSaveDialog(false)} title="Save Project">
+      {/* <Dialog open={showSaveDialog} onClose={() => setShowSaveDialog(false)} title="Save Project">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-white mb-2">Project Name</label>
@@ -201,7 +213,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
             </Button>
           </div>
         </div>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };
