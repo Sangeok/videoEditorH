@@ -17,5 +17,5 @@ export const useLoadAllProject = () => {
     loadProjects();
   }, []);
 
-  return { projects, loading };
+  return { projects, loading, refetch: loadProjects };
 };
