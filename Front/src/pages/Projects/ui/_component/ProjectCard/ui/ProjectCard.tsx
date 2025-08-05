@@ -9,7 +9,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const { loading, handleLoadProject } = useLoadProject();
+  const { handleLoadProject } = useLoadProject();
 
   return (
     <div
