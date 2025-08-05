@@ -1,37 +1,26 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { MediaElement } from "@/src/entities/media/types";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
 import { useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Input from "@/src/shared/ui/atoms/Input/ui/Input";
 import MatchWidthDropdown from "@/src/shared/ui/atoms/Dropdown/ui/MatchWidthDropdown";
+import { DEFAULT_EFFECT_DURATION, ImageEffectMenuItems } from "../constants";
 
 interface ImageEditRightSideProps {
   selectedTrackId: string | null;
 }
 
-export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSideProps) {
-  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] = useState<boolean>(false);
-  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] = useState<boolean>(false);
+export default function ImageEditRightSide({
+  selectedTrackId,
+}: ImageEditRightSideProps) {
+  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] =
+    useState<boolean>(false);
+  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] =
+    useState<boolean>(false);
 
   const inEffectDropdownRef = useRef<HTMLButtonElement>(null);
   const outEffectDropdownRef = useRef<HTMLButtonElement>(null);
-
-  const ImageEffectMenuItems = {
-    ImageIn: [
-      {
-        id: 1,
-        name: "Fade In",
-      },
-    ],
-    ImageOut: [
-      {
-        id: 1,
-        name: "Fade Out",
-      },
-    ],
-  };
 
   const { updateMediaElement } = useMediaStore();
   const imageElement = useMediaStore((state) =>
@@ -46,7 +35,7 @@ export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSi
     if (inEffect === "Fade In") {
       updateMediaElement(imageElement.id, {
         fadeIn: true,
-        fadeInDuration: 0.5,
+        fadeInDuration: DEFAULT_EFFECT_DURATION,
       });
     }
   };
@@ -55,7 +44,7 @@ export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSi
     if (outEffect === "Fade Out") {
       updateMediaElement(imageElement.id, {
         fadeOut: true,
-        fadeOutDuration: 0.5,
+        fadeOutDuration: DEFAULT_EFFECT_DURATION,
       });
     }
   };
@@ -133,64 +122,12 @@ export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSi
           <Input
             type="number"
             value={imageElement.fadeOutDuration}
-            onChange={(e) => handleFadeOutDurationChange(Number(e.target.value))}
+            onChange={(e) =>
+              handleFadeOutDurationChange(Number(e.target.value))
+            }
           />
         )}
       </div>
-
-      {/* <div className="space-y-2">
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={imageElement.fadeIn || false}
-            onChange={(e) => handleFadeInChange(e.target.checked)}
-            className="rounded"
-          />
-          <span className="text-white">Fade In</span>
-        </label>
-        
-        {imageElement.fadeIn && (
-          <div className="ml-6 space-y-1">
-            <label className="text-sm text-gray-400">Duration (seconds)</label>
-            <input
-              type="number"
-              min="0.1"
-              max="5"
-              step="0.1"
-              value={imageElement.fadeInDuration || 0.5}
-              onChange={(e) => handleFadeInDurationChange(Number(e.target.value))}
-              className="w-full px-2 py-1 bg-gray-800 text-white rounded border border-gray-600"
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={imageElement.fadeOut || false}
-            onChange={(e) => handleFadeOutChange(e.target.checked)}
-            className="rounded"
-          />
-          <span className="text-white">Fade Out</span>
-        </label>
-        
-        {imageElement.fadeOut && (
-          <div className="ml-6 space-y-1">
-            <label className="text-sm text-gray-400">Duration (seconds)</label>
-            <input
-              type="number"
-              min="0.1"
-              max="5"
-              step="0.1"
-              value={imageElement.fadeOutDuration || 0.5}
-              onChange={(e) => handleFadeOutDurationChange(Number(e.target.value))}
-              className="w-full px-2 py-1 bg-gray-800 text-white rounded border border-gray-600"
-            />
-          </div>
-        )}
-      </div> */}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import Input from "@/src/shared/ui/atoms/Input/ui/Input";
