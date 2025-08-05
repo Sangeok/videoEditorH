@@ -85,7 +85,9 @@ export class ProjectPersistenceService {
 
       // Load timeline data if available
       if (savedProject.timelineData) {
-        timelineStore.setCurrentTime(savedProject.timelineData.currentTime || 0);
+        timelineStore.setCurrentTime(
+          savedProject.timelineData.currentTime || 0
+        );
         timelineStore.setZoom(savedProject.timelineData.zoom || 1);
       }
 
@@ -148,7 +150,10 @@ export class ProjectPersistenceService {
     return newProjectId;
   }
 
-  static async duplicateProject(projectId: string, newName?: string): Promise<string | null> {
+  static async duplicateProject(
+    projectId: string,
+    newName?: string
+  ): Promise<string | null> {
     try {
       const savedProject = await indexedDBService.loadProject(projectId);
 

@@ -10,11 +10,11 @@ import { SavedProject } from "@/src/shared/lib/indexedDB";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
 import { useRouter } from "next/navigation";
 
-interface ProjectManagerProps {
+interface ProjectCreatorProps {
   onClose: () => void;
 }
 
-const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
+export default function ProjectCreator({ onClose }: ProjectCreatorProps) {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saveProjectName, setSaveProjectName] = useState("");
@@ -60,7 +60,9 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
         router.push(`/edit/${projectId}`);
         onClose();
       } else {
-        alert("Failed to load project. The project may be corrupted or no longer exist.");
+        alert(
+          "Failed to load project. The project may be corrupted or no longer exist."
+        );
       }
     } catch (error) {
       console.error("Failed to load project:", error);
@@ -96,7 +98,9 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
   const handleNewProject = async () => {
     setLoading(true);
     try {
-      const newProjectId = await ProjectPersistenceService.createNewProject(saveProjectName);
+      const newProjectId = await ProjectPersistenceService.createNewProject(
+        saveProjectName
+      );
       router.push(`/edit/${newProjectId}`);
       onClose();
     } catch (error) {
@@ -106,7 +110,11 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return (
+      date.toLocaleDateString() +
+      " " +
+      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    );
   };
 
   return (
@@ -118,7 +126,11 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
       />
 
       <div className="flex gap-3 justify-end">
-        <Button onClick={handleNewProject} className="flex items-center gap-2" disabled={loading}>
+        <Button
+          onClick={handleNewProject}
+          className="flex items-center gap-2"
+          disabled={loading}
+        >
           <Plus size={16} />
           Create New Project
         </Button>
@@ -216,6 +228,4 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ onClose }) => {
       </Dialog> */}
     </div>
   );
-};
-
-export default ProjectManager;
+}
