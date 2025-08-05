@@ -2,12 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import { Download, Menu, MoveLeft, Save, Share2 } from "lucide-react";
+import { Download, Menu, MoveLeft, Save } from "lucide-react";
 import { useState } from "react";
 import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import { MenuItem } from "../constants/MenuItem";
-import ProjectMenu from "@/src/features/Edit/ui/ProjectMenu/ui/ProjectMenu";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
 import { useProjectStore } from "@/src/entities/Project/useProjectStore";
 
@@ -15,9 +14,6 @@ export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const { project } = useProjectStore();
-
-  console.log("project");
-  console.log(project);
 
   const router = useRouter();
 
@@ -36,7 +32,13 @@ export default function EditorHeader() {
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
+      children: (
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          dropdownItems={MenuItem}
+        />
+      ),
       onClick: () => {
         setIsOpen(!isOpen);
       },

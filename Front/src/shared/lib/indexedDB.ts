@@ -1,5 +1,5 @@
-import { ProjectType } from "@/entities/Project/types";
-import { Media } from "@/entities/media/types";
+import { Media } from "@/src/entities/media/types";
+import { ProjectType } from "@/src/entities/Project/types";
 
 export interface SavedProject {
   id: string;
@@ -23,39 +23,49 @@ class IndexedDBService {
     if (this.db) return this.db;
 
     return new Promise((resolve, reject) => {
+      // check if indexedDB is supported
       if (!window.indexedDB) {
         reject(new Error("IndexedDB is not supported by this browser"));
         return;
       }
 
+      // open database
       const request = indexedDB.open(this.dbName, this.version);
 
+      // Register handler
+      // handle error
       request.onerror = () => {
         const error = request.error || new Error("Failed to open database");
         console.error("IndexedDB open error:", error);
         reject(error);
       };
 
+      // handle success
       request.onsuccess = () => {
         this.db = request.result;
-        
+
         // Add error handler for the database
         this.db.onerror = (event) => {
           console.error("Database error:", event);
         };
-        
+
         resolve(request.result);
       };
 
+      // handle upgrade(or create for first time)
       request.onupgradeneeded = (event) => {
         try {
           const db = (event.target as IDBOpenDBRequest).result;
-          
+
           // Create projects store
           if (!db.objectStoreNames.contains("projects")) {
-            const projectStore = db.createObjectStore("projects", { keyPath: "id" });
+            const projectStore = db.createObjectStore("projects", {
+              keyPath: "id",
+            });
             projectStore.createIndex("name", "name", { unique: false });
-            projectStore.createIndex("updatedAt", "updatedAt", { unique: false });
+            projectStore.createIndex("updatedAt", "updatedAt", {
+              unique: false,
+            });
           }
         } catch (error) {
           console.error("Database upgrade error:", error);
@@ -64,18 +74,21 @@ class IndexedDBService {
       };
 
       request.onblocked = () => {
-        console.warn("Database upgrade blocked. Please close other tabs with this application.");
+        console.warn(
+          "Database upgrade blocked. Please close other tabs with this application."
+        );
       };
     });
   }
 
   async saveProject(projectData: SavedProject): Promise<void> {
     const db = await this.openDB();
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["projects"], "readwrite");
+      // Access the object store(projects table)
       const store = transaction.objectStore("projects");
-      
+
       const request = store.put({
         ...projectData,
         updatedAt: new Date(),
@@ -88,10 +101,11 @@ class IndexedDBService {
 
   async loadProject(projectId: string): Promise<SavedProject | null> {
     const db = await this.openDB();
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["projects"], "readonly");
       const store = transaction.objectStore("projects");
+
       const request = store.get(projectId);
 
       request.onerror = () => reject(request.error);
@@ -111,7 +125,7 @@ class IndexedDBService {
 
   async getAllProjects(): Promise<SavedProject[]> {
     const db = await this.openDB();
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["projects"], "readonly");
       const store = transaction.objectStore("projects");
@@ -122,17 +136,19 @@ class IndexedDBService {
       request.onsuccess = () => {
         const results = request.result || [];
         // Convert date strings back to Date objects and sort by updatedAt desc
-        const projects = results.map(result => ({
-          ...result,
-          createdAt: new Date(result.createdAt),
-          updatedAt: new Date(result.updatedAt),
-          projectData: {
-            ...result.projectData,
-            createdAt: new Date(result.projectData.createdAt),
-            updatedAt: new Date(result.projectData.updatedAt),
-          },
-        })).sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-        
+        const projects = results
+          .map((result) => ({
+            ...result,
+            createdAt: new Date(result.createdAt),
+            updatedAt: new Date(result.updatedAt),
+            projectData: {
+              ...result.projectData,
+              createdAt: new Date(result.projectData.createdAt),
+              updatedAt: new Date(result.projectData.updatedAt),
+            },
+          }))
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
         resolve(projects);
       };
     });
@@ -140,7 +156,7 @@ class IndexedDBService {
 
   async deleteProject(projectId: string): Promise<void> {
     const db = await this.openDB();
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["projects"], "readwrite");
       const store = transaction.objectStore("projects");
@@ -153,7 +169,7 @@ class IndexedDBService {
 
   async clearAllProjects(): Promise<void> {
     const db = await this.openDB();
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(["projects"], "readwrite");
       const store = transaction.objectStore("projects");

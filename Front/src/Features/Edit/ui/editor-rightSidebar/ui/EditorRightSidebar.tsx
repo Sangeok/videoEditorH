@@ -2,7 +2,7 @@
 
 import TextEditRightSide from "./_component/TextEditRightSide";
 import VideoEditRightSide from "./_component/VideoEditRightSide";
-import ImageEditRightSide from "./_component/ImageEditRightSide";
+import ImageEditRightSide from "./_component/ImageEditRightSide/ui/ImageEditRightSide";
 import { useSelectedTrackStore } from "../../../model/store/useSelectedTrackStore";
 import AudioEditRightSide from "./_component/AudioEditRightSide";
 
