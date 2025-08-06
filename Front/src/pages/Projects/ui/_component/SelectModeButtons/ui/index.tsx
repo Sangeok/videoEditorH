@@ -1,21 +1,23 @@
-import { useLoadAllProject } from "@/src/pages/Projects/model/hooks/useLoadAllProject";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { Circle, CircleOff, Trash, X } from "lucide-react";
+import { SavedProject } from "@/src/shared/lib/indexedDB";
 
 interface SelectModeButtonsProps {
   selectedProjects: string[];
   setSelectedProjects: (projects: string[]) => void;
   setShowSelectMode: (show: boolean) => void;
+  refetch: () => void;
+  projects: SavedProject[];
 }
 
 export default function SelectModeButtons({
   selectedProjects,
   setSelectedProjects,
   setShowSelectMode,
+  refetch,
+  projects,
 }: SelectModeButtonsProps) {
-  const { projects, refetch } = useLoadAllProject();
-
   return (
     <div className="flex gap-2">
       {projects.length !== 0 && selectedProjects.length === projects.length && (

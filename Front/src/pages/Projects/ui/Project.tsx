@@ -16,7 +16,7 @@ export default function Project() {
   const [showSelectMode, setShowSelectMode] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
 
-  const { projects, loading } = useLoadAllProject();
+  const { projects, loading, refetch } = useLoadAllProject();
   const router = useRouter();
 
   if (loading) {
@@ -48,6 +48,8 @@ export default function Project() {
             selectedProjects={selectedProjects}
             setSelectedProjects={setSelectedProjects}
             setShowSelectMode={setShowSelectMode}
+            refetch={refetch}
+            projects={projects}
           />
         )}
       </div>
