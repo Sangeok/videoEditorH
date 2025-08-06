@@ -16,31 +16,6 @@ export default function ProjectCreator({ onClose }: ProjectCreatorProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // 삭제 기능 추가 시 참고
-  // const handleDeleteProject = async (projectId: string) => {
-  //   if (!confirm("Are you sure you want to delete this project?")) return;
-
-  //   setLoading(true);
-  //   try {
-  //     await ProjectPersistenceService.deleteProject(projectId);
-  //     await loadProjects();
-  //   } catch (error) {
-  //     console.error("Failed to delete project:", error);
-  //   }
-  //   setLoading(false);
-  // };
-
-  // const handleDuplicateProject = async (projectId: string) => {
-  //   setLoading(true);
-  //   try {
-  //     await ProjectPersistenceService.duplicateProject(projectId);
-  //     await loadProjects();
-  //   } catch (error) {
-  //     console.error("Failed to duplicate project:", error);
-  //   }
-  //   setLoading(false);
-  // };
-
   const handleNewProject = async () => {
     setLoading(true);
     try {
