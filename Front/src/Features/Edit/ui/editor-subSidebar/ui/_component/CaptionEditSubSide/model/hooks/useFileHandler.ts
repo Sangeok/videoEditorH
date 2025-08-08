@@ -1,5 +1,4 @@
 import { useRef, useCallback } from "react";
-import { FileHandlerActions } from "../types";
 
 interface UseFileHandlerParams {
   onFileSelect: (file: File) => Promise<void>;
@@ -9,16 +8,12 @@ interface UseFileHandlerParams {
 export function useFileHandler({ onFileSelect, onReset }: UseFileHandlerParams) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = useCallback(async (file: File) => {
-    await onFileSelect(file);
-  }, [onFileSelect]);
-
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      handleFileSelect(file);
+      onFileSelect(file);
     }
-  }, [handleFileSelect]);
+  }, [onFileSelect]);
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -29,9 +24,9 @@ export function useFileHandler({ onFileSelect, onReset }: UseFileHandlerParams) 
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
-      handleFileSelect(file);
+      onFileSelect(file);
     }
-  }, [handleFileSelect]);
+  }, [onFileSelect]);
 
   const openFileDialog = useCallback(() => {
     fileInputRef.current?.click();
@@ -44,17 +39,14 @@ export function useFileHandler({ onFileSelect, onReset }: UseFileHandlerParams) 
     }
   }, [onReset]);
 
-  const actions: FileHandlerActions = {
-    handleFileSelect,
-    handleFileChange,
-    handleDragOver,
-    handleDrop,
-    openFileDialog,
-    resetUpload,
-  };
-
   return {
     fileInputRef,
-    actions,
+    actions: {
+      handleFileChange,
+      handleDragOver,
+      handleDrop,
+      openFileDialog,
+      resetUpload,
+    },
   };
 }

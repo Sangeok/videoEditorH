@@ -2,13 +2,13 @@ export const ImageEffectMenuItems = {
   ImageIn: [
     {
       id: 1,
-      name: "Fade In",
+      name: "fadeIn",
     },
   ],
   ImageOut: [
     {
       id: 1,
-      name: "Fade Out",
+      name: "fadeOut",
     },
   ],
 };

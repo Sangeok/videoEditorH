@@ -5,7 +5,7 @@ import {
   parseSRTContent,
   readFileAsText,
 } from "@/src/shared/lib/srtUtils";
-import { UploadState, CaptionUploadState } from "../types";
+import { UploadState } from "../types";
 
 export function useCaptionUpload() {
   const [uploadState, setUploadState] = useState<UploadState>("idle");
@@ -58,14 +58,12 @@ export function useCaptionUpload() {
     setUploadedCount(0);
   }, []);
 
-  const state: CaptionUploadState = {
-    uploadState,
-    errorMessage,
-    uploadedCount,
-  };
-
   return {
-    state,
+    state: {
+      uploadState,
+      errorMessage,
+      uploadedCount,
+    },
     actions: {
       processSRTFile,
       resetUpload,

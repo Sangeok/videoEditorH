@@ -1,6 +1,6 @@
 "use client";
 
-import TextEditRightSide from "./_component/TextEditRightSide";
+import TextEditRightSide from "./_component/TextEditRightSide/ui/TextEditRightSide";
 import VideoEditRightSide from "./_component/VideoEditRightSide";
 import ImageEditRightSide from "./_component/ImageEditRightSide/ui/ImageEditRightSide";
 import { useSelectedTrackStore } from "../../../model/store/useSelectedTrackStore";
@@ -8,9 +8,7 @@ import AudioEditRightSide from "./_component/AudioEditRightSide";
 
 export default function EditorRightSidebar() {
   const selectedTrack = useSelectedTrackStore((state) => state.selectedTrack);
-  const selectedTrackId = useSelectedTrackStore(
-    (state) => state.selectedTrackId
-  );
+  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   const renderSubSideBar = () => {
     switch (selectedTrack) {
@@ -28,9 +26,7 @@ export default function EditorRightSidebar() {
   };
   return (
     <aside className="w-50 h-full bg-black border-l border-white/20 overflow-y-auto">
-      <div className="flex flex-col h-full items-center p-2">
-        {renderSubSideBar()}
-      </div>
+      <div className="flex flex-col h-full items-center p-2">{renderSubSideBar()}</div>
     </aside>
   );
 }

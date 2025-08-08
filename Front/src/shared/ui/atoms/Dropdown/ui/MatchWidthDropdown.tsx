@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import { useEffect, useRef, useState } from "react";
+import { EffectType } from "@/src/entities/media/types";
 
 type DropdownPosition = "top" | "bottom" | "left" | "right";
 
@@ -7,7 +8,7 @@ interface MatchWidthDropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   dropdownItems: any[];
-  handleSelectEvent?: (item: string) => void;
+  handleSelectEvent?: (item: EffectType) => void;
   position?: DropdownPosition; // 위치 옵션 추가
   targetEl?: HTMLElement | null; // 직접 DOM 요소를 받는 prop 추가
 }

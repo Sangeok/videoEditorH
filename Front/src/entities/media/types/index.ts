@@ -47,6 +47,10 @@ export interface MediaElement {
   speed: number;
 }
 
+export type FadeEffectType = "fadeIn" | "fadeOut" | "none";
+
+export type EffectType = FadeEffectType | "none";
+
 export interface Media {
   projectDuration: number;
   fps: number;
