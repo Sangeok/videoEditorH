@@ -1,6 +1,14 @@
 import { RefObject } from "react";
 import UploadStateRenderer from "./UploadStateRenderer";
-import { UploadState, FileHandlerActions } from "../../model/types";
+import { UploadState } from "../../model/types";
+
+interface FileHandlerActions {
+  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+  openFileDialog: () => void;
+  resetUpload: () => void;
+}
 
 interface FileUploadAreaProps {
   uploadState: UploadState;

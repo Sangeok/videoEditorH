@@ -1,23 +1,20 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { MediaElement } from "@/src/entities/media/types";
+import { EffectType, FadeEffectType, MediaElement } from "@/src/entities/media/types";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Input from "@/src/shared/ui/atoms/Input/ui/Input";
 import MatchWidthDropdown from "@/src/shared/ui/atoms/Dropdown/ui/MatchWidthDropdown";
 import { DEFAULT_EFFECT_DURATION, ImageEffectMenuItems } from "../constants";
+import { useImageEffectsDetails } from "../model/hooks/useImageEffectsDetails";
 
 interface ImageEditRightSideProps {
   selectedTrackId: string | null;
 }
 
-export default function ImageEditRightSide({
-  selectedTrackId,
-}: ImageEditRightSideProps) {
-  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] =
-    useState<boolean>(false);
-  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] =
-    useState<boolean>(false);
+export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSideProps) {
+  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] = useState<boolean>(false);
+  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] = useState<boolean>(false);
 
   const inEffectDropdownRef = useRef<HTMLButtonElement>(null);
   const outEffectDropdownRef = useRef<HTMLButtonElement>(null);
@@ -27,12 +24,10 @@ export default function ImageEditRightSide({
     state.media.mediaElement.find((element) => element.id === selectedTrackId)
   ) as MediaElement;
 
-  if (!imageElement || imageElement.type !== "image") {
-    return <div>No image selected</div>;
-  }
+  const { handleFadeDurationChange } = useImageEffectsDetails(imageElement);
 
-  const handleInEffectChange = (inEffect: string) => {
-    if (inEffect === "Fade In") {
+  const handleInEffectChange = (inEffect: EffectType) => {
+    if (inEffect === "fadeIn") {
       updateMediaElement(imageElement.id, {
         fadeIn: true,
         fadeInDuration: DEFAULT_EFFECT_DURATION,
@@ -40,8 +35,8 @@ export default function ImageEditRightSide({
     }
   };
 
-  const handleOutEffectChange = (outEffect: string) => {
-    if (outEffect === "Fade Out") {
+  const handleOutEffectChange = (outEffect: EffectType) => {
+    if (outEffect === "fadeOut") {
       updateMediaElement(imageElement.id, {
         fadeOut: true,
         fadeOutDuration: DEFAULT_EFFECT_DURATION,
@@ -49,13 +44,9 @@ export default function ImageEditRightSide({
     }
   };
 
-  const handleFadeInDurationChange = (value: number) => {
-    updateMediaElement(imageElement.id, { fadeInDuration: value });
-  };
-
-  const handleFadeOutDurationChange = (value: number) => {
-    updateMediaElement(imageElement.id, { fadeOutDuration: value });
-  };
+  if (!imageElement || imageElement.type !== "image") {
+    return <div>No image selected</div>;
+  }
 
   return (
     <div className="p-4 w-full space-y-4">
@@ -89,7 +80,7 @@ export default function ImageEditRightSide({
           <Input
             type="number"
             value={imageElement.fadeInDuration}
-            onChange={(e) => handleFadeInDurationChange(Number(e.target.value))}
+            onChange={(e) => handleFadeDurationChange(Number(e.target.value), "fadeInDuration")}
           />
         )}
       </div>
@@ -122,9 +113,7 @@ export default function ImageEditRightSide({
           <Input
             type="number"
             value={imageElement.fadeOutDuration}
-            onChange={(e) =>
-              handleFadeOutDurationChange(Number(e.target.value))
-            }
+            onChange={(e) => handleFadeDurationChange(Number(e.target.value), "fadeOutDuration")}
           />
         )}
       </div>
