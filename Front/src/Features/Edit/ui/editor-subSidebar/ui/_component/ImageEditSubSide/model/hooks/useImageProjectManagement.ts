@@ -6,7 +6,7 @@ export function useImageProjectManagement() {
     useMediaStore();
 
   const addImageToProject = (imageUrl: string) => {
-    const imageElement = createImageElement(imageUrl, media.projectDuration);
+    const imageElement = createImageElement(imageUrl);
     addMediaElement(imageElement);
   };
 

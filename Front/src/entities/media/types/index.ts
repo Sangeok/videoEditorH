@@ -25,24 +25,36 @@ export interface MediaElement {
   startTime: number;
   endTime: number;
   duration: number;
-  type: "video" | "image";
+  type: "video" | "image" | "audio";
 
-  url: string;
-  width: number;
-  height: number;
-  opacity: number;
-  rotate: string;
-  visibility: "visible" | "hidden";
-  top: number | string;
-  left: number | string;
+  url?: string;
+  width?: number;
+  height?: number;
+  opacity?: number;
+  rotate?: string;
+  visibility?: "visible" | "hidden";
+  top?: number | string;
+  left?: number | string;
 
   // fade effects
-  fadeIn: boolean;
-  fadeOut: boolean;
-  fadeInDuration: number;
-  fadeOutDuration: number;
+  fadeIn?: boolean;
+  fadeOut?: boolean;
+  fadeInDuration?: number;
+  fadeOutDuration?: number;
 
   // video only
+  volume?: number;
+  speed?: number;
+}
+
+export interface AudioElement {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  type: "audio";
+
+  url: string;
   volume: number;
   speed: number;
 }
@@ -56,4 +68,5 @@ export interface Media {
   fps: number;
   textElement: TextElement[];
   mediaElement: MediaElement[];
+  audioElement: AudioElement[];
 }

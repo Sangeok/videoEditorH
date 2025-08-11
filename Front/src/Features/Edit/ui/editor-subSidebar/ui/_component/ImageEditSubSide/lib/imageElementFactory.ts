@@ -10,12 +10,12 @@ const DEFAULT_POSITION = "50%";
 const DEFAULT_VOLUME = 0;
 const DEFAULT_SPEED = 1;
 
-export function createImageElement(imageUrl: string, projectDuration: number): MediaElement {
+export function createImageElement(imageUrl: string): MediaElement {
   return {
     id: generateImageId(),
     type: "image",
-    startTime: projectDuration,
-    endTime: projectDuration + DEFAULT_IMAGE_DURATION,
+    startTime: 0,
+    endTime: DEFAULT_IMAGE_DURATION,
     duration: DEFAULT_IMAGE_DURATION,
     url: imageUrl,
     width: DEFAULT_IMAGE_WIDTH,

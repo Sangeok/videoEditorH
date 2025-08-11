@@ -140,6 +140,7 @@ export class ProjectPersistenceService {
       fps: 30,
       textElement: [],
       mediaElement: [],
+      audioElement: [],
     });
     timelineStore.setCurrentTime(0);
     timelineStore.resetZoom();

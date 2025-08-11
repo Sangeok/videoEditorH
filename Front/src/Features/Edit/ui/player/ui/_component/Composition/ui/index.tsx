@@ -21,6 +21,10 @@ export default function Composition({ textElements }: CompositionProps) {
         if (!mediaElement) return null;
         return SequenceItem[mediaElement.type](mediaElement, { fps });
       })}
+      {media.audioElement.map((audioElement) => {
+        if (!audioElement) return null;
+        return SequenceItem["audio"](audioElement, { fps });
+      })}
     </>
   );
 }
