@@ -27,9 +27,13 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
       return;
     }
 
-    if (playerRef.current) {
+    if (playerRef.current && !isPlaying) {
       const frameToSeek = PlayerService.timeToFrame(currentTime, fps);
-      playerRef.current.seekTo(frameToSeek);
+      const currentFrame = playerRef.current.getCurrentFrame();
+      // 현재 프레임과 다를 때만 seek 실행
+      if (Math.abs(currentFrame - frameToSeek) > 1) {
+        playerRef.current.seekTo(frameToSeek);
+      }
     }
   }, [currentTime, fps, playerRef]);
 

@@ -1,5 +1,12 @@
 import { JSX } from "react";
-import { AbsoluteFill, Img, Sequence, useCurrentFrame, interpolate } from "remotion";
+import {
+  AbsoluteFill,
+  Img,
+  Sequence,
+  useCurrentFrame,
+  interpolate,
+  Audio,
+} from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
 import { MediaElement, TextElement } from "@/src/entities/media/types";
 
@@ -9,12 +16,17 @@ interface SequenceItemOptions {
 
 export const SequenceItem: Record<
   string,
-  (item: TextElement | MediaElement, options: SequenceItemOptions) => JSX.Element
+  (
+    item: TextElement | MediaElement,
+    options: SequenceItemOptions
+  ) => JSX.Element
 > = {
   text: (item, options: SequenceItemOptions) => {
     const textElement = item as TextElement;
     const fromFrame = Math.floor(textElement.startTime * options.fps);
-    const durationInFrames = Math.floor((textElement.endTime - textElement.startTime) * options.fps);
+    const durationInFrames = Math.floor(
+      (textElement.endTime - textElement.startTime) * options.fps
+    );
 
     return (
       <Sequence
@@ -34,30 +46,41 @@ export const SequenceItem: Record<
   image: (item, options: SequenceItemOptions) => {
     const imageElement = item as MediaElement;
     const fromFrame = Math.floor(imageElement.startTime * options.fps);
-    const durationInFrames = Math.floor((imageElement.endTime - imageElement.startTime) * options.fps);
+    const durationInFrames = Math.floor(
+      (imageElement.endTime - imageElement.startTime) * options.fps
+    );
 
     const ImageWithFade = () => {
       const frame = useCurrentFrame();
-      
+
       let opacity = 1;
-      
+
       // Calculate fade in opacity
       if (imageElement.fadeIn) {
-        const fadeInFrames = Math.floor((imageElement.fadeInDuration || 0.5) * options.fps);
+        const fadeInFrames = Math.floor(
+          (imageElement.fadeInDuration || 0.5) * options.fps
+        );
         opacity = interpolate(frame, [0, fadeInFrames], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
         });
       }
-      
+
       // Calculate fade out opacity
       if (imageElement.fadeOut) {
-        const fadeOutFrames = Math.floor((imageElement.fadeOutDuration || 0.5) * options.fps);
+        const fadeOutFrames = Math.floor(
+          (imageElement.fadeOutDuration || 0.5) * options.fps
+        );
         const fadeOutStartFrame = durationInFrames - fadeOutFrames;
-        const fadeOutOpacity = interpolate(frame, [fadeOutStartFrame, durationInFrames], [1, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
+        const fadeOutOpacity = interpolate(
+          frame,
+          [fadeOutStartFrame, durationInFrames],
+          [1, 0],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }
+        );
         opacity = Math.min(opacity, fadeOutOpacity);
       }
 
@@ -81,7 +104,7 @@ export const SequenceItem: Record<
               maxHeight: "100%",
               objectFit: "contain",
             }}
-            src={imageElement.url}
+            src={imageElement.url || ""}
             alt={"image"}
           />
         </AbsoluteFill>
@@ -102,6 +125,36 @@ export const SequenceItem: Record<
         }}
       >
         <ImageWithFade />
+      </Sequence>
+    );
+  },
+
+  audio: (item, options: SequenceItemOptions) => {
+    const audioElement = item as MediaElement;
+    const fromFrame = Math.floor(audioElement.startTime * options.fps);
+    const durationInFrames = Math.floor(
+      (audioElement.endTime - audioElement.startTime) * options.fps
+    );
+
+    return (
+      <Sequence
+        key={audioElement.id}
+        from={fromFrame}
+        durationInFrames={durationInFrames}
+        name={`Audio: ${audioElement.id}`}
+        style={{
+          height: "100%",
+          border: "5px solid green",
+          zIndex: 100,
+          pointerEvents: "none",
+        }}
+      >
+        <AbsoluteFill>
+          <Audio
+            src={audioElement.url || ""}
+            volume={audioElement.volume || 100}
+          />
+        </AbsoluteFill>
       </Sequence>
     );
   },
