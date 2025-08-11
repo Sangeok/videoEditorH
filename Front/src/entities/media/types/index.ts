@@ -47,6 +47,18 @@ export interface MediaElement {
   speed?: number;
 }
 
+export interface AudioElement {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  type: "audio";
+
+  url: string;
+  volume: number;
+  speed: number;
+}
+
 export type FadeEffectType = "fadeIn" | "fadeOut" | "none";
 
 export type EffectType = FadeEffectType | "none";
@@ -56,4 +68,5 @@ export interface Media {
   fps: number;
   textElement: TextElement[];
   mediaElement: MediaElement[];
+  audioElement: AudioElement[];
 }

@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Music, X, Play, Pause } from "lucide-react";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { MediaElement } from "@/src/entities/media/types";
+import { AudioElement } from "@/src/entities/media/types";
 
 export default function MusicEditSubSide() {
   const [uploadedAudios, setUploadedAudios] = useState<
@@ -18,7 +18,7 @@ export default function MusicEditSubSide() {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { media, addMediaElement } = useMediaStore();
+  const { media, addAudioElement } = useMediaStore();
 
   const processAudioFile = (file: File) => {
     if (!file.type.startsWith("audio/")) {
@@ -40,7 +40,7 @@ export default function MusicEditSubSide() {
       ]);
 
       // Create audio element and add to media store
-      const audioElement: MediaElement = {
+      const audioElement: AudioElement = {
         id: `audio-${Date.now()}-${Math.random()}`,
         type: "audio",
         startTime: media.projectDuration,
@@ -48,9 +48,10 @@ export default function MusicEditSubSide() {
         duration: 30,
         url: audioUrl,
         volume: 100,
+        speed: 1,
       };
 
-      addMediaElement(audioElement);
+      addAudioElement(audioElement);
       setLoading(false);
     };
 

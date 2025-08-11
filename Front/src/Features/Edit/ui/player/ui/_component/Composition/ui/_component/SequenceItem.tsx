@@ -8,7 +8,11 @@ import {
   Audio,
 } from "remotion";
 import DraggableText from "./DraggableText/ui/DraggableText";
-import { MediaElement, TextElement } from "@/src/entities/media/types";
+import {
+  AudioElement,
+  MediaElement,
+  TextElement,
+} from "@/src/entities/media/types";
 
 interface SequenceItemOptions {
   fps: number;
@@ -130,7 +134,7 @@ export const SequenceItem: Record<
   },
 
   audio: (item, options: SequenceItemOptions) => {
-    const audioElement = item as MediaElement;
+    const audioElement = item as AudioElement;
     const fromFrame = Math.floor(audioElement.startTime * options.fps);
     const durationInFrames = Math.floor(
       (audioElement.endTime - audioElement.startTime) * options.fps

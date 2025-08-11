@@ -1,14 +1,14 @@
 "use client";
 
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { MediaElement } from "@/src/entities/media/types";
+import { AudioElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import { timeToPixels } from "@/src/features/Edit/ui/editor-footer/lib/zoomUtils";
 import { useTimelineToolStore } from "@/src/features/Edit/model/store/useTimelieToolStore";
 import { useSelectedTrackStore } from "@/src/features/Edit/model/store/useSelectedTrackStore";
 
 export default function AudioTimeline() {
-  const { media, deleteMediaElement } = useMediaStore();
+  const { media, deleteAudioElement } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
   const setSelectedTrackAndId = useSelectedTrackStore(
@@ -16,13 +16,14 @@ export default function AudioTimeline() {
   );
 
   // Filter only audio elements
-  const audioElements = media.mediaElement.filter(
-    (element) => element.type === "audio"
-  );
+  const audioElements = media.audioElement || [];
 
-  const handleAudioClick = (audioElement: MediaElement) => {
+  console.log("media", media);
+  console.log(media.audioElement);
+
+  const handleAudioClick = (audioElement: AudioElement) => {
     if (isDelete) {
-      deleteMediaElement(audioElement.id);
+      deleteAudioElement(audioElement.id);
     } else {
       setSelectedTrackAndId("Audio", audioElement.id);
     }
@@ -89,14 +90,6 @@ export default function AudioTimeline() {
                       {Math.round(audioElement.volume * 100)}%
                     </div>
                   )}
-
-                {/* Fade indicators */}
-                {audioElement.fadeIn && (
-                  <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black/50 to-transparent" />
-                )}
-                {audioElement.fadeOut && (
-                  <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black/50 to-transparent" />
-                )}
 
                 {/* Audio name/id */}
                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs font-medium truncate pr-8 pointer-events-none">

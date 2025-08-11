@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { MediaElement, TextElement } from "@/src/entities/media/types";
+import { MediaElement } from "@/src/entities/media/types";
 import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
 import { timeToPixels } from "@/src/features/Edit/ui/editor-footer/lib/zoomUtils";
 import { useTimelineToolStore } from "@/src/features/Edit/model/store/useTimelieToolStore";
@@ -26,6 +26,8 @@ export default function MediaTimeline() {
       setSelectedTrackAndId(clickedTrack, mediaElement.id);
     }
   };
+
+  console.log(media.mediaElement);
 
   return (
     <div className="relative w-full h-16 bg-zinc-900">
