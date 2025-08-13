@@ -22,7 +22,7 @@ export default function EditPage({ params }: EditPageProps) {
   }
 
   if (!projectExists) {
-    return null; // 리다이렉트 중이므로 아무것도 렌더링하지 않음
+    return null;
   }
 
   return (

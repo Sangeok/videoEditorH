@@ -20,7 +20,7 @@ interface MediaStore {
   updateTextElement: (
     textElementId: string,
     updates: Partial<TextElement>
-  ) => void; // 추가
+  ) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (
@@ -45,10 +45,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       let newTextElement: TextElement;
 
       if (currentTextElements.length === 0 || preserveTiming) {
-        // 첫 번째 요소이거나 타이밍 보존이 요청된 경우 원본 타이밍 유지
+        // if first element or preserveTiming is true, keep original timing
         newTextElement = { ...textElement };
       } else {
-        // 일반 텍스트 요소인 경우 연속 배치
+        // if normal text element, arrange continuously
         const lastElement = currentTextElements[currentTextElements.length - 1];
         const currentElementDuration = textElement.duration;
 
@@ -61,7 +61,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
       const updatedTextElements = [...currentTextElements, newTextElement];
 
-      // projectDuration을 가장 마지막 요소의 endTime으로 업데이트
+      // update projectDuration to the endTime of the last element
       const newProjectDuration = Math.max(
         state.media.projectDuration,
         newTextElement.endTime
@@ -81,7 +81,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         (textElement) => textElement.id !== textElementId
       );
 
-      // 삭제 후 남은 element들 중 가장 큰 endTime을 찾아 projectDuration 재계산
+      // recalculate projectDuration after deletion
       const newProjectDuration =
         updatedTextElements.length > 0
           ? Math.max(...updatedTextElements.map((element) => element.endTime))
@@ -184,14 +184,14 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       let newAudioElement: AudioElement;
 
       if (currentAudioElements.length === 0) {
-        // 첫 번째 오디오 element인 경우
+        // if first audio element
         newAudioElement = {
           ...audioElement,
           startTime: 0,
           endTime: audioElement.duration,
         };
       } else {
-        // 기존 audio elements가 있는 경우, 마지막 element 이후에 배치
+        // if existing audio elements, arrange after the last element
         const lastElement =
           currentAudioElements[currentAudioElements.length - 1];
 
@@ -204,7 +204,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
       const updatedAudioElements = [...currentAudioElements, newAudioElement];
 
-      // projectDuration을 오디오 element의 endTime을 포함하여 업데이트
+      // update projectDuration to include the endTime of the audio element
       const newProjectDuration = Math.max(
         state.media.projectDuration,
         newAudioElement.endTime
@@ -225,7 +225,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         (element) => element.id !== audioElementId
       );
 
-      // 삭제 후 남은 element들(text + audio) 중 가장 큰 endTime을 찾아 projectDuration 재계산
+      // recalculate projectDuration after deletion
       const allEndTimes = [
         ...state.media.textElement.map((element) => element.endTime),
         ...state.media.mediaElement.map((element) => element.endTime),
@@ -253,7 +253,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         element.id === audioElementId ? { ...element, ...updates } : element
       );
 
-      // 모든 element들(text + audio)의 endTime을 확인하여 projectDuration 재계산
+      // recalculate projectDuration after update
       const allEndTimes = [
         ...state.media.textElement.map((element) => element.endTime),
         ...state.media.mediaElement.map((element) => element.endTime),

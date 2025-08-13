@@ -81,7 +81,6 @@ export default function EditorHeader() {
         <span className="text-white text-sm mr-4">
           {project.id ? project.name : "Loading..."}
         </span>
-        {/* <ProjectMenu /> */}
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (

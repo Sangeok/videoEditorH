@@ -3,9 +3,9 @@
 import { useState, useCallback } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { useDragText } from "@/features/editFeatures/model/hooks/useDragText";
-import { useTextEdit } from "@/features/editFeatures/model/hooks/useTextEdit";
 import { DraggableTextProps, CursorType } from "../model/types";
+import { useDragText } from "../model/useDragText";
+import { useTextEdit } from "../model/useTextEdit";
 
 export default function DraggableText({ element }: DraggableTextProps) {
   const { isPlaying } = useTimelineStore();
