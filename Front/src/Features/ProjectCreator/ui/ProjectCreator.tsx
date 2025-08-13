@@ -22,7 +22,7 @@ export default function ProjectCreator({ onClose }: ProjectCreatorProps) {
       const newProjectId = await ProjectPersistenceService.createNewProject(
         saveProjectName
       );
-      router.push(`/edit/${newProjectId}`);
+      router.push(`/edits/${newProjectId}`);
       onClose();
     } catch (error) {
       console.error("Failed to create new project:", error);

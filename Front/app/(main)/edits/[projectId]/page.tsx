@@ -8,7 +8,7 @@ interface EditPageProps {
 
 export default function Edits({ params }: EditPageProps) {
   return (
-    <div>
+    <div className="h-full w-full">
       <EditPage params={params} />
     </div>
   );

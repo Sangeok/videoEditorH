@@ -54,6 +54,8 @@ export const SequenceItem: Record<
       (imageElement.endTime - imageElement.startTime) * options.fps
     );
 
+    console.log("왔나?");
+
     const ImageWithFade = () => {
       const frame = useCurrentFrame();
 

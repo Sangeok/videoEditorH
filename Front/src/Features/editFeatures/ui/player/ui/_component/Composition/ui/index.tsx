@@ -10,6 +10,9 @@ export default function Composition({ textElements }: CompositionProps) {
   const { media } = useMediaStore();
   const fps = media.fps || 30;
 
+  console.log("textElements");
+  console.log(textElements);
+
   return (
     <>
       {textElements.map((textElement) => {
