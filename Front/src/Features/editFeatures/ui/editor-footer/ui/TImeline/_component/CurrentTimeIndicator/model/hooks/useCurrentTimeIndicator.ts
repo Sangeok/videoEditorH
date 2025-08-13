@@ -3,8 +3,8 @@
 import { useEffect, useMemo } from "react";
 import useTimelineStore, {
   TimelineStore,
-} from "@/src/features/editFeatures/model/store/useTimelineStore";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+} from "@/features/editFeatures/model/store/useTimelineStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 
 // 고정밀 타이머 (id)
 let playbackTimer: number | null = null;

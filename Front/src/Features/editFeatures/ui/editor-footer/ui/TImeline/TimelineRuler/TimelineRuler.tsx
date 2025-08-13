@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { calculateTicks } from "../../../lib/zoomUtils";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 
 interface TimelineRulerProps {
   className?: string;

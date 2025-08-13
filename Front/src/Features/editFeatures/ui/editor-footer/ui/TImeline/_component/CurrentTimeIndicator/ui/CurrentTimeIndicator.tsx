@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect } from "react";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useCurrentTimeIndicator } from "../model/hooks/useCurrentTimeIndicator";
 
 const CurrentTimeIndicator = memo(() => {

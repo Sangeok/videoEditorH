@@ -1,5 +1,5 @@
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useState, useCallback, useEffect } from "react";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
 
 interface DragState {
   isDragging: boolean;

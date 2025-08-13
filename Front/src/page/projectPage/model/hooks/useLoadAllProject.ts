@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { SavedProject } from "@/src/shared/lib/indexedDB";
-import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
+import { SavedProject } from "@/shared/lib/indexedDB";
+import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 
 export const useLoadAllProject = () => {
   const [projects, setProjects] = useState<SavedProject[]>([]);

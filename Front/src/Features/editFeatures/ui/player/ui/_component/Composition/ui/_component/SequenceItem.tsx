@@ -12,7 +12,7 @@ import {
   AudioElement,
   MediaElement,
   TextElement,
-} from "@/src/entities/media/types";
+} from "@/entities/media/types";
 
 interface SequenceItemOptions {
   fps: number;

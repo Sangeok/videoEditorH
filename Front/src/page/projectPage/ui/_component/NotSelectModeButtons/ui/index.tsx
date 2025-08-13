@@ -1,4 +1,4 @@
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { MousePointer2, Plus } from "lucide-react";
 
 interface NotSelectModeButtonsProps {

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import Input from "@/src/shared/ui/atoms/Input/ui/Input";
-import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
+import Input from "@/shared/ui/atoms/Input/ui/Input";
+import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 import { useRouter } from "next/navigation";
 
 interface ProjectCreatorProps {

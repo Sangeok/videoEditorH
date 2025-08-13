@@ -1,8 +1,8 @@
 "use client";
 
 import { ZoomIn, ZoomOut } from "lucide-react";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
-import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 
 export default function ZoomControl() {
   const { zoom, zoomIn, zoomOut, setZoom } = useTimelineStore();

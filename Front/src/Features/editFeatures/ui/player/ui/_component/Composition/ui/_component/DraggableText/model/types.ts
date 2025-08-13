@@ -1,4 +1,4 @@
-import { TextElement } from "@/src/entities/media/types";
+import { TextElement } from "@/entities/media/types";
 
 export interface DraggableTextProps {
   element: TextElement;

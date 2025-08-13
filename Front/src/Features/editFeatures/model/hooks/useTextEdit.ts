@@ -1,5 +1,5 @@
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
 
 interface UseTextEditProps {
   elementId: string;
@@ -16,7 +16,7 @@ export const useTextEdit = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState(initialText);
   const [isComposing, setIsComposing] = useState(false);
-  
+
   const textRef = useRef<HTMLDivElement>(null);
   const updateTimerRef = useRef<NodeJS.Timeout | null>(null);
   const cursorPositionRef = useRef<number>(0);

@@ -1,8 +1,8 @@
-import EditorSideBar from "@/src/features/editFeatures/ui/editor-mainSidebar/ui/EditorMainSideBar";
-import EditorRightSidebar from "@/src/features/editFeatures/ui/editor-rightSidebar/ui/EditorRightSidebar";
-import EditorSubSideBar from "@/src/features/editFeatures/ui/editor-subSidebar/ui/EditorSubSideBar";
-import EditorFooter from "@/src/widgets/Edit/ui/editor-footer/ui/EditorFooter";
-import EditorHeader from "@/src/widgets/Edit/ui/editor-header/ui/EditorHeader";
+import EditorSideBar from "../../../src/features/editFeatures/ui/editor-mainSidebar/ui/EditorMainSideBar";
+import EditorRightSidebar from "../../../src/features/editFeatures/ui/editor-rightSidebar/ui/EditorRightSidebar";
+import EditorSubSideBar from "../../../src/features/editFeatures/ui/editor-subSidebar/ui/EditorSubSideBar";
+import EditorFooter from "../../../src/widgets/Edit/ui/editor-footer/ui/EditorFooter";
+import EditorHeader from "../../../src/widgets/Edit/ui/editor-header/ui/EditorHeader";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

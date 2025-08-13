@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 
 export function useImageSelection() {
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const { media } = useMediaStore();
 
-  const selectedImage = selectedImageId 
-    ? media.mediaElement.find(el => el.id === selectedImageId && el.type === "image")
+  const selectedImage = selectedImageId
+    ? media.mediaElement.find(
+        (el) => el.id === selectedImageId && el.type === "image"
+      )
     : null;
 
   const selectImage = (imageId: string) => {

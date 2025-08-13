@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { Player as RemotionPlayer } from "@remotion/player";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import Composition from "./_component/Composition/ui";
 import { usePlayerController } from "../model/hooks/usePlayerController";
 import { usePlayerSync } from "../model/hooks/usePlayerSync";

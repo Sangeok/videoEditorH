@@ -2,15 +2,19 @@
 
 import { useState, useRef } from "react";
 import { Music, X, Play, Pause } from "lucide-react";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { MediaElement } from "@/src/entities/media/types";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { MediaElement } from "@/entities/media/types";
 
 export default function MusicEditSubSide() {
-  const [uploadedAudios, setUploadedAudios] = useState<{ url: string; name: string }[]>([]);
+  const [uploadedAudios, setUploadedAudios] = useState<
+    { url: string; name: string }[]
+  >([]);
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [previewAudio, setPreviewAudio] = useState<HTMLAudioElement | null>(null);
+  const [previewAudio, setPreviewAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +34,10 @@ export default function MusicEditSubSide() {
       const audioName = file.name;
 
       // Add to uploaded list
-      setUploadedAudios((prev) => [...prev, { url: audioUrl, name: audioName }]);
+      setUploadedAudios((prev) => [
+        ...prev,
+        { url: audioUrl, name: audioName },
+      ]);
 
       // Create audio element and add to media store
       const audioElement: MediaElement = {
@@ -132,7 +139,9 @@ export default function MusicEditSubSide() {
       {/* Upload Area */}
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors w-full ${
-          dragActive ? "border-blue-500 bg-blue-500/10" : "border-zinc-600 bg-zinc-800/50"
+          dragActive
+            ? "border-blue-500 bg-blue-500/10"
+            : "border-zinc-600 bg-zinc-800/50"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -151,8 +160,15 @@ export default function MusicEditSubSide() {
 
         <Music className="mx-auto h-12 w-12 text-gray-400 mb-3" />
         <p className="text-gray-300 mb-2">Drag & drop your audio files here</p>
-        <p className="text-gray-500 text-sm mb-4">Supports MP3, WAV, OGG, M4A</p>
-        <Button onClick={() => fileInputRef.current?.click()} variant="light" size="sm" disabled={loading}>
+        <p className="text-gray-500 text-sm mb-4">
+          Supports MP3, WAV, OGG, M4A
+        </p>
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          variant="light"
+          size="sm"
+          disabled={loading}
+        >
           {loading ? "Processing..." : "Choose Audio Files"}
         </Button>
       </div>
@@ -160,7 +176,9 @@ export default function MusicEditSubSide() {
       {/* Uploaded Audio List */}
       {uploadedAudios.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-zinc-300">Uploaded Audio ({uploadedAudios.length})</h4>
+          <h4 className="text-sm font-medium text-zinc-300">
+            Uploaded Audio ({uploadedAudios.length})
+          </h4>
           <div className="space-y-2">
             {uploadedAudios.map((audio, index) => (
               <div
@@ -180,7 +198,9 @@ export default function MusicEditSubSide() {
                   </button>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <Music className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-sm text-gray-300 truncate">{audio.name}</span>
+                    <span className="text-sm text-gray-300 truncate">
+                      {audio.name}
+                    </span>
                   </div>
                 </div>
                 <button

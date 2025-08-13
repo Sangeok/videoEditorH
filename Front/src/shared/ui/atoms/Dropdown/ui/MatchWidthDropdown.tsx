@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import { useEffect, useRef, useState } from "react";
-import { EffectType } from "@/src/entities/media/types";
+import { EffectType } from "@/entities/media/types";
 
 type DropdownPosition = "top" | "bottom" | "left" | "right";
 

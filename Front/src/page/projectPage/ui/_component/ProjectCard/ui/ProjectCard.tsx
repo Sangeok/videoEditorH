@@ -1,8 +1,8 @@
 "use client";
 
-import { SavedProject } from "@/src/shared/lib/indexedDB";
+import { SavedProject } from "@/shared/lib/indexedDB";
 import { Calendar, Video } from "lucide-react";
-import { useLoadProject } from "../model/hooks/useLoadProject";
+import { useLoadProject } from "@/page/projectPage/ui/_component/ProjectCard/model/hooks/useLoadProject";
 
 interface ProjectCardProps {
   project: SavedProject;

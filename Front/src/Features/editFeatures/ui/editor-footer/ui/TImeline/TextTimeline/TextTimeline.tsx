@@ -1,11 +1,11 @@
 "use client";
 
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { TextElement } from "@/src/entities/media/types";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
-import { timeToPixels } from "@/src/features/editFeatures/ui/editor-footer/lib/zoomUtils";
-import { useTimelineToolStore } from "@/src/features/editFeatures/model/store/useTimelieToolStore";
-import { useSelectedTrackStore } from "@/src/features/editFeatures/model/store/useSelectedTrackStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { TextElement } from "@/entities/media/types";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import { timeToPixels } from "@/features/editFeatures/ui/editor-footer/lib/zoomUtils";
+import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
+import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 
 export default function TextTimeline() {
   const { media, deleteTextElement } = useMediaStore();

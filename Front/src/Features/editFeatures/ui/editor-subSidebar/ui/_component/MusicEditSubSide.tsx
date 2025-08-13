@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { Music, X, Play, Pause } from "lucide-react";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { AudioElement } from "@/src/entities/media/types";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { AudioElement } from "@/entities/media/types";
 
 export default function MusicEditSubSide() {
   const [uploadedAudios, setUploadedAudios] = useState<
@@ -41,10 +41,10 @@ export default function MusicEditSubSide() {
 
       // Create audio element to get actual duration
       const audio = new Audio(audioUrl);
-      
+
       audio.onloadedmetadata = () => {
         const actualDuration = audio.duration;
-        
+
         // Create audio element and add to media store with actual duration
         const audioElement: AudioElement = {
           id: `audio-${Date.now()}-${Math.random()}`,

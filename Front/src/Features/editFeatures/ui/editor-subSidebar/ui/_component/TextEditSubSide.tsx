@@ -1,6 +1,6 @@
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
-import TextArea from "@/src/shared/ui/atoms/TextArea/ui/TextArea";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
+import TextArea from "@/shared/ui/atoms/TextArea/ui/TextArea";
 import { useState } from "react";
 
 export default function TextEditSubSide() {

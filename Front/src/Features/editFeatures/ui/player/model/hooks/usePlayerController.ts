@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, RefObject } from "react";
 import { PlayerRef } from "@remotion/player";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { PlayerService } from "../services/playerService";
 
 interface UsePlayerControllerReturn {

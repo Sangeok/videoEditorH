@@ -1,4 +1,4 @@
-import { MediaElement } from "@/src/entities/media/types";
+import { MediaElement } from "@/entities/media/types";
 
 const DEFAULT_IMAGE_DURATION = 5;
 const DEFAULT_IMAGE_WIDTH = 400;

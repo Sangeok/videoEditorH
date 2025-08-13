@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import {
   convertSRTToTextElements,
   parseSRTContent,
   readFileAsText,
-} from "@/src/shared/lib/srtUtils";
+} from "@/shared/lib/srtUtils";
 import { UploadState } from "../types";
 
 export function useCaptionUpload() {
