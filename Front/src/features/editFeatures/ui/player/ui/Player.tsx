@@ -14,7 +14,6 @@ import { PlayerService } from "../model/services/playerService";
  * RemotionPlayer를 래핑하여 타임라인과 동기화된 재생 기능 제공
  */
 export default function Player() {
-  console.log("엥?");
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
   const fps = media.fps || 30;

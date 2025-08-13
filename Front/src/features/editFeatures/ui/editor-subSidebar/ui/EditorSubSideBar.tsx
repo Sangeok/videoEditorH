@@ -1,9 +1,9 @@
 "use client";
 
 import useSideButtonStore from "@/features/editFeatures/model/store/useSideButtonStore";
-import TextEditSubSide from "./_component/TextEditSubSide";
+import TextEditSubSide from "./_component/TextEditSubSide/ui/TextEditSubSide";
 import VideoEditSubSide from "./_component/VideoEditSubSide";
-import MusicEditSubSide from "./_component/MusicEditSubSide";
+import MusicEditSubSide from "./_component/MusicEditSubSide/ui/MusicEditSubSide";
 import ImageEditSubSide from "./_component/ImageEditSubSide/ui/index";
 import CaptionEditSubSide from "./_component/CaptionEditSubSide/ui/CaptionEditSubSide";
 

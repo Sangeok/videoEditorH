@@ -16,8 +16,6 @@ export default function Timeline() {
         <div className="h-full min-h-[100px] relative flex flex-col overflow-y-auto">
           <div className="flex-1">
             <TextTimeline />
-            {/* <MediaTimeline /> */}
-            {/* <AudioTimeline /> */}
           </div>
           <div className="flex-1">
             <MediaTimeline />

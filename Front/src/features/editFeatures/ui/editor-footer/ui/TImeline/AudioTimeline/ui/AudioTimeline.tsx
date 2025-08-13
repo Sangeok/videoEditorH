@@ -50,7 +50,7 @@ export default function AudioTimeline() {
               }}
               onClick={() => handleAudioClick(audioElement)}
             >
-              {/* Audio waveform visualization (placeholder) */}
+              {/* Audio waveform visualization */}
               <div className="relative h-full bg-gradient-to-r from-purple-700 to-purple-500 rounded overflow-hidden border border-purple-400/50 hover:border-purple-400">
                 <div className="absolute inset-0 opacity-30">
                   <svg
@@ -74,17 +74,9 @@ export default function AudioTimeline() {
                   </svg>
                 </div>
 
-                {/* Volume indicator */}
-                {audioElement.volume !== undefined &&
-                  audioElement.volume < 1 && (
-                    <div className="absolute top-1 right-1 bg-black/50 px-1 rounded text-xs text-white">
-                      {Math.round(audioElement.volume * 100)}%
-                    </div>
-                  )}
-
                 {/* Audio name/id */}
                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs font-medium truncate pr-8 pointer-events-none">
-                  Audio {audioElement.id.slice(-4)}
+                  Audio {audioElement.id}
                 </span>
               </div>
 

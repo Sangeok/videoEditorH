@@ -56,9 +56,6 @@ export default function DraggableText({ element }: DraggableTextProps) {
     return "grab";
   };
 
-  console.log("element");
-  console.log(element);
-
   return (
     <div
       style={{
