@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
+import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

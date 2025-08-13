@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { TextElement } from "@/src/entities/media/types";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { TextElement } from "@/entities/media/types";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import { DebouncedTextEditState, DebouncedTextEditActions } from "./types";
 
 const DEBOUNCE_DELAY = 300;

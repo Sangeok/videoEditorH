@@ -2,7 +2,7 @@
 
 import { Upload, X } from "lucide-react";
 import { useImageEdit } from "../model/hooks/useImageEdit";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 
 export default function ImageEditSubSide() {
   const { state, actions, fileInputRef } = useImageEdit();

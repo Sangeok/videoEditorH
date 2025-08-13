@@ -1,10 +1,10 @@
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { EffectType, MediaElement } from "@/src/entities/media/types";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { EffectType, MediaElement } from "@/entities/media/types";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import Input from "@/src/shared/ui/atoms/Input/ui/Input";
-import MatchWidthDropdown from "@/src/shared/ui/atoms/Dropdown/ui/MatchWidthDropdown";
+import Input from "@/shared/ui/atoms/Input/ui/Input";
+import MatchWidthDropdown from "@/shared/ui/atoms/Dropdown/ui/MatchWidthDropdown";
 import { DEFAULT_EFFECT_DURATION, ImageEffectMenuItems } from "../constants";
 import { useImageEffectsDetails } from "../model/hooks/useImageEffectsDetails";
 
@@ -12,9 +12,13 @@ interface ImageEditRightSideProps {
   selectedTrackId: string | null;
 }
 
-export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSideProps) {
-  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] = useState<boolean>(false);
-  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] = useState<boolean>(false);
+export default function ImageEditRightSide({
+  selectedTrackId,
+}: ImageEditRightSideProps) {
+  const [isInEffectDropdownOpen, setIsInEffectDropdownOpen] =
+    useState<boolean>(false);
+  const [isOutEffectDropdownOpen, setIsOutEffectDropdownOpen] =
+    useState<boolean>(false);
 
   const inEffectDropdownRef = useRef<HTMLButtonElement>(null);
   const outEffectDropdownRef = useRef<HTMLButtonElement>(null);
@@ -80,7 +84,9 @@ export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSi
           <Input
             type="number"
             value={imageElement.fadeInDuration}
-            onChange={(e) => handleFadeDurationChange(Number(e.target.value), "fadeInDuration")}
+            onChange={(e) =>
+              handleFadeDurationChange(Number(e.target.value), "fadeInDuration")
+            }
           />
         )}
       </div>
@@ -113,7 +119,12 @@ export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSi
           <Input
             type="number"
             value={imageElement.fadeOutDuration}
-            onChange={(e) => handleFadeDurationChange(Number(e.target.value), "fadeOutDuration")}
+            onChange={(e) =>
+              handleFadeDurationChange(
+                Number(e.target.value),
+                "fadeOutDuration"
+              )
+            }
           />
         )}
       </div>

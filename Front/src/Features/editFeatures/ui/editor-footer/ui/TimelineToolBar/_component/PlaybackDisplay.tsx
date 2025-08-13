@@ -1,10 +1,10 @@
 "use client";
 
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
-import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 import { SkipBack, SkipForward, Play, Pause } from "lucide-react";
-import { formatPlaybackTime } from "../../../lib/formatTimelineTime";
+import { formatPlaybackTime } from "@/features/editFeatures/ui/editor-footer/lib/formatTimelineTime";
 
 export default function PlaybackDisplay() {
   const { media } = useMediaStore();

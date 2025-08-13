@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { Download, Menu, MoveLeft, Save } from "lucide-react";
 import { useState } from "react";
-import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
-import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import Dropdown from "@/shared/ui/atoms/Dropdown/ui/Dropdown";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 import { MenuItem } from "../constants/MenuItem";
-import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
-import { useProjectStore } from "../../../../../entities/project/useProjectStore";
+import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
+import { useProjectStore } from "@/entities/project/useProjectStore";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);

@@ -1,6 +1,6 @@
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 import { createImageElement } from "../../lib/imageElementFactory";
-import { MediaElement } from "@/src/entities/media/types";
+import { MediaElement } from "@/entities/media/types";
 
 export function useImageProjectManagement() {
   const { addMediaElement, updateMediaElement, deleteMediaElement } =
@@ -11,7 +11,10 @@ export function useImageProjectManagement() {
     addMediaElement(imageElement);
   };
 
-  const updateImageSettings = (imageId: string, updates: Partial<MediaElement>) => {
+  const updateImageSettings = (
+    imageId: string,
+    updates: Partial<MediaElement>
+  ) => {
     updateMediaElement(imageId, updates);
   };
 

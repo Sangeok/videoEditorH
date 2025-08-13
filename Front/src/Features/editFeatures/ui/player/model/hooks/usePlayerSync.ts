@@ -3,7 +3,7 @@
 import { useEffect, useRef, RefObject } from "react";
 import { PlayerRef } from "@remotion/player";
 import { PlayerService } from "../services/playerService";
-import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 
 interface UsePlayerSyncProps {
   playerRef: RefObject<PlayerRef | null>;

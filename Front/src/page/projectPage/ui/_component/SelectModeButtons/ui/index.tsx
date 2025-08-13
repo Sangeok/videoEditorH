@@ -1,7 +1,7 @@
-import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { Circle, CircleOff, Trash, X } from "lucide-react";
-import { SavedProject } from "@/src/shared/lib/indexedDB";
+import { SavedProject } from "@/shared/lib/indexedDB";
 
 interface SelectModeButtonsProps {
   selectedProjects: string[];

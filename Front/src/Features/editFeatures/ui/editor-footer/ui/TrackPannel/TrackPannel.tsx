@@ -1,4 +1,4 @@
-import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 import { Music, Type, Video } from "lucide-react";
 
 const TrackPannelItems = [

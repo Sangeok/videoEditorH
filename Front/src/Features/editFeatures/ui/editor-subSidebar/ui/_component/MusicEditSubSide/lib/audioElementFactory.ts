@@ -1,4 +1,4 @@
-import { AudioElement } from "@/src/entities/media/types";
+import { AudioElement } from "@/entities/media/types";
 import { v4 as uuidv4 } from "uuid";
 
 export function createAudioElement(

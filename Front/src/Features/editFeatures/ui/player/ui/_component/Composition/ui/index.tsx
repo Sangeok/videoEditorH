@@ -1,6 +1,6 @@
-import { TextElement } from "@/src/entities/media/types";
+import { TextElement } from "@/entities/media/types";
 import { SequenceItem } from "./_component/SequenceItem";
-import { useMediaStore } from "@/src/entities/media/useMediaStore";
+import { useMediaStore } from "@/entities/media/useMediaStore";
 
 interface CompositionProps {
   textElements: TextElement[];

@@ -1,7 +1,7 @@
 "use client";
 
-import { useTimelineToolStore } from "@/src/features/editFeatures/model/store/useTimelieToolStore";
-import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
+import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
+import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 import { Copy, Split, Trash } from "lucide-react";
 
 export default function ToolButton() {

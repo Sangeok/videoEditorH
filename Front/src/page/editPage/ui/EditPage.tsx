@@ -1,8 +1,8 @@
 "use client";
 
 import { use } from "react";
-import { useCheckProject } from "../model/hooks/useCheckProject";
-import Player from "../../../features/editFeatures/ui/player/ui/Player";
+import { useCheckProject } from "@/page/editPage/model/hooks/useCheckProject";
+import Player from "@/features/editFeatures/ui/player/ui/Player";
 
 interface EditPageProps {
   params: Promise<{ projectId: string }>;

@@ -1,5 +1,5 @@
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
-import Button from "@/src/shared/ui/atoms/Button/ui/Button";
+import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { UploadState } from "../../model/types";
 
 interface UploadStateRendererProps {
@@ -58,11 +58,11 @@ function UploadingState() {
   );
 }
 
-function SuccessState({ 
-  uploadedCount, 
-  onReset 
-}: { 
-  uploadedCount: number; 
+function SuccessState({
+  uploadedCount,
+  onReset,
+}: {
+  uploadedCount: number;
   onReset: () => void;
 }) {
   return (
@@ -70,7 +70,8 @@ function SuccessState({
       <CheckCircle className="mx-auto h-12 w-12 text-green-400 mb-3" />
       <p className="text-green-400 mb-2">Successfully imported!</p>
       <p className="text-gray-400 text-sm mb-4">
-        {uploadedCount} caption{uploadedCount !== 1 ? "s" : ""} added to timeline
+        {uploadedCount} caption{uploadedCount !== 1 ? "s" : ""} added to
+        timeline
       </p>
       <Button onClick={onReset} variant="light" size="sm">
         Import Another File
@@ -79,11 +80,11 @@ function SuccessState({
   );
 }
 
-function ErrorState({ 
-  errorMessage, 
-  onReset 
-}: { 
-  errorMessage: string; 
+function ErrorState({
+  errorMessage,
+  onReset,
+}: {
+  errorMessage: string;
   onReset: () => void;
 }) {
   return (
