@@ -8,7 +8,7 @@ import Dropdown from "@/src/shared/ui/atoms/Dropdown/ui/Dropdown";
 import IconButton from "@/src/shared/ui/atoms/Button/ui/IconButton";
 import { MenuItem } from "../constants/MenuItem";
 import { ProjectPersistenceService } from "@/src/shared/lib/projectPersistence";
-import { useProjectStore } from "@/src/entities/Project/useProjectStore";
+import { useProjectStore } from "@/src/entities/project/useProjectStore";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
