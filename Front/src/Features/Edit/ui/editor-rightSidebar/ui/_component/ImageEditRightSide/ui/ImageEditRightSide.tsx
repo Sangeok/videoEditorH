@@ -1,5 +1,5 @@
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import { EffectType, FadeEffectType, MediaElement } from "@/src/entities/media/types";
+import { EffectType, MediaElement } from "@/src/entities/media/types";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";

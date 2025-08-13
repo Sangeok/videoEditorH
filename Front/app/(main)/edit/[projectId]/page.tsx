@@ -1,4 +1,4 @@
-import Edit from "@/src/pages/Edit/ui/Edit";
+import Edit from "@/src/page/Edit/ui/Edit";
 
 interface EditPageProps {
   params: Promise<{ projectId: string }>;

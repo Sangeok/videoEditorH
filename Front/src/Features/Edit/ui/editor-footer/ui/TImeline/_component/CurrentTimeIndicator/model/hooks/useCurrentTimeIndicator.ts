@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
+import useTimelineStore, { TimelineStore } from "@/src/features/Edit/model/store/useTimelineStore";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 
 // 고정밀 타이머 (id)
 let playbackTimer: number | null = null;
 
-const startTimer = (store: () => any) => {
+const startTimer = (store: () => TimelineStore) => {
   if (playbackTimer) cancelAnimationFrame(playbackTimer);
   let lastUpdate = performance.now();
 

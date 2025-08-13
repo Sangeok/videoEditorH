@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, Music, X, Play, Pause } from "lucide-react";
+import { Music, X, Play, Pause } from "lucide-react";
 import Button from "@/src/shared/ui/atoms/Button/ui/Button";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { MediaElement } from "@/src/entities/media/types";
@@ -42,9 +42,6 @@ export default function MusicEditSubSide() {
         url: audioUrl,
         volume: 1,
         speed: 1,
-        playbackRate: 1,
-        loop: false,
-        muted: false,
         fadeIn: false,
         fadeOut: false,
         fadeInDuration: 0.5,

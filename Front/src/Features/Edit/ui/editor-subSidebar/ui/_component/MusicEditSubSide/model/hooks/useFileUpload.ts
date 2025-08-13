@@ -77,11 +77,12 @@ export function useFileUpload() {
 
   // 컴포넌트 언마운트 시 모든 Blob URL 해제
   useEffect(() => {
+    const audioUrls = audioUrlsRef.current;
     return () => {
-      audioUrlsRef.current.forEach((url) => {
+      audioUrls.forEach((url) => {
         URL.revokeObjectURL(url);
       });
-      audioUrlsRef.current.clear();
+      audioUrls.clear();
     };
   }, []); // dependency 배열 제거로 무한 루프 방지
 
