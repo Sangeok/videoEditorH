@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { useCheckProject } from "../model/hooks/useCheckProject";
-import Player from "@/src/features/editFeatures/ui/player/ui/Player";
+import Player from "../../../features/editFeatures/ui/player/ui/Player";
 
 interface EditPageProps {
   params: Promise<{ projectId: string }>;
