@@ -179,8 +179,6 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
       const currentAudioElements = state.media.audioElement;
-      console.log("state.media", state.media);
-      console.log("currentAudioElements", currentAudioElements);
       let newAudioElement: AudioElement;
 
       if (currentAudioElements.length === 0) {

@@ -27,8 +27,6 @@ export default function MediaTimeline() {
     }
   };
 
-  console.log(media.mediaElement);
-
   return (
     <div className="relative w-full h-full bg-zinc-900">
       {/* 텍스트 요소들 */}

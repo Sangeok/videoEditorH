@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Music, X, Play, Pause } from "lucide-react";
 import Button from "@/shared/ui/atoms/Button/ui/Button";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import { MediaElement } from "@/entities/media/types";
+import { AudioElement } from "@/entities/media/types";
 
 export default function MusicEditSubSide() {
   const [uploadedAudios, setUploadedAudios] = useState<
@@ -18,7 +18,7 @@ export default function MusicEditSubSide() {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { media, addMediaElement } = useMediaStore();
+  const { media, addAudioElement } = useMediaStore();
 
   const processAudioFile = (file: File) => {
     if (!file.type.startsWith("audio/")) {
@@ -39,24 +39,44 @@ export default function MusicEditSubSide() {
         { url: audioUrl, name: audioName },
       ]);
 
-      // Create audio element and add to media store
-      const audioElement: MediaElement = {
-        id: `audio-${Date.now()}-${Math.random()}`,
-        type: "audio",
-        startTime: media.projectDuration,
-        endTime: media.projectDuration + 30, // Default 30 seconds duration
-        duration: 30,
-        url: audioUrl,
-        volume: 1,
-        speed: 1,
-        fadeIn: false,
-        fadeOut: false,
-        fadeInDuration: 0.5,
-        fadeOutDuration: 0.5,
+      // Create audio element to get actual duration
+      const audio = new Audio(audioUrl);
+
+      audio.onloadedmetadata = () => {
+        const actualDuration = audio.duration;
+
+        // Create audio element and add to media store with actual duration
+        const audioElement: AudioElement = {
+          id: `audio-${Date.now()}-${Math.random()}`,
+          type: "audio",
+          startTime: media.projectDuration,
+          endTime: media.projectDuration + actualDuration,
+          duration: actualDuration,
+          url: audioUrl,
+          volume: 100,
+          speed: 1,
+        };
+
+        addAudioElement(audioElement);
+        setLoading(false);
       };
 
-      addMediaElement(audioElement);
-      setLoading(false);
+      audio.onerror = () => {
+        // Fallback to default duration if metadata loading fails
+        const audioElement: AudioElement = {
+          id: `audio-${Date.now()}-${Math.random()}`,
+          type: "audio",
+          startTime: media.projectDuration,
+          endTime: media.projectDuration + 30, // Fallback to 30 seconds
+          duration: 30,
+          url: audioUrl,
+          volume: 100,
+          speed: 1,
+        };
+
+        addAudioElement(audioElement);
+        setLoading(false);
+      };
     };
 
     reader.onerror = () => {
