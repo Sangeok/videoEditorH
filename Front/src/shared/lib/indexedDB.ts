@@ -1,5 +1,5 @@
 import { Media } from "@/src/entities/media/types";
-import { ProjectType } from "@/src/entities/Project/types";
+import { ProjectType } from "@/src/entities/project/types";
 
 export interface SavedProject {
   id: string;
