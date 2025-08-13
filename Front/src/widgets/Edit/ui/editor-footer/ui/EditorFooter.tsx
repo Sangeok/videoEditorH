@@ -1,6 +1,6 @@
-import Timeline from "../../../../../features/Edit/ui/editor-footer/ui/TImeline/Timeline";
-import TimelineToolBar from "../../../../../features/Edit/ui/editor-footer/ui/TimelineToolBar/TimelineToolBar";
-import TrackPannel from "../../../../../features/Edit/ui/editor-footer/ui/TrackPannel/TrackPannel";
+import Timeline from "../../../../../features/editFeatures/ui/editor-footer/ui/TImeline/Timeline";
+import TimelineToolBar from "../../../../../features/editFeatures/ui/editor-footer/ui/TimelineToolBar/TimelineToolBar";
+import TrackPannel from "../../../../../features/editFeatures/ui/editor-footer/ui/TrackPannel/TrackPannel";
 
 export default function EditorFooter() {
   return (

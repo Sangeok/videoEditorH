@@ -1,9 +1,9 @@
 "use client";
 
 import { indexedDBService, SavedProject } from "./indexedDB";
-import { useProjectStore } from "@/src/entities/Project/useProjectStore";
+import { useProjectStore } from "@/src/entities/project/useProjectStore";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
-import useTimelineStore from "@/src/features/Edit/model/store/useTimelineStore";
+import useTimelineStore from "@/src/features/editFeatures/model/store/useTimelineStore";
 
 export class ProjectPersistenceService {
   static async saveCurrentProject(customName?: string): Promise<string> {
