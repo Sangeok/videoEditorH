@@ -27,7 +27,7 @@ interface TimelineActions {
   resetZoom: () => void;
 }
 
-type TimelineStore = TimelineState & TimelineActions;
+export type TimelineStore = TimelineState & TimelineActions;
 
 const useTimelineStore = create<TimelineStore>((set, get) => ({
   // 초기 상태

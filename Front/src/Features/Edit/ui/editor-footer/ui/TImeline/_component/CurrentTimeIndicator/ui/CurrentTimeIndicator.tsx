@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useRef, useEffect, useMemo } from "react";
+import { memo, useEffect } from "react";
 import { useMediaStore } from "@/src/entities/media/useMediaStore";
 import { useCurrentTimeIndicator } from "../model/hooks/useCurrentTimeIndicator";
 

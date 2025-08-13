@@ -1,4 +1,4 @@
-import { TextElement } from "@/src/entities/media/types";
+
 
 export interface TextEditRightSideProps {
   selectedTrackId: string | null;

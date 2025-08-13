@@ -1,3 +1,5 @@
+import { MediaElement } from "@/src/entities/media/types";
+
 export interface ImageEditState {
   uploadedImages: string[];
   selectedImageId: string | null;
@@ -10,10 +12,10 @@ export interface ImageEditActions {
   handleDrop: (e: React.DragEvent) => void;
   removeImage: (index: number) => void;
   selectImage: (imageId: string) => void;
-  updateImageSettings: (imageId: string, updates: any) => void;
+  updateImageSettings: (imageId: string, updates: Partial<MediaElement>) => void;
   deleteImage: (imageId: string) => void;
 }
 
 export interface UseImageEditReturn extends ImageEditState, ImageEditActions {
-  selectedImage: any;
+  selectedImage: MediaElement | undefined;
 }

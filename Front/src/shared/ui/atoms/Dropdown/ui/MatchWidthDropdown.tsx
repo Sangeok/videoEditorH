@@ -4,10 +4,12 @@ import { EffectType } from "@/src/entities/media/types";
 
 type DropdownPosition = "top" | "bottom" | "left" | "right";
 
+type DropdownItem = string | { name: string; [key: string]: unknown };
+
 interface MatchWidthDropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  dropdownItems: any[];
+  dropdownItems: DropdownItem[];
   handleSelectEvent?: (item: EffectType) => void;
   position?: DropdownPosition; // 위치 옵션 추가
   targetEl?: HTMLElement | null; // 직접 DOM 요소를 받는 prop 추가
@@ -69,11 +71,11 @@ export default function MatchWidthDropdown({
   if (!isOpen || !isPositionReady) return null;
 
   // 항목 클릭 핸들러
-  const handleItemClick = (item: any) => {
+  const handleItemClick = (item: DropdownItem) => {
     // 약간의 지연을 주어 이벤트 처리 보장
     setTimeout(() => {
       const valueToPass = typeof item === "string" ? item : item.name;
-      handleSelectEvent?.(valueToPass);
+      handleSelectEvent?.(valueToPass as EffectType);
       setIsOpen(false);
     }, 10);
   };
@@ -92,7 +94,7 @@ export default function MatchWidthDropdown({
       onClick={(e) => e.stopPropagation()} // 이벤트 버블링 방지
     >
       {dropdownItems && dropdownItems.length > 0 ? (
-        dropdownItems.map((item: any, index: number) => (
+        dropdownItems.map((item: DropdownItem, index: number) => (
           <div
             key={index}
             className="dropdown-item px-4 py-3 dark-button-hover text-center cursor-pointer whitespace-nowrap"

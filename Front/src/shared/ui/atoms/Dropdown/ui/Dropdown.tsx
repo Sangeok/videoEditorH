@@ -1,12 +1,18 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, ReactNode } from "react";
 
 type DropdownPosition = "top" | "bottom" | "left" | "right";
 type DropdownSize = "sm" | "md" | "lg";
 
+interface DropdownItem {
+  id: string | number;
+  name: string;
+  icon?: ReactNode;
+}
+
 interface DropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  dropdownItems: any[];
+  dropdownItems: DropdownItem[];
   handleSelectEvent?: (item: string) => void;
   position?: DropdownPosition; // 위치 옵션 추가
   size?: DropdownSize;

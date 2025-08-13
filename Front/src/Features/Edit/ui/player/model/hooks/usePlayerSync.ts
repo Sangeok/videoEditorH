@@ -35,7 +35,7 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
         playerRef.current.seekTo(frameToSeek);
       }
     }
-  }, [currentTime, fps, playerRef]);
+  }, [currentTime, fps, playerRef, isPlaying]);
 
   // 플레이어 상태를 주기적으로 동기화
   useEffect(() => {
@@ -60,5 +60,5 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
       clearInterval(interval);
       lastUpdateTimeRef.current = -1;
     };
-  }, [isPlaying, fps]);
+  }, [isPlaying, fps, playerRef, setCurrentTime]);
 };
