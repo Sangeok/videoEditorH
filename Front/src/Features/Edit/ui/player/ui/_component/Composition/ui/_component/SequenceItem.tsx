@@ -146,12 +146,6 @@ export const SequenceItem: Record<
         from={fromFrame}
         durationInFrames={durationInFrames}
         name={`Audio: ${audioElement.id}`}
-        style={{
-          height: "100%",
-          border: "5px solid green",
-          zIndex: 100,
-          pointerEvents: "none",
-        }}
       >
         <AbsoluteFill>
           <Audio
