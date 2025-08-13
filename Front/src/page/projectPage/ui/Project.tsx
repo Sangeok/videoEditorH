@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ProjectCard from "./_component/ProjectCard/ui/ProjectCard";
 import Dialog from "@/src/shared/ui/atoms/Dialog/ui/Dialog";
-import ProjectCreator from "@/src/features/projectCreator/ui/ProjectCreator";
+import ProjectCreator from "../../../features/projectCreator/ui/ProjectCreator";
 import { useLoadAllProject } from "../model/hooks/useLoadAllProject";
 import NotSelectModeButtons from "./_component/NotSelectModeButtons/ui";
 import SelectModeButtons from "./_component/SelectModeButtons/ui";
