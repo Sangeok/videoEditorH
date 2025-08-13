@@ -23,7 +23,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     setCurrentTime,
   } = useTimelineStore();
 
-  // 컴포넌트가 마운트되면 타임라인 너비를 측정하고 store에 저장
+  // when component mounts, measure timeline width and store it
   useEffect(() => {
     if (rulerRef.current) {
       const width = rulerRef.current.clientWidth;
@@ -31,7 +31,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     }
   }, [setTimelineWidth]);
 
-  // 창 크기 변경 시 타임라인 너비 업데이트
+  // when window size changes, update timeline width
   useEffect(() => {
     const handleResize = () => {
       if (rulerRef.current) {
@@ -44,7 +44,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, [setTimelineWidth]);
 
-  // 눈금 계산
+  // calculate ticks(눈금)
   const { majorTicks, minorTicks } = calculateTicks(
     viewportStartTime,
     viewportEndTime,
@@ -52,7 +52,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     pixelsPerSecond
   );
 
-  // 클릭으로 시간 이동
+  // move time by clicking
   const handleTimelineClick = (e: React.MouseEvent) => {
     if (!rulerRef.current) return;
 
@@ -60,7 +60,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
     const clickX = e.clientX - rect.left;
     const clickedTime = clickX / pixelsPerSecond;
 
-    // duration 범위 내에서만 이동
+    // move only within duration range
     const clampedTime = Math.max(0, Math.min(clickedTime, duration));
     setCurrentTime(clampedTime);
   };
@@ -71,10 +71,10 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
       className={`relative h-8 bg-black overflow-hidden cursor-pointer ${className}`}
       onClick={handleTimelineClick}
     >
-      {/* 배경 */}
+      {/* background */}
       <div className="absolute inset-0 bg-black" />
 
-      {/* 보조 눈금 */}
+      {/* minor ticks */}
       {minorTicks.map(
         (tick: { time: number; position: number }, index: number) => (
           <div
@@ -87,7 +87,7 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
         )
       )}
 
-      {/* 주 눈금과 시간 라벨 */}
+      {/* major ticks and time labels */}
       {majorTicks.map(
         (
           tick: { time: number; position: number; label: string },
@@ -101,17 +101,17 @@ export default function TimelineRuler({ className = "" }: TimelineRulerProps) {
               transform: "translateX(-50%)",
             }}
           >
-            {/* 시간 라벨 */}
+            {/* time label */}
             <span className="text-xs text-gray-600 mb-1 whitespace-nowrap">
               {tick.label}
             </span>
-            {/* 주 눈금 */}
+            {/* major ticks */}
             <div className="w-px h-6 bg-gray-600" />
           </div>
         )
       )}
 
-      {/* 0초 기준선 */}
+      {/* 0s baseline */}
       <div className="absolute top-0 left-0 w-px h-full bg-white/50" />
     </div>
   );

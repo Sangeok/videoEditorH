@@ -30,7 +30,7 @@ export default function MediaTimeline() {
   console.log(media.mediaElement);
 
   return (
-    <div className="relative w-full h-16 bg-zinc-900">
+    <div className="relative w-full h-full bg-zinc-900">
       {/* 텍스트 요소들 */}
       <div className="relative h-full">
         {media.mediaElement.map((mediaElement) => {
@@ -46,7 +46,7 @@ export default function MediaTimeline() {
           return (
             <div
               key={mediaElement.id}
-              className="absolute top-2 h-12 bg-gray-700 hover:bg-gray-800 border-1 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
+              className="absolute top-2 h-12 bg-gray-700 border-b-4 hover:bg-gray-800 border-1 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
               style={{
                 left: `${leftPosition}px`,
                 width: `${width}px`,

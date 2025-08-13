@@ -18,9 +18,6 @@ export default function AudioTimeline() {
   // Filter only audio elements
   const audioElements = media.audioElement || [];
 
-  console.log("media", media);
-  console.log(media.audioElement);
-
   const handleAudioClick = (audioElement: AudioElement) => {
     if (isDelete) {
       deleteAudioElement(audioElement.id);
@@ -30,12 +27,7 @@ export default function AudioTimeline() {
   };
 
   return (
-    <div className="relative w-full h-16 bg-zinc-900 border-t border-zinc-800">
-      {/* Audio track label */}
-      <div className="absolute left-0 top-0 px-2 py-1 text-xs text-gray-400 bg-zinc-950/50">
-        Audio Track
-      </div>
-
+    <div className="relative w-full h-full bg-zinc-900">
       {/* Audio elements */}
       <div className="relative h-full">
         {audioElements.map((audioElement) => {
@@ -60,7 +52,6 @@ export default function AudioTimeline() {
             >
               {/* Audio waveform visualization (placeholder) */}
               <div className="relative h-full bg-gradient-to-r from-purple-700 to-purple-500 rounded overflow-hidden border border-purple-400/50 hover:border-purple-400">
-                {/* Waveform pattern */}
                 <div className="absolute inset-0 opacity-30">
                   <svg
                     className="w-full h-full"
@@ -104,10 +95,10 @@ export default function AudioTimeline() {
         })}
       </div>
 
-      {/* Empty state */}
+      {/* empty state message */}
       {audioElements.length === 0 && (
         <div className="absolute top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
-          No audio tracks
+          There is no audio element.
         </div>
       )}
     </div>

@@ -17,7 +17,6 @@ export default function TextTimeline() {
     (state) => state.setSelectedTrackAndId
   );
 
-  // 텍스트 요소 클릭 핸들러 (향후 선택 기능용)
   const handleTextClick = (textElement: TextElement) => {
     if (isDelete) {
       deleteTextElement(textElement.id);
@@ -27,8 +26,8 @@ export default function TextTimeline() {
   };
 
   return (
-    <div className="relative w-full h-16 bg-zinc-900">
-      {/* 텍스트 요소들 */}
+    <div className="relative w-full h-full bg-zinc-900">
+      {/* text elements */}
       <div className="relative h-full">
         {media.textElement.map((textElement) => {
           const leftPosition = timeToPixels(
@@ -43,7 +42,7 @@ export default function TextTimeline() {
           return (
             <div
               key={textElement.id}
-              className="absolute top-2 h-12 bg-gray-700 hover:bg-gray-800 border-1 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
+              className="absolute top-2 h-12 bg-gray-700 hover:bg-gray-800 border-1 border-b-4 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
               style={{
                 left: `${leftPosition}px`,
                 width: `${width}px`,
@@ -51,14 +50,14 @@ export default function TextTimeline() {
               onClick={() => handleTextClick(textElement)}
               title={`${textElement.text} (${textElement.startTime}s - ${textElement.endTime}s)`}
             >
-              {/* 텍스트 내용 (너비에 따라 조정) */}
+              {/* text content (adjust width) */}
               <span className="truncate px-2">{textElement.id || "Text"}</span>
             </div>
           );
         })}
       </div>
 
-      {/* 빈 상태 메시지 */}
+      {/* empty state message */}
       {media.textElement.length === 0 && (
         <div className="absolute top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
           There is no text element.
