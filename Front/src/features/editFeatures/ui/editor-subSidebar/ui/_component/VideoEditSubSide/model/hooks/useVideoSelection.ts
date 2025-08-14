@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import { UploadedVideo } from "./useFileUpload";
 
 export function useVideoSelection() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -18,9 +17,7 @@ export function useVideoSelection() {
     return selectedVideoId === videoId;
   };
 
-  const selectedVideo = selectedVideoId
-    ? media.mediaElement.find((element) => element.id === selectedVideoId)
-    : null;
+  const selectedVideo = selectedVideoId ? media.mediaElement.find((element) => element.id === selectedVideoId) : null;
 
   return {
     selectedVideoId,

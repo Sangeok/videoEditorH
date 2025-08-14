@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { MediaElement } from "@/entities/media/types";
 
 export interface UploadedVideo {
   id: string;

@@ -1,10 +1,3 @@
-export interface VideoEditState {
-  uploadedVideos: UploadedVideo[];
-  selectedVideoId: string | null;
-  dragActive: boolean;
-  selectedVideo: any;
-}
-
 export interface VideoEditActions {
   handleFileSelect: (files: FileList | null) => void;
   handleDrag: (e: React.DragEvent) => void;
