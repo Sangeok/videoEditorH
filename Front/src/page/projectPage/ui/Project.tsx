@@ -19,6 +19,14 @@ export default function Project() {
   const { projects, loading, refetch } = useLoadAllProject();
   const router = useRouter();
 
+  const handleProjectSelect = (projectId: string, selected: boolean) => {
+    if (selected) {
+      setSelectedProjects((prev) => [...prev, projectId]);
+    } else {
+      setSelectedProjects((prev) => prev.filter((id) => id !== projectId));
+    }
+  };
+
   if (loading) {
     return <div className="text-white">Loading...</div>;
   }
@@ -60,15 +68,7 @@ export default function Project() {
             project={project}
             selectMode={showSelectMode}
             isSelected={selectedProjects.includes(project.id)}
-            onSelect={(projectId, selected) => {
-              if (selected) {
-                setSelectedProjects((prev) => [...prev, projectId]);
-              } else {
-                setSelectedProjects((prev) =>
-                  prev.filter((id) => id !== projectId)
-                );
-              }
-            }}
+            onSelect={handleProjectSelect}
           />
         ))}
       </div>

@@ -8,7 +8,6 @@ import { formatPlaybackTime } from "@/features/editFeatures/ui/editor-footer/lib
 
 export default function PlaybackDisplay() {
   const { media } = useMediaStore();
-  const duration = media.projectDuration || 0;
   const projectDuration = media.projectDuration || 0;
   const { currentTime, isPlaying, setCurrentTime, setIsPlaying } =
     useTimelineStore();
@@ -30,7 +29,7 @@ export default function PlaybackDisplay() {
 
   // 다음으로 건너뛰기 (5초)
   const handleSkipForward = () => {
-    const newTime = Math.min(duration, currentTime + 5);
+    const newTime = Math.min(projectDuration, currentTime + 5);
     setCurrentTime(newTime);
   };
 

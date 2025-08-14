@@ -10,27 +10,27 @@ The application allows for multimedia editing, including text, video, images, mu
 
 The project uses `npm` as its package manager. The following commands are used for building and running the application:
 
-*   **Install dependencies:**
-    ```bash
-    npm install
-    ```
-*   **Run development server:**
-    ```bash
-    npm run dev
-    ```
-    This command starts the development server with Turbopack at `http://localhost:3000`.
-*   **Build for production:**
-    ```bash
-    npm run build
-    ```
-*   **Run production server:**
-    ```bash
-    npm start
-    ```
-*   **Linting:**
-    ```bash
-    npm run lint
-    ```
+- **Install dependencies:**
+  ```bash
+  npm install
+  ```
+- **Run development server:**
+  ```bash
+  npm run dev
+  ```
+  This command starts the development server with Turbopack at `http://localhost:3000`.
+- **Build for production:**
+  ```bash
+  npm run build
+  ```
+- **Run production server:**
+  ```bash
+  npm start
+  ```
+- **Linting:**
+  ```bash
+  npm run lint
+  ```
 
 ## Development Conventions
 
@@ -48,23 +48,27 @@ This layered approach promotes low coupling and high cohesion, making the codeba
 
 ### Technology Stack
 
-*   **Framework**: Next.js 15 with React 19
-*   **Language**: TypeScript
-*   **Styling**: Tailwind CSS 4, with `class-variance-authority`, `clsx`, and `tailwind-merge` for robust and maintainable component styling.
-*   **UI Components**: Radix UI for accessible, unstyled primitives, and Lucide React for icons.
-*   **State Management**: Zustand is used for global state management. Its simplicity and minimal boilerplate make it an excellent fit for the FSD architecture, allowing state to be managed at the feature or widget level where it is needed.
-*   **Video Engine**: `remotion` and `@remotion/player` are at the core of the video editing functionality, enabling programmatic video creation and manipulation within a React environment.
-*   **Subtitles**: `srt-parser-2` is used for parsing and handling SRT subtitle files.
-*   **Animation**: `tw-animate-css` provides Tailwind CSS-based animations.
+- **Framework**: Next.js 15 with React 19
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4, with `class-variance-authority`, `clsx`, and `tailwind-merge` for robust and maintainable component styling.
+- **UI Components**: Radix UI for accessible, unstyled primitives, and Lucide React for icons.
+- **State Management**: Zustand is used for global state management. Its simplicity and minimal boilerplate make it an excellent fit for the FSD architecture, allowing state to be managed at the feature or widget level where it is needed.
+- **Video Engine**: `remotion` and `@remotion/player` are at the core of the video editing functionality, enabling programmatic video creation and manipulation within a React environment.
+- **Subtitles**: `srt-parser-2` is used for parsing and handling SRT subtitle files.
+- **Animation**: `tw-animate-css` provides Tailwind CSS-based animations.
 
 ### Code Quality and Standards
 
 The project enforces a high standard of code quality through its ESLint configuration (`eslint.config.mjs`). By extending `next/core-web-vitals` and `next/typescript`, the project prioritizes:
 
-*   **Core Web Vitals**: A strong focus on web performance to ensure a smooth user experience.
-*   **TypeScript Best Practices**: Adherence to best practices for writing clean, type-safe code.
-*   **Next.js Conventions**: Following the recommended guidelines for building robust and optimized Next.js applications.
+- **Core Web Vitals**: A strong focus on web performance to ensure a smooth user experience.
+- **TypeScript Best Practices**: Adherence to best practices for writing clean, type-safe code.
+- **Next.js Conventions**: Following the recommended guidelines for building robust and optimized Next.js applications.
 
 ### Timeline Functionality
 
 A detailed document (`Front/public/timeline-zoom-ruler.md`) outlines the implementation of the timeline's zoom and ruler functionality. This indicates a focus on creating a sophisticated and user-friendly editing interface. The timeline features dynamic zoom control, a smart ruler system, and visual feedback for the user.
+
+# Guideline
+
+When answering a question, the explanation should be in Korean.

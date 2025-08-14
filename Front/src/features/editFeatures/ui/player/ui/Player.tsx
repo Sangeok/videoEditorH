@@ -15,7 +15,6 @@ import { PlayerService } from "../model/services/playerService";
  */
 export default function Player() {
   const { media } = useMediaStore();
-  const duration = media.projectDuration || 0;
   const fps = media.fps || 30;
   const projectDuration = media.projectDuration || 0;
 
@@ -48,11 +47,14 @@ export default function Player() {
   );
 
   // 미디어가 없는 경우 메시지 표시
-  if (duration === 0) {
+  if (projectDuration === 0) {
     return <div>No media</div>;
   }
 
-  const durationInFrames = PlayerService.getDurationInFrames(duration, fps);
+  const durationInFrames = PlayerService.getDurationInFrames(
+    projectDuration,
+    fps
+  );
 
   return (
     <RemotionPlayer
