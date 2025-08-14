@@ -26,9 +26,13 @@ export function useAudioFileProcessor() {
       onSuccess(uploadedAudio);
 
       try {
-        const audioElement = await createAudioElement(audioUrl, media.projectDuration);
+        const audioElement = await createAudioElement(
+          audioUrl,
+          media.projectDuration
+        );
         addAudioElement(audioElement);
-      } catch (error) {
+      } catch (error: unknown) {
+        console.error("Error uploading audio element:", error);
         const fallbackAudioElement = {
           id: `audio-${Date.now()}-${Math.random()}`,
           type: "audio" as const,
