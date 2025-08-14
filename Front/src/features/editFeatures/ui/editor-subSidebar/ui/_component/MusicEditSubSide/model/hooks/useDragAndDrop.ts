@@ -16,16 +16,13 @@ export function useDragAndDrop() {
 
   const handleDrop = (
     e: React.DragEvent,
-    onFileDrop: (files: FileList) => void
+    onFilesDropped: (files: FileList) => void
   ) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      onFileDrop(e.dataTransfer.files);
-      e.dataTransfer.clearData();
-    }
+    onFilesDropped(e.dataTransfer.files);
   };
 
   return {
