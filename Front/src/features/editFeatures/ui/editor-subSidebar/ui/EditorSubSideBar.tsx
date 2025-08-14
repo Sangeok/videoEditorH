@@ -2,15 +2,13 @@
 
 import useSideButtonStore from "@/features/editFeatures/model/store/useSideButtonStore";
 import TextEditSubSide from "./_component/TextEditSubSide/ui/TextEditSubSide";
-import VideoEditSubSide from "./_component/VideoEditSubSide";
+import VideoEditSubSide from "./_component/VideoEditSubSide/ui/index";
 import MusicEditSubSide from "./_component/MusicEditSubSide/ui/MusicEditSubSide";
 import ImageEditSubSide from "./_component/ImageEditSubSide/ui/index";
 import CaptionEditSubSide from "./_component/CaptionEditSubSide/ui/CaptionEditSubSide";
 
 export default function EditorSubSideBar() {
-  const activeSideButton = useSideButtonStore(
-    (state) => state.activeSideButton
-  );
+  const activeSideButton = useSideButtonStore((state) => state.activeSideButton);
 
   const renderSubSideBar = () => {
     switch (activeSideButton) {
@@ -31,9 +29,7 @@ export default function EditorSubSideBar() {
 
   return (
     <aside className="w-80 h-full bg-black border-r border-white/20 overflow-y-auto">
-      <div className="flex flex-col h-full w-full items-center p-4">
-        {renderSubSideBar()}
-      </div>
+      <div className="flex flex-col h-full w-full items-center p-4">{renderSubSideBar()}</div>
     </aside>
   );
 }

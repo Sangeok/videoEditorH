@@ -74,9 +74,7 @@ class IndexedDBService {
       };
 
       request.onblocked = () => {
-        console.warn(
-          "Database upgrade blocked. Please close other tabs with this application."
-        );
+        console.warn("Database upgrade blocked. Please close other tabs with this application.");
       };
     });
   }
