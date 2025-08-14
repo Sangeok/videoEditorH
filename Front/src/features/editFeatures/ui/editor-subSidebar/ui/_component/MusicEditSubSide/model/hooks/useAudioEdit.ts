@@ -1,47 +1,59 @@
-// import { useAudioUpload } from "./useAudioUpload";
-// import { useDragAndDrop } from "@/src/features/Edit/ui/editor-subSidebar/ui/_component/ImageEditSubSide/model/hooks/useDragAndDrop";
-// import { useAudioSelection } from "./useAudioSelection";
-// import { useAudioProjectManagement } from "./useAudioProjectManagement";
+import { useFileUpload } from "./useFileUpload";
+import { useDragAndDrop } from "./useDragAndDrop";
+import { useAudioPreview } from "./useAudioPreview";
+import { useAudioFileProcessor } from "./useAudioFileProcessor";
+import { AudioEditState, AudioEditActions } from "../types";
 
-// export function useAudioEdit() {
-//   const fileUpload = useAudioUpload();
-//   const dragAndDrop = useDragAndDrop();
-//   const audioSelection = useAudioSelection();
-//   const projectManagement = useAudioProjectManagement();
+export function useAudioEdit(): {
+  state: AudioEditState;
+  actions: AudioEditActions;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+} {
+  const fileUpload = useFileUpload();
+  const dragAndDrop = useDragAndDrop();
+  const audioPreview = useAudioPreview();
+  const audioProcessor = useAudioFileProcessor();
 
-//   const handleFileSelect = (files: FileList | null) => {
-//     fileUpload.handleFileSelect(files, projectManagement.addAudioToProject);
-//   };
+  const handleFileSelect = (files: FileList | null) => {
+    fileUpload.handleFileSelect(files, (file) => {
+      audioProcessor.processAudioFile(
+        file,
+        () => fileUpload.setLoading(true),
+        (audio) => {
+          fileUpload.addAudio(audio);
+          fileUpload.setLoading(false);
+        },
+        () => fileUpload.setLoading(false)
+      );
+    });
+  };
 
-//   const handleDrop = (e: React.DragEvent) => {
-//     dragAndDrop.handleDrop(e, (files) => {
-//       fileUpload.handleFileSelect(files, projectManagement.addAudioToProject);
-//     });
-//   };
+  const handleDrop = (e: React.DragEvent) => {
+    dragAndDrop.handleDrop(e, (files) => {
+      handleFileSelect(files);
+    });
+  };
 
-//   const deleteAudio = (audioId: string) => {
-//     projectManagement.deleteAudio(audioId);
-//     if (audioSelection.isAudioSelected(audioId)) {
-//       audioSelection.clearSelection();
-//     }
-//   };
+  const removeAudio = (index: number) => {
+    audioPreview.stopPreviewForIndex(index);
+    fileUpload.removeAudio(index);
+  };
 
-//   return {
-//     fileInputRef: fileUpload.fileInputRef,
-//     state: {
-//       uploadedAudios: fileUpload.uploadedAudios,
-//       selectedAudioId: audioSelection.selectedAudioId,
-//       dragActive: dragAndDrop.dragActive,
-//       selectedAudio: audioSelection.selectedAudio,
-//     },
-//     actions: {
-//       handleFileSelect,
-//       handleDrag: dragAndDrop.handleDrag,
-//       handleDrop,
-//       removeAudio: fileUpload.removeAudio,
-//       selectAudio: audioSelection.selectAudio,
-//       updateAudioSettings: projectManagement.updateAudioSettings,
-//       deleteAudio,
-//     },
-//   };
-// }
+  return {
+    fileInputRef: fileUpload.fileInputRef,
+    state: {
+      uploadedAudios: fileUpload.uploadedAudios,
+      dragActive: dragAndDrop.dragActive,
+      loading: fileUpload.loading,
+      previewAudio: audioPreview.previewAudio,
+      playingIndex: audioPreview.playingIndex,
+    },
+    actions: {
+      handleFileSelect,
+      handleDrag: dragAndDrop.handleDrag,
+      handleDrop,
+      togglePreview: audioPreview.togglePreview,
+      removeAudio,
+    },
+  };
+}
