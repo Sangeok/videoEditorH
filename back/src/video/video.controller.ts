@@ -1,16 +1,6 @@
 // video.controller.ts
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  HttpStatus,
-  Get,
-  Param,
-} from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Post, Body } from '@nestjs/common';
 import { VideoService } from './video.service';
-import * as fs from 'fs';
 
 @Controller('video')
 export class VideoController {
@@ -18,7 +8,7 @@ export class VideoController {
 
   // 비동기 영상 생성 요청
   @Post('create')
-  async createVideo(@Body() videoData: any) {
+  createVideo(@Body() videoData: any) {
     try {
       const jobId = `job-${Date.now()}`;
 
@@ -36,7 +26,7 @@ export class VideoController {
     } catch (error) {
       return {
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

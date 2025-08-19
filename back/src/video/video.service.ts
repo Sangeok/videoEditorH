@@ -14,7 +14,7 @@ export class VideoService {
       // 1. Remotion 프로젝트 번들링
       console.log('번들링 시작...');
       const bundleLocation = await bundle({
-        entryPoint: path.resolve(__dirname, '../remotion/index.ts'),
+        entryPoint: path.resolve(__dirname, '../remotion/index.js'),
         webpackOverride: (config) => config,
       });
       console.log('번들링 완료:', bundleLocation);
