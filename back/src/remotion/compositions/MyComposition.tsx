@@ -34,8 +34,8 @@ export const MyComposition: React.FC = () => {
       component={VideoEditor}
       durationInFrames={durationInFrames}
       fps={fps}
-      width={1920}
-      height={1080}
+      width={1080}
+      height={1920}
     />
   );
 };

@@ -16,7 +16,7 @@ export class VideoController {
       console.log(videoData);
 
       // 백그라운드에서 영상 생성 시작
-      this.processVideoInBackground(jobId, videoData);
+      void this.processVideoInBackground(jobId, videoData);
 
       return {
         success: true,

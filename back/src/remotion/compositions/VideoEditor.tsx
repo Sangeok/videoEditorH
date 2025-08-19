@@ -37,13 +37,13 @@ interface MediaElement {
   startTime: number;
   endTime: number;
   duration: number;
-  type: "video" | "image" | "audio";
+  type: 'video' | 'image' | 'audio';
   url?: string;
   width?: number;
   height?: number;
   opacity?: number;
   rotate?: string;
-  visibility?: "visible" | "hidden";
+  visibility?: 'visible' | 'hidden';
   top?: number | string;
   left?: number | string;
   fadeIn?: boolean;
@@ -59,7 +59,7 @@ interface AudioElement {
   startTime: number;
   endTime: number;
   duration: number;
-  type: "audio";
+  type: 'audio';
   url: string;
   volume: number;
   speed: number;
@@ -79,9 +79,14 @@ interface VideoEditorProps {
   };
 }
 
-const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({ textElement, fps }) => {
+const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({
+  textElement,
+  fps,
+}) => {
   const fromFrame = Math.floor(textElement.startTime * fps);
-  const durationInFrames = Math.floor((textElement.endTime - textElement.startTime) * fps);
+  const durationInFrames = Math.floor(
+    (textElement.endTime - textElement.startTime) * fps,
+  );
 
   return (
     <Sequence
@@ -101,7 +106,9 @@ const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({ tex
             maxWidth: textElement?.maxWidth ? textElement?.maxWidth : '',
             display: 'inline-block',
             padding: '10px',
-            whiteSpace: textElement?.whiteSpace ? textElement?.whiteSpace : 'nowrap',
+            whiteSpace: textElement?.whiteSpace
+              ? textElement?.whiteSpace
+              : 'nowrap',
             borderRadius: '4px',
             boxSizing: 'border-box',
             textAlign: 'center',
@@ -118,16 +125,23 @@ const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({ tex
   );
 };
 
-const ImageSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({ mediaElement, fps }) => {
+const ImageSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({
+  mediaElement,
+  fps,
+}) => {
   const fromFrame = Math.floor(mediaElement.startTime * fps);
-  const durationInFrames = Math.floor((mediaElement.endTime - mediaElement.startTime) * fps);
+  const durationInFrames = Math.floor(
+    (mediaElement.endTime - mediaElement.startTime) * fps,
+  );
 
   const ImageWithFade = () => {
     const frame = useCurrentFrame();
     let opacity = 1;
 
     if (mediaElement.fadeIn) {
-      const fadeInFrames = Math.floor((mediaElement.fadeInDuration || 0.5) * fps);
+      const fadeInFrames = Math.floor(
+        (mediaElement.fadeInDuration || 0.5) * fps,
+      );
       opacity = interpolate(frame, [0, fadeInFrames], [0, 1], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
@@ -135,12 +149,19 @@ const ImageSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({ 
     }
 
     if (mediaElement.fadeOut) {
-      const fadeOutFrames = Math.floor((mediaElement.fadeOutDuration || 0.5) * fps);
+      const fadeOutFrames = Math.floor(
+        (mediaElement.fadeOutDuration || 0.5) * fps,
+      );
       const fadeOutStartFrame = durationInFrames - fadeOutFrames;
-      const fadeOutOpacity = interpolate(frame, [fadeOutStartFrame, durationInFrames], [1, 0], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-      });
+      const fadeOutOpacity = interpolate(
+        frame,
+        [fadeOutStartFrame, durationInFrames],
+        [1, 0],
+        {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        },
+      );
       opacity = Math.min(opacity, fadeOutOpacity);
     }
 
@@ -182,9 +203,14 @@ const ImageSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({ 
   );
 };
 
-const VideoSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({ mediaElement, fps }) => {
+const VideoSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({
+  mediaElement,
+  fps,
+}) => {
   const fromFrame = Math.floor(mediaElement.startTime * fps);
-  const durationInFrames = Math.floor((mediaElement.endTime - mediaElement.startTime) * fps);
+  const durationInFrames = Math.floor(
+    (mediaElement.endTime - mediaElement.startTime) * fps,
+  );
 
   return (
     <Sequence
@@ -209,9 +235,14 @@ const VideoSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({ 
   );
 };
 
-const AudioSequence: React.FC<{ audioElement: AudioElement; fps: number }> = ({ audioElement, fps }) => {
+const AudioSequence: React.FC<{ audioElement: AudioElement; fps: number }> = ({
+  audioElement,
+  fps,
+}) => {
   const fromFrame = Math.floor(audioElement.startTime * fps);
-  const durationInFrames = Math.floor((audioElement.endTime - audioElement.startTime) * fps);
+  const durationInFrames = Math.floor(
+    (audioElement.endTime - audioElement.startTime) * fps,
+  );
 
   return (
     <Sequence
@@ -221,7 +252,10 @@ const AudioSequence: React.FC<{ audioElement: AudioElement; fps: number }> = ({ 
       name={`Audio: ${audioElement.id}`}
     >
       <AbsoluteFill>
-        <Audio src={audioElement.url || ''} volume={audioElement.volume || 100} />
+        <Audio
+          src={audioElement.url || ''}
+          volume={audioElement.volume || 100}
+        />
       </AbsoluteFill>
     </Sequence>
   );
@@ -255,36 +289,53 @@ export const VideoEditor: React.FC = () => {
 
   const currentTime = frame / fps;
 
-  console.log(
-    `VideoEditor currentTime: ${currentTime}s, elements:`,
-    {
-      text: inputProps.media?.textElement?.length || 0,
-      media: inputProps.media?.mediaElement?.length || 0,
-      audio: inputProps.media?.audioElement?.length || 0,
-    },
-  );
+  console.log(`VideoEditor currentTime: ${currentTime}s, elements:`, {
+    text: inputProps.media?.textElement?.length || 0,
+    media: inputProps.media?.mediaElement?.length || 0,
+    audio: inputProps.media?.audioElement?.length || 0,
+  });
 
   return (
     <AbsoluteFill style={{ backgroundColor: 'black' }}>
       {/* 텍스트 요소 렌더링 */}
       {inputProps.media?.textElement?.map((textElement) => (
-        <TextSequence key={textElement.id} textElement={textElement} fps={fps} />
+        <TextSequence
+          key={textElement.id}
+          textElement={textElement}
+          fps={fps}
+        />
       ))}
 
       {/* 미디어 요소 렌더링 */}
       {inputProps.media?.mediaElement?.map((mediaElement) => {
         if (mediaElement.type === 'image') {
-          return <ImageSequence key={mediaElement.id} mediaElement={mediaElement} fps={fps} />;
+          return (
+            <ImageSequence
+              key={mediaElement.id}
+              mediaElement={mediaElement}
+              fps={fps}
+            />
+          );
         }
         if (mediaElement.type === 'video') {
-          return <VideoSequence key={mediaElement.id} mediaElement={mediaElement} fps={fps} />;
+          return (
+            <VideoSequence
+              key={mediaElement.id}
+              mediaElement={mediaElement}
+              fps={fps}
+            />
+          );
         }
         return null;
       })}
 
       {/* 오디오 요소 렌더링 */}
       {inputProps.media?.audioElement?.map((audioElement) => (
-        <AudioSequence key={audioElement.id} audioElement={audioElement} fps={fps} />
+        <AudioSequence
+          key={audioElement.id}
+          audioElement={audioElement}
+          fps={fps}
+        />
       ))}
 
       {/* 개발 정보 표시 */}
@@ -298,7 +349,8 @@ export const VideoEditor: React.FC = () => {
           opacity: 0.7,
         }}
       >
-        Frame: {frame} | Time: {currentTime.toFixed(2)}s | Project: {inputProps.project?.name}
+        Frame: {frame} | Time: {currentTime.toFixed(2)}s | Project:{' '}
+        {inputProps.project?.name}
       </div>
     </AbsoluteFill>
   );
