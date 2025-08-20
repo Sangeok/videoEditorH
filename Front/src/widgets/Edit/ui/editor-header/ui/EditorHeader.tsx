@@ -10,13 +10,25 @@ import { MenuItem } from "../constants/MenuItem";
 import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 import { useProjectStore } from "@/entities/project/useProjectStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
+import ExportProgressModal from "@/features/ExportProgress/ui/ExportProgressModal";
+import { useExportProgress } from "@/widgets/Edit/ui/editor-header/model/hooks/useExportProgress";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const [exportLoading, setExportLoading] = useState(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
   const { project } = useProjectStore();
   const { media } = useMediaStore();
+  const {
+    jobId,
+    progress,
+    status,
+    error,
+    outputPath,
+    subscribeToJob,
+    cancelJob,
+    resetState,
+  } = useExportProgress();
 
   const router = useRouter();
 
@@ -32,10 +44,14 @@ export default function EditorHeader() {
   };
 
   const handleExport = async () => {
-    setExportLoading(true);
     try {
+      // 상태 초기화 및 모달 열기
+      resetState();
+      setExportModalOpen(true);
+
       // 백엔드 API 엔드포인트 (환경변수로 관리 권장)
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
       // 비디오 생성을 위한 데이터 준비
       const exportData = {
@@ -70,16 +86,32 @@ export default function EditorHeader() {
 
       if (result.success) {
         console.log("비디오 생성 시작됨:", result.jobId);
-        // TODO: 생성 완료 알림을 위한 폴링 또는 WebSocket 구현
-        alert(`비디오 생성이 시작되었습니다. Job ID: ${result.jobId}`);
+        // WebSocket으로 진행률 구독
+        subscribeToJob(result.jobId);
       } else {
         throw new Error(result.message || "비디오 생성 요청 실패");
       }
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`비디오 내보내기 실패: ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
-    } finally {
-      setExportLoading(false);
+      alert(
+        `비디오 내보내기 실패: ${
+          error instanceof Error ? error.message : "알 수 없는 오류"
+        }`
+      );
+      setExportModalOpen(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (jobId) {
+      await cancelJob(jobId);
+    }
+  };
+
+  const handleModalClose = () => {
+    setExportModalOpen(false);
+    if (status === "completed" || status === "error") {
+      resetState();
     }
   };
 
@@ -87,7 +119,13 @@ export default function EditorHeader() {
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
+      children: (
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          dropdownItems={MenuItem}
+        />
+      ),
       onClick: () => {
         setIsOpen(!isOpen);
       },
@@ -112,7 +150,7 @@ export default function EditorHeader() {
       icon: <Download size={16} />,
       label: "Export",
       onClick: handleExport,
-      disabled: exportLoading,
+      disabled: status === "exporting",
     },
   ];
 
@@ -128,19 +166,39 @@ export default function EditorHeader() {
           ))}
         </div>
 
-        <span className="text-white text-sm mr-4">{project.id ? project.name : "Loading..."}</span>
+        <span className="text-white text-sm mr-4">
+          {project.id ? project.name : "Loading..."}
+        </span>
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (
-            <Button variant="dark" key={button.label} onClick={button.onClick} disabled={button.disabled}>
+            <Button
+              variant="dark"
+              key={button.label}
+              onClick={button.onClick}
+              disabled={button.disabled}
+            >
               <div className="flex items-center gap-2">
                 {button.icon}
-                {button.disabled && button.label === "Export" ? "Exporting..." : button.label}
+                {button.disabled && button.label === "Export"
+                  ? "Exporting..."
+                  : button.label}
               </div>
             </Button>
           ))}
         </div>
       </div>
+
+      {/* Export Progress Modal */}
+      <ExportProgressModal
+        open={exportModalOpen}
+        onClose={handleModalClose}
+        progress={progress}
+        status={status}
+        error={error}
+        outputPath={outputPath}
+        cancel={handleCancel}
+      />
     </header>
   );
 }

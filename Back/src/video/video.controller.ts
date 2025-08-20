@@ -1,11 +1,15 @@
 // video.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
 import { VideoService } from './video.service';
+import { VideoGateway } from './video.gateway';
 import type { VideoInputData } from '../types';
 
 @Controller('video')
 export class VideoController {
-  constructor(private readonly videoService: VideoService) {}
+  constructor(
+    private readonly videoService: VideoService,
+    private readonly videoGateway: VideoGateway,
+  ) {}
 
   // 비동기 영상 생성 요청
   @Post('create')
@@ -52,11 +56,14 @@ export class VideoController {
     videoData: VideoInputData,
   ) {
     try {
-      const outputPath = await this.videoService.createVideo(videoData);
+      const outputPath = await this.videoService.createVideo(videoData, jobId);
 
-      // 여기서 WebSocket이나 SSE로 완료 알림 가능
+      this.videoGateway.sendCompleted(jobId, outputPath);
       console.log(`영상 생성 완료: ${outputPath}`);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.videoGateway.sendError(jobId, errorMessage);
       console.error(`영상 생성 실패 (${jobId}):`, error);
     }
   }
