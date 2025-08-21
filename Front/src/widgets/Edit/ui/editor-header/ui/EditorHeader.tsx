@@ -10,7 +10,7 @@ import { MenuItem } from "../constants/MenuItem";
 import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 import { useProjectStore } from "@/entities/project/useProjectStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import ExportProgressModal from "@/features/ExportProgress/ui/ExportProgressModal";
+import ExportProgressModal from "@/features/exportProgress/ui/ExportProgressModal";
 import { useExportProgress } from "@/widgets/Edit/ui/editor-header/model/hooks/useExportProgress";
 
 export default function EditorHeader() {
@@ -19,16 +19,7 @@ export default function EditorHeader() {
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const { project } = useProjectStore();
   const { media } = useMediaStore();
-  const {
-    jobId,
-    progress,
-    status,
-    error,
-    outputPath,
-    subscribeToJob,
-    cancelJob,
-    resetState,
-  } = useExportProgress();
+  const { jobId, progress, status, error, outputPath, subscribeToJob, cancelJob, resetState } = useExportProgress();
 
   const router = useRouter();
 
@@ -50,8 +41,7 @@ export default function EditorHeader() {
       setExportModalOpen(true);
 
       // 백엔드 API 엔드포인트 (환경변수로 관리 권장)
-      const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
       // 비디오 생성을 위한 데이터 준비
       const exportData = {
@@ -93,11 +83,7 @@ export default function EditorHeader() {
       }
     } catch (error) {
       console.error("Export failed:", error);
-      alert(
-        `비디오 내보내기 실패: ${
-          error instanceof Error ? error.message : "알 수 없는 오류"
-        }`
-      );
+      alert(`비디오 내보내기 실패: ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
       setExportModalOpen(false);
     }
   };
@@ -119,13 +105,7 @@ export default function EditorHeader() {
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: (
-        <Dropdown
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          dropdownItems={MenuItem}
-        />
-      ),
+      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
       onClick: () => {
         setIsOpen(!isOpen);
       },
@@ -166,23 +146,14 @@ export default function EditorHeader() {
           ))}
         </div>
 
-        <span className="text-white text-sm mr-4">
-          {project.id ? project.name : "Loading..."}
-        </span>
+        <span className="text-white text-sm mr-4">{project.id ? project.name : "Loading..."}</span>
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (
-            <Button
-              variant="dark"
-              key={button.label}
-              onClick={button.onClick}
-              disabled={button.disabled}
-            >
+            <Button variant="dark" key={button.label} onClick={button.onClick} disabled={button.disabled}>
               <div className="flex items-center gap-2">
                 {button.icon}
-                {button.disabled && button.label === "Export"
-                  ? "Exporting..."
-                  : button.label}
+                {button.disabled && button.label === "Export" ? "Exporting..." : button.label}
               </div>
             </Button>
           ))}
