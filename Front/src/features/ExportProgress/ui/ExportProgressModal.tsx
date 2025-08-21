@@ -58,21 +58,15 @@ export default function ExportProgressModal({
     <Dialog open={open} onClose={onClose} title="Export Video">
       <div className="space-y-6">
         {/* Status Header */}
-        <div className="flex items-center gap-3">
-          {/* {getStatusIcon()} */}
-          <div>
-            <h3 className={`text-lg font-semibold ${getStatusColor()}`}>
-              {getStatusText()}
-            </h3>
-            {/* {jobId && <p className="text-sm text-gray-400">Job ID: {jobId}</p>} */}
-          </div>
-        </div>
+        <h3 className={`text-lg font-semibold ${getStatusColor()}`}>
+          {getStatusText()}
+        </h3>
 
         {/* Progress Bar */}
         {status === "exporting" && (
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-2xl font-semibold">
             <span className="text-gray-300">진행률</span>
-            <span className="text-white font-medium">{progress}%</span>
+            <span className="text-white">{progress}%</span>
           </div>
         )}
 
@@ -100,7 +94,9 @@ export default function ExportProgressModal({
         {/* Action Buttons */}
         <div className="flex w-full">
           {(status === "error" || status === "completed") && (
-            <Button onClick={onClose}>Close</Button>
+            <div className="flex w-full justify-end">
+              <Button onClick={onClose}>Close</Button>
+            </div>
           )}
           {status === "exporting" && (
             <div className="flex justify-between w-full ">

@@ -6,7 +6,8 @@ import {
   SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
+import { VideoService } from './video.service';
 
 @Injectable()
 @WebSocketGateway({
@@ -19,6 +20,11 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   private jobSockets = new Map<string, Set<string>>();
+
+  constructor(
+    @Inject(forwardRef(() => VideoService))
+    private videoService: VideoService,
+  ) {}
 
   handleConnection(client: Socket) {
     console.log(`클라이언트 연결됨: ${client.id}`);
@@ -37,6 +43,22 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const { jobId, clientId } = payload;
     this.subscribeToJob(jobId, clientId);
     client.emit('subscribed', { jobId, message: '작업 구독 완료' });
+  }
+
+  @SubscribeMessage('cancelJob')
+  handleCancelJob(client: Socket, payload: { jobId: string }) {
+    const { jobId } = payload;
+    console.log(`작업 취소 요청 수신: ${jobId} from client: ${client.id}`);
+
+    const success = this.videoService.cancelJob(jobId);
+
+    client.emit('cancelResponse', {
+      jobId,
+      success,
+      message: success
+        ? '작업이 취소되었습니다'
+        : '취소할 작업을 찾을 수 없습니다',
+    });
   }
 
   subscribeToJob(jobId: string, clientId: string) {
@@ -67,6 +89,16 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
           jobId,
           outputPath,
         });
+      });
+      this.jobSockets.delete(jobId);
+    }
+  }
+
+  sendCancelled(jobId: string) {
+    const clients = this.jobSockets.get(jobId);
+    if (clients) {
+      clients.forEach((clientId) => {
+        this.server.to(clientId).emit('cancelled', { jobId });
       });
       this.jobSockets.delete(jobId);
     }

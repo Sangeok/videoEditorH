@@ -102,9 +102,9 @@ export default function EditorHeader() {
     }
   };
 
-  const handleCancel = async () => {
+  const handleCancel = () => {
     if (jobId) {
-      await cancelJob(jobId);
+      cancelJob(jobId);
     }
   };
 

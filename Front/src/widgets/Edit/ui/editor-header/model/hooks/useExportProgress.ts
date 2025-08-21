@@ -65,15 +65,15 @@ export const useExportProgress = () => {
       }));
     });
 
-    socket.on("cancel", (data: { jobId: string }) => {
-      console.log("작업 취소됨:", data);
-      setState((prev) => ({
-        ...prev,
-        jobId: data.jobId,
-        status: "error",
-        error: "작업이 취소되었습니다.",
-      }));
-    });
+    // socket.on("cancel", (data: { jobId: string }) => {
+    //   console.log("작업 취소됨:", data);
+    //   setState((prev) => ({
+    //     ...prev,
+    //     jobId: data.jobId,
+    //     status: "error",
+    //     error: "작업이 취소되었습니다.",
+    //   }));
+    // });
 
     socket.on("error", (data: { jobId: string; error: string }) => {
       console.log("내보내기 오류:", data);
@@ -89,15 +89,31 @@ export const useExportProgress = () => {
     return socket;
   }, []);
 
-  const cancelJob = useCallback((jobId: string) => {
-    const socket = socketRef.current;
-    if (socket && isConnectedRef.current && jobId) {
-      socket.emit("cancelJob", { jobId });
-      console.log("작업 취소됨:", jobId);
-    } else {
-      console.error("작업 취소 실패");
-    }
+  // 상태 초기화 함수
+  const resetState = useCallback(() => {
+    setState({
+      jobId: null,
+      progress: 0,
+      status: "idle",
+      error: undefined,
+      outputPath: undefined,
+    });
   }, []);
+
+  const cancelJob = useCallback(
+    (jobId: string) => {
+      const socket = socketRef.current;
+      if (socket && isConnectedRef.current && jobId) {
+        socket.emit("cancelJob", { jobId });
+        resetState();
+        console.log("작업 취소됨:", jobId);
+      } else {
+        resetState();
+        console.error("작업 취소 실패");
+      }
+    },
+    [resetState]
+  );
 
   // 작업 구독 함수
   const subscribeToJob = useCallback(
@@ -133,17 +149,6 @@ export const useExportProgress = () => {
     },
     [connectSocket]
   );
-
-  // 상태 초기화 함수
-  const resetState = useCallback(() => {
-    setState({
-      jobId: null,
-      progress: 0,
-      status: "idle",
-      error: undefined,
-      outputPath: undefined,
-    });
-  }, []);
 
   // 컴포넌트 언마운트 시 연결 해제
   useEffect(() => {

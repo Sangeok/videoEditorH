@@ -1,7 +1,11 @@
 // video.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { bundle } from '@remotion/bundler';
-import { renderMedia, selectComposition } from '@remotion/renderer';
+import {
+  makeCancelSignal,
+  renderMedia,
+  selectComposition,
+} from '@remotion/renderer';
 import * as path from 'path';
 import type { VideoInputData } from '../types';
 import { VideoGateway } from './video.gateway';
@@ -9,16 +13,24 @@ import { VideoGateway } from './video.gateway';
 @Injectable()
 export class VideoService {
   private cancelledJobs = new Set<string>();
+  private activeJobs = new Map<string, () => void>(); // jobId별 cancel 함수 저장
 
-  constructor(private readonly videoGateway: VideoGateway) {}
+  constructor(
+    @Inject(forwardRef(() => VideoGateway))
+    private readonly videoGateway: VideoGateway,
+  ) {}
 
   async createVideo(
     inputData: VideoInputData,
     jobId?: string,
   ): Promise<string> {
     try {
-      if (jobId && this.cancelledJobs.has(jobId)) {
-        throw new Error('작업이 취소되었습니다.');
+      const { cancelSignal, cancel } = makeCancelSignal();
+
+      // jobId가 있으면 cancel 함수를 저장
+      if (jobId) {
+        this.activeJobs.set(jobId, cancel);
+        console.log(`작업 시작 - JobID: ${jobId}`);
       }
 
       console.log('VideoService createVideo 시작');
@@ -32,10 +44,6 @@ export class VideoService {
       });
       console.log('번들링 완료:', bundleLocation);
 
-      if (jobId && this.cancelledJobs.has(jobId)) {
-        throw new Error('작업이 취소되었습니다.');
-      }
-
       // 2. 컴포지션 선택
       console.log('컴포지션 선택 시작...');
       const composition = await selectComposition({
@@ -44,10 +52,6 @@ export class VideoService {
         inputProps: inputData,
       });
       console.log('컴포지션 정보:', composition);
-
-      if (jobId && this.cancelledJobs.has(jobId)) {
-        throw new Error('작업이 취소되었습니다.');
-      }
 
       // 3. 영상 렌더링
       const outputPath = path.resolve(
@@ -69,10 +73,8 @@ export class VideoService {
         codec: 'h264',
         outputLocation: outputPath,
         inputProps: inputData,
+        cancelSignal,
         onProgress: ({ progress }) => {
-          if (jobId && this.cancelledJobs.has(jobId)) {
-            throw new Error('작업이 취소되었습니다.');
-          }
           console.log(`렌더링 진행률: ${(progress * 100).toFixed(1)}%`);
           if (jobId) {
             this.videoGateway.sendProgress(jobId, progress);
@@ -81,17 +83,39 @@ export class VideoService {
       });
 
       console.log('영상 렌더링 완료:', outputPath);
+
+      // 작업 완료 후 정리
       if (jobId) {
-        this.cancelledJobs.delete(jobId);
+        this.activeJobs.delete(jobId);
       }
+
       return outputPath;
     } catch (error) {
+      // 에러 발생 시 정리
       if (jobId) {
-        this.cancelledJobs.delete(jobId);
+        this.activeJobs.delete(jobId);
       }
+
       throw new Error(
         `영상 생성 실패: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
+  }
+
+  /**
+   * 진행 중인 작업을 취소합니다
+   */
+  cancelJob(jobId: string): boolean {
+    const cancelFunction = this.activeJobs.get(jobId);
+    if (cancelFunction) {
+      console.log(`작업 취소 요청: ${jobId}`);
+      cancelFunction();
+      this.activeJobs.delete(jobId);
+      this.cancelledJobs.add(jobId);
+      this.videoGateway.sendCancelled(jobId);
+      return true;
+    }
+    console.log(`취소할 작업을 찾을 수 없음: ${jobId}`);
+    return false;
   }
 }
