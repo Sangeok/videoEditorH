@@ -12,8 +12,7 @@ import { VideoGateway } from './video.gateway';
 
 @Injectable()
 export class VideoService {
-  private cancelledJobs = new Set<string>();
-  private activeJobs = new Map<string, () => void>(); // jobId별 cancel 함수 저장
+  private activeJobs = new Map<string, () => void>(); // save cancel function by jobId
 
   constructor(
     @Inject(forwardRef(() => VideoGateway))
@@ -27,40 +26,40 @@ export class VideoService {
     try {
       const { cancelSignal, cancel } = makeCancelSignal();
 
-      // jobId가 있으면 cancel 함수를 저장
+      // if jobId exists, save cancel function
       if (jobId) {
         this.activeJobs.set(jobId, cancel);
-        console.log(`작업 시작 - JobID: ${jobId}`);
+        console.log(`job started - JobID: ${jobId}`);
       }
 
-      console.log('VideoService createVideo 시작');
-      console.log('입력 데이터:', JSON.stringify(inputData, null, 2));
+      console.log('VideoService createVideo started');
+      console.log('input data:', JSON.stringify(inputData, null, 2));
 
-      // 1. Remotion 프로젝트 번들링
-      console.log('번들링 시작...');
+      // 1. Remotion project bundling
+      console.log('bundling started...');
       const bundleLocation = await bundle({
         entryPoint: path.resolve(__dirname, '../remotion/index.js'),
         webpackOverride: (config) => config,
       });
-      console.log('번들링 완료:', bundleLocation);
+      console.log('bundling completed:', bundleLocation);
 
-      // 2. 컴포지션 선택
-      console.log('컴포지션 선택 시작...');
+      // 2. select composition
+      console.log('select composition started...');
       const composition = await selectComposition({
         serveUrl: bundleLocation,
         id: 'MyComposition',
         inputProps: inputData,
       });
-      console.log('컴포지션 정보:', composition);
+      console.log('composition info:', composition);
 
-      // 3. 영상 렌더링
+      // 3. render video
       const outputPath = path.resolve(
         __dirname,
         `../../uploads/video-${Date.now()}.mp4`,
       );
 
-      console.log('영상 렌더링 시작...', outputPath);
-      console.log('렌더링 설정:', {
+      console.log('video rendering started...', outputPath);
+      console.log('rendering settings:', {
         duration: composition.durationInFrames,
         fps: composition.fps,
         width: composition.width,
@@ -75,47 +74,46 @@ export class VideoService {
         inputProps: inputData,
         cancelSignal,
         onProgress: ({ progress }) => {
-          console.log(`렌더링 진행률: ${(progress * 100).toFixed(1)}%`);
+          console.log(`rendering progress: ${(progress * 100).toFixed(1)}%`);
           if (jobId) {
             this.videoGateway.sendProgress(jobId, progress);
           }
         },
       });
 
-      console.log('영상 렌더링 완료:', outputPath);
+      console.log('video rendering completed:', outputPath);
 
-      // 작업 완료 후 정리
+      // clean up when job is completed
       if (jobId) {
         this.activeJobs.delete(jobId);
       }
 
       return outputPath;
     } catch (error) {
-      // 에러 발생 시 정리
+      // clean up when error occurs
       if (jobId) {
         this.activeJobs.delete(jobId);
       }
 
       throw new Error(
-        `영상 생성 실패: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `video creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   /**
-   * 진행 중인 작업을 취소합니다
+   * cancel running job(rendering video)
    */
   cancelJob(jobId: string): boolean {
     const cancelFunction = this.activeJobs.get(jobId);
     if (cancelFunction) {
-      console.log(`작업 취소 요청: ${jobId}`);
+      console.log(`cancel job request: ${jobId}`);
       cancelFunction();
       this.activeJobs.delete(jobId);
-      this.cancelledJobs.add(jobId);
       this.videoGateway.sendCancelled(jobId);
       return true;
     }
-    console.log(`취소할 작업을 찾을 수 없음: ${jobId}`);
+    console.log(`Can't find job: ${jobId}`);
     return false;
   }
 }

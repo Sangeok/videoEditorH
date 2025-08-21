@@ -27,11 +27,11 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   handleConnection(client: Socket) {
-    console.log(`클라이언트 연결됨: ${client.id}`);
+    console.log(`client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`클라이언트 연결 해제됨: ${client.id}`);
+    console.log(`client disconnected: ${client.id}`);
     this.cleanupClientFromJobs(client.id);
   }
 
@@ -42,22 +42,20 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const { jobId, clientId } = payload;
     this.subscribeToJob(jobId, clientId);
-    client.emit('subscribed', { jobId, message: '작업 구독 완료' });
+    client.emit('subscribed', { jobId, message: 'job subscribed!!!' });
   }
 
   @SubscribeMessage('cancelJob')
   handleCancelJob(client: Socket, payload: { jobId: string }) {
     const { jobId } = payload;
-    console.log(`작업 취소 요청 수신: ${jobId} from client: ${client.id}`);
+    console.log(`cancel job request: ${jobId} from client: ${client.id}`);
 
     const success = this.videoService.cancelJob(jobId);
 
     client.emit('cancelResponse', {
       jobId,
       success,
-      message: success
-        ? '작업이 취소되었습니다'
-        : '취소할 작업을 찾을 수 없습니다',
+      message: success ? 'job cancelled!!!' : "Can't find job",
     });
   }
 
@@ -66,7 +64,7 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.jobSockets.set(jobId, new Set());
     }
     this.jobSockets.get(jobId)!.add(clientId);
-    console.log(`클라이언트 ${clientId}가 작업 ${jobId}을 구독함`);
+    console.log(`${clientId} subscribed to job ${jobId}`);
   }
 
   sendProgress(jobId: string, progress: number) {

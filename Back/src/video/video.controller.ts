@@ -11,19 +11,18 @@ export class VideoController {
     private readonly videoGateway: VideoGateway,
   ) {}
 
-  // 비동기 영상 생성 요청
   @Post('create')
   createVideo(@Body() videoData: VideoInputData) {
     try {
       const jobId = `job-${Date.now()}`;
 
-      // 백그라운드에서 영상 생성 시작
+      // create video in background
       void this.processVideoInBackground(jobId, videoData);
 
       return {
         success: true,
         jobId,
-        message: '영상 생성이 시작되었습니다.',
+        message: 'video creation started',
       };
     } catch (error) {
       return {
@@ -59,12 +58,12 @@ export class VideoController {
       const outputPath = await this.videoService.createVideo(videoData, jobId);
 
       this.videoGateway.sendCompleted(jobId, outputPath);
-      console.log(`영상 생성 완료: ${outputPath}`);
+      console.log(`video created: ${outputPath}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.videoGateway.sendError(jobId, errorMessage);
-      console.error(`영상 생성 실패 (${jobId}):`, error);
+      console.error(`video creation failed (${jobId}):`, error);
     }
   }
 }
