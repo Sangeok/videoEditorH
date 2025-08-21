@@ -10,8 +10,8 @@ import { MenuItem } from "../constants/MenuItem";
 import { ProjectPersistenceService } from "@/shared/lib/projectPersistence";
 import { useProjectStore } from "@/entities/project/useProjectStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import ExportProgressModal from "@/features/exportProgress/ui/ExportProgressModal";
 import { useExportProgress } from "@/widgets/Edit/ui/editor-header/model/hooks/useExportProgress";
+import ExportProgressModal from "@/features/exportProgress/ui/ExportProgressModal";
 
 export default function EditorHeader() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
