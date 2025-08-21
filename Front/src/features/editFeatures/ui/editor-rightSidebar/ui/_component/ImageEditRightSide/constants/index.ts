@@ -11,6 +11,6 @@ export const ImageEffectMenuItems = {
       name: "fadeOut",
     },
   ],
-};
+} as const;
 
 export const DEFAULT_EFFECT_DURATION = 0.5;

@@ -9,7 +9,7 @@ type DropdownItem = string | { name: string; [key: string]: unknown };
 interface MatchWidthDropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  dropdownItems: DropdownItem[];
+  dropdownItems: readonly DropdownItem[];
   handleSelectEvent?: (item: EffectType) => void;
   position?: DropdownPosition; // 위치 옵션 추가
   targetEl?: HTMLElement | null; // 직접 DOM 요소를 받는 prop 추가

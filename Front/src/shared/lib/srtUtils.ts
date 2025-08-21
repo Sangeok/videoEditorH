@@ -52,9 +52,7 @@ export function parseSRTContent(srtContent: string): ParsedSRTEntry[] {
 /**
  * Convert parsed SRT entries to TextElement format
  */
-export function convertSRTToTextElements(
-  parsedEntries: ParsedSRTEntry[]
-): TextElement[] {
+export function convertSRTToTextElements(parsedEntries: ParsedSRTEntry[]): TextElement[] {
   return parsedEntries.map((entry, index) => ({
     id: `srt-${Date.now()}-${index}`,
     type: "text",
