@@ -1,5 +1,3 @@
-import { MediaElement } from "@/entities/media/types";
-
 // Calculate timeline position in pixels
 export function calculateTimelinePosition(time: number, pixelsPerSecond: number): number {
   return time * pixelsPerSecond;

@@ -7,7 +7,8 @@ import { useMediaDrag } from "../model/hooks/useMediaDrag";
 import { useMediaInteraction } from "../model/hooks/useMediaInteraction";
 import { MediaElement } from "./_component/MediaElement";
 import { EmptyState } from "./_component/EmptyState";
-import { MediaTimelineProps } from "../model/types";
+import { DragState, MediaTimelineProps } from "../model/types";
+import { MediaElement as MediaElementType } from "@/entities/media/types";
 
 export default function MediaTimeline({ className }: MediaTimelineProps = {}) {
   const { media } = useMediaStore();
@@ -45,11 +46,11 @@ function MediaElementsContainer({
   onResizeStart,
   onMediaClick,
 }: {
-  mediaElements: any[];
+  mediaElements: MediaElementType[];
   pixelsPerSecond: number;
-  dragState: any;
+  dragState: DragState;
   onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
-  onMediaClick: (mediaElement: any) => void;
+  onMediaClick: (mediaElement: MediaElementType) => void;
 }) {
   return (
     <div className="relative h-full">
