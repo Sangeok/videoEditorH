@@ -93,7 +93,9 @@ export function useMediaDrag() {
     (e: MouseEvent) => {
       if (!dragState.isDragging || !dragState.elementId) return;
 
+      // calculate the time difference between the start point and the current point
       const deltaX = e.clientX - dragState.startX;
+      // convert the time difference to the time difference in seconds
       const deltaTime = pixelsToTime(deltaX);
 
       if (dragState.dragType === "left") {
