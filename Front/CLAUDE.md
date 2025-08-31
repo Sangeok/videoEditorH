@@ -113,3 +113,16 @@ ComponentName/
 - Dark theme is applied globally via Tailwind CSS
 - State management is entirely client-side with Zustand
 - Player synchronization happens through ref-based communication
+
+## Important Development Reminders
+
+- The working directory is the `front/` directory - all commands should be run from here
+- The main route is located at `app/page.tsx` which contains the video editor interface
+- No test framework is currently configured - if tests are needed, they must be set up first
+- TypeScript configuration uses `@/` imports pointing to `src/` directory
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
