@@ -91,6 +91,128 @@ export function useMediaMove() {
     [getSortedElements, roundTime]
   );
 
+  // Find overlapping elements against the dragged range
+  const findOverlappingElements = useCallback(
+    (targetStartTime: number, duration: number, excludeId: string) => {
+      const sortedElements = getSortedElements(excludeId);
+      const dragStart = roundTime(targetStartTime);
+      const dragEnd = roundTime(targetStartTime + duration);
+
+      return sortedElements.filter((element) => {
+        const elementStart = roundTime(element.startTime);
+        const elementEnd = roundTime(element.endTime);
+        return dragStart < elementEnd && dragEnd > elementStart;
+      });
+    },
+    [getSortedElements, roundTime]
+  );
+
+  // Choose the primary overlapping element (closest center to dragged center)
+  const choosePrimaryOverlap = useCallback(
+    (targetStartTime: number, duration: number, excludeId: string) => {
+      const overlaps = findOverlappingElements(
+        targetStartTime,
+        duration,
+        excludeId
+      );
+      if (overlaps.length === 0) return null;
+
+      const draggedCenter = roundTime(targetStartTime + duration / 2);
+      let best = overlaps[0];
+      let bestDelta = Math.abs(
+        draggedCenter -
+          roundTime((overlaps[0].startTime + overlaps[0].endTime) / 2)
+      );
+
+      for (let i = 1; i < overlaps.length; i += 1) {
+        const candidate = overlaps[i];
+        const candidateCenter = roundTime(
+          (candidate.startTime + candidate.endTime) / 2
+        );
+        const delta = Math.abs(draggedCenter - candidateCenter);
+        if (delta < bestDelta) {
+          best = candidate;
+          bestDelta = delta;
+        }
+      }
+
+      return best;
+    },
+    [findOverlappingElements, roundTime]
+  );
+
+  // Check if a candidate start overlaps any element
+  const hasOverlapAt = useCallback(
+    (candidateStart: number, duration: number, excludeId: string) => {
+      const candidateStartRounded = roundTime(candidateStart);
+      const candidateEndRounded = roundTime(candidateStartRounded + duration);
+      for (const element of getSortedElements(excludeId)) {
+        const elementStart = roundTime(element.startTime);
+        const elementEnd = roundTime(element.endTime);
+        if (
+          candidateStartRounded < elementEnd &&
+          candidateEndRounded > elementStart
+        ) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [getSortedElements, roundTime]
+  );
+
+  // Compute snap start time based on overlap side relative to the overlapping element's center
+  const computeSnapStartForPreview = useCallback(
+    (targetStartTime: number, duration: number, excludeId: string): number => {
+      const primary = choosePrimaryOverlap(
+        targetStartTime,
+        duration,
+        excludeId
+      );
+      if (!primary) {
+        return calculateValidDropTime(targetStartTime, duration, excludeId);
+      }
+
+      const primaryCenter = roundTime(
+        (primary.startTime + primary.endTime) / 2
+      );
+      const draggedCenter = roundTime(targetStartTime + duration / 2);
+
+      let candidateStart: number;
+      if (draggedCenter < primaryCenter) {
+        // Place before overlapping element so dragged end touches its start
+        candidateStart = roundTime(
+          Math.max(0, roundTime(primary.startTime) - duration)
+        );
+      } else {
+        // Place after overlapping element so dragged start touches its end
+        candidateStart = roundTime(primary.endTime);
+      }
+
+      // If candidate still overlaps others, try the opposite side
+      if (hasOverlapAt(candidateStart, duration, excludeId)) {
+        let alternative: number;
+        if (draggedCenter < primaryCenter) {
+          alternative = roundTime(primary.endTime);
+        } else {
+          alternative = roundTime(
+            Math.max(0, roundTime(primary.startTime) - duration)
+          );
+        }
+
+        if (!hasOverlapAt(alternative, duration, excludeId)) {
+          return alternative;
+        }
+
+        // Fallback to default behavior
+        return calculateValidDropTime(targetStartTime, duration, excludeId);
+      }
+
+      return candidateStart;
+    },
+    [choosePrimaryOverlap, calculateValidDropTime, hasOverlapAt, roundTime]
+  );
+
   // Handle move drag start
   const handleMoveStart = useCallback(
     (e: React.MouseEvent, elementId: string) => {
@@ -130,7 +252,7 @@ export function useMediaMove() {
 
       // Calculate target time
       const targetTime = roundTime(moveDragState.originalStartTime + deltaTime);
-      const validTargetTime = calculateValidDropTime(
+      const validTargetTime = computeSnapStartForPreview(
         targetTime,
         duration,
         moveDragState.elementId
@@ -152,7 +274,7 @@ export function useMediaMove() {
       moveDragState,
       pixelsToTime,
       timeToPixels,
-      calculateValidDropTime,
+      computeSnapStartForPreview,
       roundTime,
     ]
   );
@@ -169,7 +291,7 @@ export function useMediaMove() {
       );
       const rawStartTime = roundTime(dropPreview.targetTime);
       // Resolve to a valid non-overlapping start time at drop
-      const resolvedStartTime = calculateValidDropTime(
+      const resolvedStartTime = computeSnapStartForPreview(
         rawStartTime,
         duration,
         moveDragState.elementId
@@ -192,7 +314,7 @@ export function useMediaMove() {
     dropPreview,
     updateMediaElement,
     roundTime,
-    calculateValidDropTime,
+    computeSnapStartForPreview,
   ]);
 
   // Global mouse event listeners
