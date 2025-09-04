@@ -22,20 +22,28 @@ const initialDropPreview: DropPreview = {
 export function useMediaMove() {
   const { media, updateMediaElement } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
-  const [moveDragState, setMoveDragState] = useState<MoveDragState>(initialMoveDragState);
-  const [dropPreview, setDropPreview] = useState<DropPreview>(initialDropPreview);
+  const [moveDragState, setMoveDragState] =
+    useState<MoveDragState>(initialMoveDragState);
+  const [dropPreview, setDropPreview] =
+    useState<DropPreview>(initialDropPreview);
 
   // Convert pixels to time (with precision rounding)
-  const pixelsToTime = useCallback((pixels: number) => {
-    const time = pixels / pixelsPerSecond;
-    return Math.round(time * 1000) / 1000; // Round to 3 decimal places
-  }, [pixelsPerSecond]);
+  const pixelsToTime = useCallback(
+    (pixels: number) => {
+      const time = pixels / pixelsPerSecond;
+      return Math.round(time * 1000) / 1000; // Round to 3 decimal places
+    },
+    [pixelsPerSecond]
+  );
 
   // Convert time to pixels (with precision rounding)
-  const timeToPixels = useCallback((time: number) => {
-    const pixels = time * pixelsPerSecond;
-    return Math.round(pixels * 1000) / 1000; // Round to 3 decimal places
-  }, [pixelsPerSecond]);
+  const timeToPixels = useCallback(
+    (time: number) => {
+      const pixels = time * pixelsPerSecond;
+      return Math.round(pixels * 1000) / 1000; // Round to 3 decimal places
+    },
+    [pixelsPerSecond]
+  );
 
   // Helper function to round time values to 3 decimal places
   const roundTime = useCallback((time: number) => {
@@ -45,7 +53,9 @@ export function useMediaMove() {
   // Get sorted media elements by start time (excluding currently dragged element)
   const getSortedElements = useCallback(
     (excludeId?: string) => {
-      return [...media.mediaElement].filter((el) => el.id !== excludeId).sort((a, b) => a.startTime - b.startTime);
+      return [...media.mediaElement]
+        .filter((el) => el.id !== excludeId)
+        .sort((a, b) => a.startTime - b.startTime);
     },
     [media.mediaElement]
   );
@@ -68,7 +78,10 @@ export function useMediaMove() {
         console.log("duration", roundedDuration);
 
         // If target overlaps with existing element, position after it
-        if (validTime < elementEnd && validTime + roundedDuration > elementStart) {
+        if (
+          validTime < elementEnd &&
+          validTime + roundedDuration > elementStart
+        ) {
           validTime = roundTime(elementEnd);
         }
       }
@@ -101,7 +114,7 @@ export function useMediaMove() {
         elementId,
       });
     },
-    [media.mediaElement, timeToPixels]
+    [media.mediaElement, timeToPixels, roundTime]
   );
 
   // Handle mouse move during drag
@@ -111,11 +124,17 @@ export function useMediaMove() {
 
       const deltaX = e.clientX - moveDragState.startX;
       const deltaTime = pixelsToTime(deltaX);
-      const duration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
+      const duration = roundTime(
+        moveDragState.originalEndTime - moveDragState.originalStartTime
+      );
 
       // Calculate target time
       const targetTime = roundTime(moveDragState.originalStartTime + deltaTime);
-      const validTargetTime = calculateValidDropTime(targetTime, duration, moveDragState.elementId);
+      const validTargetTime = calculateValidDropTime(
+        targetTime,
+        duration,
+        moveDragState.elementId
+      );
 
       // Update ghost position and drop preview
       setMoveDragState((prev) => ({
@@ -123,24 +142,43 @@ export function useMediaMove() {
         ghostPosition: timeToPixels(validTargetTime),
       }));
 
+      // Keep preview at the raw cursor position; show resolved position via ghostPosition
       setDropPreview((prev) => ({
         ...prev,
-        targetTime: validTargetTime,
+        targetTime: targetTime,
       }));
     },
-    [moveDragState, pixelsToTime, timeToPixels, calculateValidDropTime]
+    [
+      moveDragState,
+      pixelsToTime,
+      timeToPixels,
+      calculateValidDropTime,
+      roundTime,
+    ]
   );
 
   // Handle mouse up (drop)
   const handleMouseUp = useCallback(() => {
-    if (moveDragState.isDragging && moveDragState.elementId && dropPreview.isVisible) {
-      const duration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
-      const newStartTime = roundTime(dropPreview.targetTime);
-      const newEndTime = roundTime(newStartTime + duration);
+    if (
+      moveDragState.isDragging &&
+      moveDragState.elementId &&
+      dropPreview.isVisible
+    ) {
+      const duration = roundTime(
+        moveDragState.originalEndTime - moveDragState.originalStartTime
+      );
+      const rawStartTime = roundTime(dropPreview.targetTime);
+      // Resolve to a valid non-overlapping start time at drop
+      const resolvedStartTime = calculateValidDropTime(
+        rawStartTime,
+        duration,
+        moveDragState.elementId
+      );
+      const newEndTime = roundTime(resolvedStartTime + duration);
 
       // Update the media element position
       updateMediaElement(moveDragState.elementId, {
-        startTime: newStartTime,
+        startTime: resolvedStartTime,
         endTime: newEndTime,
         duration,
       });
@@ -149,7 +187,13 @@ export function useMediaMove() {
     // Reset states
     setMoveDragState(initialMoveDragState);
     setDropPreview(initialDropPreview);
-  }, [moveDragState, dropPreview, updateMediaElement, roundTime]);
+  }, [
+    moveDragState,
+    dropPreview,
+    updateMediaElement,
+    roundTime,
+    calculateValidDropTime,
+  ]);
 
   // Global mouse event listeners
   useEffect(() => {
