@@ -13,7 +13,6 @@ export interface MoveDragState {
   isDragging: boolean;
   elementId: string | null;
   startX: number;
-  startY: number;
   originalStartTime: number;
   originalEndTime: number;
   ghostPosition?: number | null; // Preview position in pixels

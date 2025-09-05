@@ -7,7 +7,6 @@ const initialMoveDragState: MoveDragState = {
   isDragging: false,
   elementId: null, // elementId to be dragged
   startX: 0, // starting x position of the drag(pixels)
-  startY: 0, // starting y position of the drag(pixels)
   originalStartTime: 0, // original start time of the element(seconds)
   originalEndTime: 0, // original end time of the element(seconds)
   ghostPosition: null, // preview position in pixels
@@ -71,11 +70,6 @@ export function useMediaMove() {
       for (const element of sortedElements) {
         const elementStart = roundTime(element.startTime);
         const elementEnd = roundTime(element.endTime);
-
-        console.log("validTime", validTime);
-        console.log("elementStart", elementStart);
-        console.log("elementEnd", elementEnd);
-        console.log("duration", roundedDuration);
 
         // If target overlaps with existing element, position after it
         if (
@@ -224,7 +218,6 @@ export function useMediaMove() {
         isDragging: true,
         elementId,
         startX: e.clientX,
-        startY: e.clientY,
         originalStartTime: roundTime(element.startTime),
         originalEndTime: roundTime(element.endTime),
         ghostPosition: timeToPixels(roundTime(element.startTime)),
@@ -281,11 +274,7 @@ export function useMediaMove() {
 
   // Handle mouse up (drop)
   const handleMouseUp = useCallback(() => {
-    if (
-      moveDragState.isDragging &&
-      moveDragState.elementId &&
-      dropPreview.isVisible
-    ) {
+    if (moveDragState.isDragging && moveDragState.elementId) {
       const duration = roundTime(
         moveDragState.originalEndTime - moveDragState.originalStartTime
       );
