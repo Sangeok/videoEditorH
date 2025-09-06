@@ -6,6 +6,9 @@ export interface ResizeDragState {
   startX: number;
   originalStartTime: number;
   originalEndTime: number;
+  // Track the farthest right edge reached during the current resize session
+  // Used to avoid pulling subsequent elements back while mouse is still down
+  maxEndTimeDuringDrag?: number;
 }
 
 // Move drag state (for MediaElement positioning)
