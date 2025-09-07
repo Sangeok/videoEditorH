@@ -11,6 +11,7 @@ import {
   isElementDragging,
   formatTimeDisplay,
 } from "../../lib/timelineLib";
+import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 
 interface MediaElementProps {
   mediaElement: MediaElementType;
@@ -32,6 +33,7 @@ export function MediaElement({
   onClick,
 }: MediaElementProps) {
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+  const isDelete = useTimelineToolStore((state) => state.isDelete);
   const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   // Calculate position and dimensions
@@ -57,11 +59,13 @@ export function MediaElement({
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
     // Check if this is a move drag (not clicking on resize handles)
-    if (onMoveStart && !e.defaultPrevented) {
+    if (!isDelete && onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
       onMoveStart(e, mediaElement.id);
-      setSelectedTrackAndId("Image", mediaElement.id);
+
+      const clickedTrack = mediaElement.type === "video" ? "Video" : "Image";
+      setSelectedTrackAndId(clickedTrack, mediaElement.id);
     } else if (!e.defaultPrevented) {
       // Regular click - don't prevent default to allow normal interactions
       onClick(mediaElement);

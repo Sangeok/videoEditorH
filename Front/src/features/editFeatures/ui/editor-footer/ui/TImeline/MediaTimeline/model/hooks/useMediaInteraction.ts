@@ -13,9 +13,6 @@ export function useMediaInteraction() {
     (mediaElement: MediaElement) => {
       if (isDelete) {
         deleteMediaElement(mediaElement.id);
-      } else {
-        const clickedTrack = mediaElement.type === "video" ? "Video" : "Image";
-        setSelectedTrackAndId(clickedTrack, mediaElement.id);
       }
     },
     [isDelete, deleteMediaElement, setSelectedTrackAndId]
