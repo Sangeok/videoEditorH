@@ -73,7 +73,11 @@ export function useMediaDrag() {
     (e: React.MouseEvent, elementId: string, dragType: DragType) => {
       e.stopPropagation();
       const element = media.mediaElement.find((el) => el.id === elementId);
+
       if (!element) return;
+
+      // element type is video, so we don't need to handle resize
+      if (element.type === "video") return;
 
       setDragState({
         isDragging: true,
