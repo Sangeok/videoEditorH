@@ -1,8 +1,8 @@
 import TimelineRuler from "./TimelineRuler/TimelineRuler";
-import TextTimeline from "./TextTimeline/TextTimeline";
-import CurrentTimeIndicator from "./_component/CurrentTimeIndicator/ui/CurrentTimeIndicator";
-import MediaTimeline from "./MediaTimeline/ui";
-import AudioTimeline from "./AudioTimeline/ui/AudioTimeline";
+import TextTimeline from "./Track/TextTimeline/TextTimeline";
+import CurrentTimeIndicator from "./CurrentTimeIndicator/ui/CurrentTimeIndicator";
+import MediaTimeline from "./Track/MediaTimeline/ui";
+import AudioTimeline from "./Track/AudioTimeline/ui/AudioTimeline";
 
 export default function Timeline() {
   return (
