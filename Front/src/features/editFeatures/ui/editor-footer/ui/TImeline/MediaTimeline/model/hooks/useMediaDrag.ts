@@ -20,6 +20,7 @@ export function useMediaDrag() {
 
   // Convert pixels to time
   const pixelsToTime = useCallback((pixels: number) => pixels / pixelsPerSecond, [pixelsPerSecond]);
+  const roundTime = useCallback((time: number) => Math.round(time * 1000) / 1000, []);
 
   // Get sorted media elements by start time
   const getSortedElements = useCallback(() => {
@@ -35,35 +36,32 @@ export function useMediaDrag() {
     return prevElement.endTime;
   }, []);
 
-  // Adjust subsequent elements when one element's end time changes
-  // if the end time of the current element is changed, the start time of the subsequent elements should be adjusted to maintain the timeline consistency
+  // Adjust subsequent elements only when overlap occurs
   const adjustSubsequentElements = useCallback(
     (elementId: string, newEndTime: number, sortedElements: MediaElement[]): ElementAdjustment[] => {
-      // find the index of the current element
       const currentIndex = sortedElements.findIndex((el) => el.id === elementId);
       if (currentIndex === -1) return [];
 
       const adjustments: ElementAdjustment[] = [];
+      let prevEnd = newEndTime;
 
-      // iterate over the subsequent elements and adjust the start time of the subsequent elements to maintain the timeline consistency
       for (let i = currentIndex + 1; i < sortedElements.length; i++) {
-        // prevElement is the previous element of the current element
-        const prevElement =
-          i === currentIndex + 1
-            ? { ...sortedElements[currentIndex], endTime: newEndTime }
-            : adjustments[adjustments.length - 1];
         const currentElement = sortedElements[i];
+        const overlap = prevEnd - currentElement.startTime;
+        const shift = Math.max(overlap, 0);
 
-        // calculate the time difference between the previous element and the current element
-        const timeDiff = prevElement.endTime - currentElement.startTime;
-        const adjustment: ElementAdjustment = {
-          id: currentElement.id,
-          startTime: prevElement.endTime, // the start time of the subsequent elements should be adjusted to the end time of the previous element
-          endTime: currentElement.endTime + timeDiff, // the end time of the subsequent elements should be adjusted to the end time of the current element + the time difference
-          duration: currentElement.endTime + timeDiff - prevElement.endTime,
-        };
-
-        adjustments.push(adjustment);
+        if (shift > 0) {
+          const adjustment: ElementAdjustment = {
+            id: currentElement.id,
+            startTime: currentElement.startTime + shift,
+            endTime: currentElement.endTime + shift,
+            duration: currentElement.endTime - currentElement.startTime,
+          };
+          adjustments.push(adjustment);
+          prevEnd = adjustment.endTime;
+        } else {
+          prevEnd = currentElement.endTime;
+        }
       }
 
       return adjustments;
@@ -75,7 +73,11 @@ export function useMediaDrag() {
     (e: React.MouseEvent, elementId: string, dragType: DragType) => {
       e.stopPropagation();
       const element = media.mediaElement.find((el) => el.id === elementId);
+
       if (!element) return;
+
+      // element type is video, so we don't need to handle resize
+      if (element.type === "video") return;
 
       setDragState({
         isDragging: true,
@@ -84,6 +86,7 @@ export function useMediaDrag() {
         startX: e.clientX,
         originalStartTime: element.startTime,
         originalEndTime: element.endTime,
+        maxEndTimeDuringDrag: element.endTime,
       });
     },
     [media.mediaElement]
@@ -115,14 +118,15 @@ export function useMediaDrag() {
       const minStartTime = getMinStartTime(dragState.elementId, sortedElements);
 
       let newStartTime = Math.max(minStartTime, dragState.originalStartTime + deltaTime);
+      newStartTime = roundTime(newStartTime);
 
       // Prevent start time from exceeding end time
-      const minAllowedStartTime = dragState.originalEndTime - 0.1;
+      const minAllowedStartTime = roundTime(dragState.originalEndTime - 0.1);
       if (newStartTime >= dragState.originalEndTime) {
         newStartTime = minAllowedStartTime;
       }
 
-      const newDuration = dragState.originalEndTime - newStartTime;
+      const newDuration = roundTime(dragState.originalEndTime - newStartTime);
 
       updateMediaElement(dragState.elementId, {
         startTime: newStartTime,
@@ -130,24 +134,29 @@ export function useMediaDrag() {
         duration: newDuration,
       });
     },
-    [dragState, getSortedElements, getMinStartTime, updateMediaElement]
+    [dragState, getSortedElements, getMinStartTime, updateMediaElement, roundTime]
   );
 
   const handleRightResize = useCallback(
     (deltaTime: number) => {
       if (!dragState.elementId) return;
 
-      const newEndTime = Math.max(dragState.originalStartTime + 0.1, dragState.originalEndTime + deltaTime);
+      let candidateEndTime = Math.max(dragState.originalStartTime + 0.1, dragState.originalEndTime + deltaTime);
+      candidateEndTime = roundTime(candidateEndTime);
+
+      const isExtendingBeyondMax = candidateEndTime > (dragState.maxEndTimeDuringDrag ?? dragState.originalEndTime);
 
       const sortedElements = getSortedElements();
-      const adjustments = adjustSubsequentElements(dragState.elementId, newEndTime, sortedElements);
+      const adjustments = isExtendingBeyondMax
+        ? adjustSubsequentElements(dragState.elementId, candidateEndTime, sortedElements)
+        : [];
 
       // Update current element
       const currentUpdate = {
         id: dragState.elementId,
         updates: {
-          endTime: newEndTime,
-          duration: newEndTime - dragState.originalStartTime,
+          endTime: candidateEndTime,
+          duration: roundTime(candidateEndTime - dragState.originalStartTime),
         },
       };
 
@@ -157,9 +166,9 @@ export function useMediaDrag() {
         ...adjustments.map((adj) => ({
           id: adj.id,
           updates: {
-            startTime: adj.startTime,
-            endTime: adj.endTime,
-            duration: adj.duration,
+            startTime: roundTime(adj.startTime),
+            endTime: roundTime(adj.endTime),
+            duration: roundTime(adj.duration),
           },
         })),
       ];
@@ -167,8 +176,16 @@ export function useMediaDrag() {
       if (allUpdates.length > 0) {
         updateMultipleMediaElements(allUpdates);
       }
+
+      // Track the farthest right edge reached during this drag
+      if (isExtendingBeyondMax) {
+        setDragState((prev) => ({
+          ...prev,
+          maxEndTimeDuringDrag: candidateEndTime,
+        }));
+      }
     },
-    [dragState, getSortedElements, adjustSubsequentElements, updateMultipleMediaElements]
+    [dragState, getSortedElements, adjustSubsequentElements, updateMultipleMediaElements, roundTime]
   );
 
   const handleMouseUp = useCallback(() => {

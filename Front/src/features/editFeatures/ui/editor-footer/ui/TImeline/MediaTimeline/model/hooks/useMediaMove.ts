@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { MoveDragState, DropPreview } from "../types";
+import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 
 const initialMoveDragState: MoveDragState = {
   isDragging: false,
@@ -25,6 +26,7 @@ export function useMediaMove() {
     useState<MoveDragState>(initialMoveDragState);
   const [dropPreview, setDropPreview] =
     useState<DropPreview>(initialDropPreview);
+  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   // Convert pixels to time (with precision rounding)
   const pixelsToTime = useCallback(
@@ -214,6 +216,8 @@ export function useMediaMove() {
       const element = media.mediaElement.find((el) => el.id === elementId);
       if (!element) return;
 
+      if (isDelete) return;
+
       setMoveDragState({
         isDragging: true,
         elementId,
@@ -229,7 +233,7 @@ export function useMediaMove() {
         elementId,
       });
     },
-    [media.mediaElement, timeToPixels, roundTime]
+    [media.mediaElement, timeToPixels, roundTime, isDelete]
   );
 
   // Handle mouse move during drag
@@ -274,7 +278,11 @@ export function useMediaMove() {
 
   // Handle mouse up (drop)
   const handleMouseUp = useCallback(() => {
-    if (moveDragState.isDragging && moveDragState.elementId) {
+    if (
+      moveDragState.isDragging &&
+      moveDragState.elementId &&
+      dropPreview.isVisible
+    ) {
       const duration = roundTime(
         moveDragState.originalEndTime - moveDragState.originalStartTime
       );

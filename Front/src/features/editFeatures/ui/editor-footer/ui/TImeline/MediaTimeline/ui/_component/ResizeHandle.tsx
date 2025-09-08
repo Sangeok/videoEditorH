@@ -12,11 +12,11 @@ export function ResizeHandle({ position, isVisible, onMouseDown }: ResizeHandleP
   const positionClasses = getPositionClasses(position);
   const visibilityClass = isVisible ? "opacity-100" : "opacity-0";
   const cursorClass = position === "left" ? "cursor-w-resize" : "cursor-e-resize";
-  
+
   const handleClasses = [
     "absolute",
     "top-0",
-    "w-2",
+    "w-1",
     "h-full",
     "bg-indigo-500",
     "transition-opacity",
@@ -27,13 +27,7 @@ export function ResizeHandle({ position, isVisible, onMouseDown }: ResizeHandleP
 
   const title = position === "left" ? "Resize start time" : "Resize end time";
 
-  return (
-    <div
-      className={handleClasses}
-      onMouseDown={onMouseDown}
-      title={title}
-    />
-  );
+  return <div className={handleClasses} onMouseDown={onMouseDown} title={title} />;
 }
 
 function getPositionClasses(position: "left" | "right"): string {
