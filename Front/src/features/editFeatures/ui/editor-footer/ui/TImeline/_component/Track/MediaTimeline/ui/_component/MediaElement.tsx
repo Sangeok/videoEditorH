@@ -18,9 +18,13 @@ interface MediaElementProps {
   pixelsPerSecond: number;
   dragState: DragState;
   moveDragState?: MoveDragState;
-  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: DragType) => void;
+  onResizeStart: (
+    e: React.MouseEvent,
+    elementId: string,
+    dragType: DragType
+  ) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (mediaElement: MediaElementType) => void;
+  onClick: (selectedElements: MediaElementType) => void;
 }
 
 export function MediaElement({
@@ -31,18 +35,32 @@ export function MediaElement({
   onResizeStart,
   onMoveStart,
   onClick,
-}: MediaElementProps) {
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+}: // onClick,
+MediaElementProps) {
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
+  const selectedTrackId = useSelectedTrackStore(
+    (state) => state.selectedTrackId
+  );
 
   // Calculate position and dimensions
-  const leftPosition = calculateTimelinePosition(mediaElement.startTime, pixelsPerSecond);
-  const width = calculateElementWidth(mediaElement.startTime, mediaElement.endTime, pixelsPerSecond);
+  const leftPosition = calculateTimelinePosition(
+    mediaElement.startTime,
+    pixelsPerSecond
+  );
+  const width = calculateElementWidth(
+    mediaElement.startTime,
+    mediaElement.endTime,
+    pixelsPerSecond
+  );
 
   // Check drag states
   const isResizeDragging = isElementDragging(mediaElement.id, dragState);
-  const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === mediaElement.id);
+  const isMoveDragging = Boolean(
+    moveDragState?.isDragging && moveDragState.elementId === mediaElement.id
+  );
   const isDragging = isResizeDragging || isMoveDragging;
   const isSelected = selectedTrackId === mediaElement.id;
 
@@ -73,7 +91,12 @@ export function MediaElement({
   };
 
   return (
-    <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
+    <div
+      className={elementClasses}
+      onMouseDown={handleMouseDown}
+      style={elementStyles}
+      title={title}
+    >
       {/* Left resize handle */}
       <ResizeHandle
         position="left"
@@ -84,7 +107,9 @@ export function MediaElement({
         }}
       />
 
-      <span className="truncate px-3 pointer-events-none select-none">{mediaElement.id || "Media"}</span>
+      <span className="truncate px-3 pointer-events-none select-none">
+        {mediaElement.id || "Media"}
+      </span>
       {/* Media content */}
 
       {/* Right resize handle */}
@@ -100,7 +125,10 @@ export function MediaElement({
   );
 }
 
-function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): string {
+function getElementClasses(
+  isDragging: boolean,
+  isMoveDragging?: boolean
+): string {
   const baseClasses = [
     "absolute",
     "top-2",
@@ -138,6 +166,9 @@ function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): strin
 }
 
 function generateElementTitle(mediaElement: MediaElementType): string {
-  const timeDisplay = formatTimeDisplay(mediaElement.startTime, mediaElement.endTime);
+  const timeDisplay = formatTimeDisplay(
+    mediaElement.startTime,
+    mediaElement.endTime
+  );
   return `${mediaElement.type} (${timeDisplay})`;
 }
