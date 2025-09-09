@@ -1,18 +1,17 @@
-import { AudioElement as AudioElementType } from "@/entities/media/types";
-import { ResizeDragType } from "../../model/types";
-import { MoveDragState } from "../../model/types";
+import { TextElement as TextElementType } from "@/entities/media/types";
+import { MoveDragState, ResizeDragType } from "../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { ResizeHandle } from "../../ui/ResizeHandle";
 import {
   calculateElementWidth,
   calculateTimelinePosition,
   formatTimeDisplay,
   isElementDragging,
 } from "../../lib/timelineLib";
+import { ResizeHandle } from "../_component/ResizeHandle";
 
 interface TextElementProps {
-  audioElement: AudioElementType;
+  textElement: TextElementType;
   pixelsPerSecond: number;
   dragState: MoveDragState;
   moveDragState?: MoveDragState;
@@ -25,8 +24,8 @@ interface TextElementProps {
   onClick: (selectedElements: string) => void;
 }
 
-export default function AudioElement({
-  audioElement,
+export default function TextElement({
+  textElement,
   pixelsPerSecond,
   dragState,
   moveDragState,
@@ -44,22 +43,22 @@ export default function AudioElement({
 
   // Calculate position and dimensions
   const leftPosition = calculateTimelinePosition(
-    audioElement.startTime,
+    textElement.startTime,
     pixelsPerSecond
   );
   const width = calculateElementWidth(
-    audioElement.startTime,
-    audioElement.endTime,
+    textElement.startTime,
+    textElement.endTime,
     pixelsPerSecond
   );
 
   // Check drag states
-  const isResizeDragging = isElementDragging(audioElement.id, dragState);
+  const isResizeDragging = isElementDragging(textElement.id, dragState);
   const isMoveDragging = Boolean(
-    moveDragState?.isDragging && moveDragState.elementId === audioElement.id
+    moveDragState?.isDragging && moveDragState.elementId === textElement.id
   );
   const isDragging = isResizeDragging || isMoveDragging;
-  const isSelected = selectedTrackId === audioElement.id;
+  const isSelected = selectedTrackId === textElement.id;
 
   // Generate styles with visibility for move dragging
   const elementStyles = {
@@ -69,7 +68,7 @@ export default function AudioElement({
   };
 
   const elementClasses = getElementClasses(isDragging, isMoveDragging);
-  const title = generateElementTitle(audioElement);
+  const title = generateElementTitle(textElement);
 
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -77,12 +76,12 @@ export default function AudioElement({
     if (!isDelete && onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
-      onMoveStart(e, audioElement.id);
+      onMoveStart(e, textElement.id);
 
-      setSelectedTrackAndId("Text", audioElement.id);
+      setSelectedTrackAndId("Text", textElement.id);
     } else if (!e.defaultPrevented) {
       // Regular click - don't prevent default to allow normal interactions
-      onClick(audioElement.id);
+      onClick(textElement.id);
     }
   };
 
@@ -99,12 +98,12 @@ export default function AudioElement({
         isVisible={isSelected}
         onMouseDown={(e) => {
           e.preventDefault();
-          onResizeStart(e, audioElement.id, "left");
+          onResizeStart(e, textElement.id, "left");
         }}
       />
 
       <span className="truncate px-3 pointer-events-none select-none">
-        {audioElement.id || "Text"}
+        {textElement.id || "Text"}
       </span>
       {/* Media content */}
 
@@ -114,7 +113,7 @@ export default function AudioElement({
         isVisible={isSelected}
         onMouseDown={(e) => {
           e.preventDefault();
-          onResizeStart(e, audioElement.id, "right");
+          onResizeStart(e, textElement.id, "right");
         }}
       />
     </div>
@@ -161,10 +160,10 @@ function getElementClasses(
   return [...baseClasses, cursorClass].join(" ");
 }
 
-function generateElementTitle(audioElement: AudioElementType): string {
+function generateElementTitle(textElement: TextElementType): string {
   const timeDisplay = formatTimeDisplay(
-    audioElement.startTime,
-    audioElement.endTime
+    textElement.startTime,
+    textElement.endTime
   );
-  return `${audioElement.type} (${timeDisplay})`;
+  return `${textElement.type} (${timeDisplay})`;
 }

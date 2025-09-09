@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { calculateElementWidth } from "../lib/timelineLib";
-import { DropPreview, MoveDragState } from "../model/types";
+import { calculateElementWidth } from "../../lib/timelineLib";
+import { DropPreview, MoveDragState } from "../../model/types";
 
 interface DropIndicatorProps {
   dropPreview: DropPreview;

@@ -2,50 +2,50 @@
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useTrackElementDrag } from "../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../model/hooks/useTrackElementMove";
 import { useRef } from "react";
-import { EmptyState } from "../ui/EmptyState";
-import { useTrackElementInteraction } from "../model/hooks/useTrackElementInteraction";
-import { TextElement as TextElementType } from "@/entities/media/types";
-import { DropIndicator } from "../ui/DropIndicator";
-import TextElement from "./TextElement";
-import { DropPreview, MoveDragState } from "../model/types";
+import { AudioElement as AudioElementType } from "@/entities/media/types";
+import { useTrackElementDrag } from "../../../model/hooks/useTrackElementDrag";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove";
+import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
+import { EmptyState } from "../../_component/EmptyState";
+import { DropPreview, MoveDragState } from "../../../model/types";
+import { DropIndicator } from "../../_component/DropIndicator";
+import AudioElement from "./AudioElement";
 
-export default function TextTimeline() {
+export default function AudioTimeline() {
   const {
     media,
-    updateTextElement,
-    deleteTextElement,
-    updateMultipleTextElements,
+    updateAudioElement,
+    deleteAudioElement,
+    updateMultipleAudioElements,
   } = useMediaStore();
 
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   const { dragState, handleResizeStart } = useTrackElementDrag({
-    SelectedElements: media.textElement,
-    updateSelectedElements: updateTextElement,
-    updateMultipleSelectedElements: updateMultipleTextElements,
+    SelectedElements: media.audioElement,
+    updateSelectedElements: updateAudioElement,
+    updateMultipleSelectedElements: updateMultipleAudioElements,
   });
 
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
-    SelectedElements: media.textElement,
-    updateSelectedElements: updateTextElement,
+    SelectedElements: media.audioElement,
+    updateSelectedElements: updateAudioElement,
   });
 
   const { handleTrackElementClick } = useTrackElementInteraction({
-    deleteSelectedElements: deleteTextElement,
+    deleteSelectedElements: deleteAudioElement,
   });
 
   const timelineRef = useRef<HTMLDivElement>(null);
 
-  const hasTextElements = media.textElement.length > 0;
+  const hasAudioElements = media.audioElement.length > 0;
 
   return (
     <div ref={timelineRef} className="relative w-full h-full bg-zinc-900">
-      {hasTextElements && (
-        <TextElementsContainer
-          textElements={media.textElement}
+      {hasAudioElements && (
+        <AudioElementsContainer
+          audioElements={media.audioElement}
           pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}
@@ -55,14 +55,14 @@ export default function TextTimeline() {
           onTrackElementClick={handleTrackElementClick}
         />
       )}
-      {!hasTextElements && <EmptyState />}
+      {!hasAudioElements && <EmptyState />}
     </div>
   );
 }
 
-// Separated container component for text elements
-function TextElementsContainer({
-  textElements,
+// Separated container component for audio elements
+function AudioElementsContainer({
+  audioElements,
   pixelsPerSecond,
   dragState,
   moveDragState,
@@ -71,7 +71,7 @@ function TextElementsContainer({
   onMoveStart,
   onTrackElementClick,
 }: {
-  textElements: TextElementType[];
+  audioElements: AudioElementType[];
   pixelsPerSecond: number;
   dragState: MoveDragState;
   moveDragState: MoveDragState;
@@ -93,11 +93,11 @@ function TextElementsContainer({
         pixelsPerSecond={pixelsPerSecond}
       />
 
-      {/* Text elements */}
-      {textElements.map((textElement) => (
-        <TextElement
-          key={textElement.id}
-          textElement={textElement}
+      {/* Audio elements */}
+      {audioElements.map((audioElement) => (
+        <AudioElement
+          key={audioElement.id}
+          audioElement={audioElement}
           pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}

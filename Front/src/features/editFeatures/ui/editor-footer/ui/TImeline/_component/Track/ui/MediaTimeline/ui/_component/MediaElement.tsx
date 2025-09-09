@@ -3,28 +3,32 @@
 import React from "react";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { DragState, DragType, MoveDragState } from "../../model/types";
-import { ResizeHandle } from "./ResizeHandle";
+import {
+  ResizeDragState,
+  ResizeDragType,
+  MoveDragState,
+} from "../../../../model/types";
+import { ResizeHandle } from "../../../../ui/_component/ResizeHandle";
 import {
   calculateTimelinePosition,
   calculateElementWidth,
   isElementDragging,
   formatTimeDisplay,
-} from "../../lib/timelineLib";
+} from "../../../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 
 interface MediaElementProps {
   mediaElement: MediaElementType;
   pixelsPerSecond: number;
-  dragState: DragState;
+  dragState: ResizeDragState;
   moveDragState?: MoveDragState;
   onResizeStart: (
     e: React.MouseEvent,
     elementId: string,
-    dragType: DragType
+    dragType: ResizeDragType
   ) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (selectedElements: MediaElementType) => void;
+  onClick: (trackElementId: string) => void;
 }
 
 export function MediaElement({
@@ -86,7 +90,7 @@ MediaElementProps) {
       setSelectedTrackAndId(clickedTrack, mediaElement.id);
     } else if (!e.defaultPrevented) {
       // Regular click - don't prevent default to allow normal interactions
-      onClick(mediaElement);
+      onClick(mediaElement.id);
     }
   };
 
