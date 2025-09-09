@@ -10,7 +10,7 @@ export function useTrackElementInteraction({
 }: UseTrackElementInteractionProps) {
   const isDelete = useTimelineToolStore((state) => state.isDelete);
 
-  const handleMediaClick = useCallback(
+  const handleTrackElementClick = useCallback(
     (selectedElements: string) => {
       if (isDelete) {
         deleteSelectedElements(selectedElements);
@@ -20,6 +20,6 @@ export function useTrackElementInteraction({
   );
 
   return {
-    handleMediaClick,
+    handleTrackElementClick,
   };
 }

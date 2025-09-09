@@ -25,6 +25,9 @@ interface MediaStore {
     textElementId: string,
     style: { backgroundColor: string; textColor: string }
   ) => void;
+  updateMultipleTextElements: (
+    updates: Array<{ id: string; updates: Partial<TextElement> }>
+  ) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (
@@ -88,10 +91,16 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         (textElement) => textElement.id !== textElementId
       );
 
+      const allElements = [
+        ...state.media.textElement,
+        ...state.media.audioElement,
+        ...updatedTextElements,
+      ];
+
       // recalculate projectDuration after deletion
       const newProjectDuration =
-        updatedTextElements.length > 0
-          ? Math.max(...updatedTextElements.map((element) => element.endTime))
+        allElements.length > 0
+          ? Math.max(...allElements.map((element) => element.endTime))
           : 0;
 
       return {
