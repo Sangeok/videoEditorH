@@ -43,6 +43,9 @@ interface MediaStore {
     audioElementId: string,
     updates: Partial<AudioElement>
   ) => void;
+  updateMultipleAudioElements: (
+    updates: Array<{ id: string; updates: Partial<AudioElement> }>
+  ) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({

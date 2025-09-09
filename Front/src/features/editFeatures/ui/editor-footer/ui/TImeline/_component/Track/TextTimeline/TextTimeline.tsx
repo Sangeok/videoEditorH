@@ -1,68 +1,111 @@
 "use client";
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import { TextElement } from "@/entities/media/types";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { timeToPixels } from "@/features/editFeatures/ui/editor-footer/lib/zoomUtils";
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
+import { useTrackElementDrag } from "../model/hooks/useTrackElementDrag";
+import { useTrackElementMove } from "../model/hooks/useTrackElementMove";
+import { useRef } from "react";
+import { EmptyState } from "../ui/EmptyState";
+import { useTrackElementInteraction } from "../model/hooks/useTrackElementInteraction";
+import { TextElement as TextElementType } from "@/entities/media/types";
+import { DropIndicator } from "../ui/DropIndicator";
+import TextElement from "./TextElement";
+import { DropPreview, MoveDragState } from "../model/types";
 
 export default function TextTimeline() {
-  const { media, deleteTextElement } = useMediaStore();
+  const {
+    media,
+    updateTextElement,
+    deleteTextElement,
+    updateMultipleTextElements,
+  } = useMediaStore();
 
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
-  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
+  const { dragState, handleResizeStart } = useTrackElementDrag({
+    SelectedElements: media.textElement,
+    updateSelectedElements: updateTextElement,
+    updateMultipleSelectedElements: updateMultipleTextElements,
+  });
 
-  const handleTextClick = (textElement: TextElement) => {
-    if (isDelete) {
-      deleteTextElement(textElement.id);
-    } else {
-      setSelectedTrackAndId("Text", textElement.id);
-    }
-  };
+  const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
+    SelectedElements: media.textElement,
+    updateSelectedElements: updateTextElement,
+  });
+
+  const { handleTrackElementClick } = useTrackElementInteraction({
+    deleteSelectedElements: deleteTextElement,
+  });
+
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  const hasTextElements = media.textElement.length > 0;
 
   return (
-    <div className="relative w-full h-full bg-zinc-900">
-      {/* text elements */}
-      <div className="relative h-full">
-        {media.textElement.map((textElement) => {
-          const leftPosition = timeToPixels(
-            textElement.startTime,
-            pixelsPerSecond
-          );
-          const width = timeToPixels(
-            textElement.endTime - textElement.startTime,
-            pixelsPerSecond
-          );
-
-          return (
-            <div
-              key={textElement.id}
-              className="absolute top-2 h-12 bg-gray-700 hover:bg-gray-800 border-1 border-b-4 border-gray-500 rounded cursor-pointer transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden"
-              style={{
-                left: `${leftPosition}px`,
-                width: `${width}px`,
-              }}
-              onClick={() => handleTextClick(textElement)}
-              title={`${textElement.text} (${textElement.startTime}s - ${textElement.endTime}s)`}
-            >
-              {/* text content (adjust width) */}
-              <span className="truncate px-2">{textElement.id || "Text"}</span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* empty state message */}
-      {media.textElement.length === 0 && (
-        <div className="absolute top-0 w-full h-full flex items-center justify-center text-gray-500 text-sm">
-          There is no text element.
-        </div>
+    <div ref={timelineRef} className="relative w-full h-full bg-zinc-900">
+      {hasTextElements && (
+        <TextElementsContainer
+          textElements={media.textElement}
+          pixelsPerSecond={pixelsPerSecond}
+          dragState={dragState}
+          moveDragState={moveDragState}
+          dropPreview={dropPreview}
+          onResizeStart={handleResizeStart}
+          onMoveStart={handleMoveStart}
+          onTrackElementClick={handleTrackElementClick}
+        />
       )}
+      {!hasTextElements && <EmptyState />}
+    </div>
+  );
+}
+
+// Separated container component for text elements
+function TextElementsContainer({
+  textElements,
+  pixelsPerSecond,
+  dragState,
+  moveDragState,
+  dropPreview,
+  onResizeStart,
+  onMoveStart,
+  onTrackElementClick,
+}: {
+  textElements: TextElementType[];
+  pixelsPerSecond: number;
+  dragState: MoveDragState;
+  moveDragState: MoveDragState;
+  dropPreview: DropPreview;
+  onResizeStart: (
+    e: React.MouseEvent,
+    elementId: string,
+    dragType: "left" | "right"
+  ) => void;
+  onMoveStart: (e: React.MouseEvent, elementId: string) => void;
+  onTrackElementClick: (trackElementId: string) => void;
+}) {
+  return (
+    <div className="relative h-full">
+      {/* Drop indicator for move preview */}
+      <DropIndicator
+        dropPreview={dropPreview}
+        moveDragState={moveDragState}
+        pixelsPerSecond={pixelsPerSecond}
+      />
+
+      {/* Text elements */}
+      {textElements.map((textElement) => (
+        <TextElement
+          key={textElement.id}
+          textElement={textElement}
+          pixelsPerSecond={pixelsPerSecond}
+          dragState={dragState}
+          moveDragState={moveDragState}
+          onResizeStart={onResizeStart}
+          onMoveStart={onMoveStart}
+          onClick={onTrackElementClick}
+        />
+      ))}
     </div>
   );
 }
