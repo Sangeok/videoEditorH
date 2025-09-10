@@ -12,7 +12,7 @@ import {
 } from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useTrackElementDrag } from "../../../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";

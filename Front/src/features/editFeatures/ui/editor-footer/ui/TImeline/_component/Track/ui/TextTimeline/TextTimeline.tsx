@@ -3,7 +3,7 @@
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useTrackElementDrag } from "../../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../../model/hooks/useTrackElementMove";
+import { useTrackElementMove } from "../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useRef } from "react";
 import { EmptyState } from "../_component/EmptyState";
 import { useTrackElementInteraction } from "../../model/hooks/useTrackElementInteraction";

@@ -6,8 +6,8 @@ import {
   MediaElement,
   TextElement,
 } from "@/entities/media/types";
-import { createElementPositioner } from "../utils/elementPositioning";
-import { useDragState } from "./useDragState";
+import { createElementPositioner } from "./_internal/elementPositioning";
+import { useDragState } from "../useDragState";
 import {
   pixelsToTime,
   roundTime,

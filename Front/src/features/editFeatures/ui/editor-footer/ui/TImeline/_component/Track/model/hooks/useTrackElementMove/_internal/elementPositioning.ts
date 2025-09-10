@@ -26,7 +26,7 @@ export function createElementPositioner<T extends TimelineElement>(
       const elementStart = roundTime(element.startTime);
       const elementEnd = roundTime(element.endTime);
 
-      const wouldOverlapWithElement = 
+      const wouldOverlapWithElement =
         validTime < elementEnd && validTime + roundedDuration > elementStart;
 
       if (wouldOverlapWithElement) {
@@ -59,7 +59,7 @@ export function createElementPositioner<T extends TimelineElement>(
     const isDraggedLeftOfPrimary = draggedCenter < primaryCenter;
 
     let candidateStart: number;
-    
+
     if (isDraggedLeftOfPrimary) {
       candidateStart = roundTime(
         Math.max(0, roundTime(primaryOverlapElement.startTime) - duration)
@@ -68,15 +68,25 @@ export function createElementPositioner<T extends TimelineElement>(
       candidateStart = roundTime(primaryOverlapElement.endTime);
     }
 
-    const candidateHasOverlap = hasOverlapAt(candidateStart, duration, excludeId);
-    
+    const candidateHasOverlap = hasOverlapAt(
+      candidateStart,
+      duration,
+      excludeId
+    );
+
     if (candidateHasOverlap) {
       const alternativePosition = isDraggedLeftOfPrimary
         ? roundTime(primaryOverlapElement.endTime)
-        : roundTime(Math.max(0, roundTime(primaryOverlapElement.startTime) - duration));
+        : roundTime(
+            Math.max(0, roundTime(primaryOverlapElement.startTime) - duration)
+          );
 
-      const alternativeHasNoOverlap = !hasOverlapAt(alternativePosition, duration, excludeId);
-      
+      const alternativeHasNoOverlap = !hasOverlapAt(
+        alternativePosition,
+        duration,
+        excludeId
+      );
+
       if (alternativeHasNoOverlap) {
         return alternativePosition;
       }

@@ -5,7 +5,7 @@ import useTimelineStore from "@/features/editFeatures/model/store/useTimelineSto
 import { useRef } from "react";
 import { AudioElement as AudioElementType } from "@/entities/media/types";
 import { useTrackElementDrag } from "../../../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { EmptyState } from "../../_component/EmptyState";
 import { DropPreview, MoveDragState } from "../../../model/types";
