@@ -12,6 +12,7 @@ interface TimeRange {
   end: number;
 }
 
+// Create a time range object
 function createTimeRange(startTime: number, duration: number): TimeRange {
   return {
     start: roundTime(startTime),
@@ -19,6 +20,7 @@ function createTimeRange(startTime: number, duration: number): TimeRange {
   };
 }
 
+// Extract the time range of the timeline element
 function getElementTimeRange(element: TimelineElement): TimeRange {
   return {
     start: roundTime(element.startTime),
@@ -26,26 +28,33 @@ function getElementTimeRange(element: TimelineElement): TimeRange {
   };
 }
 
+// Judge if the time ranges overlap
 function doTimeRangesOverlap(range1: TimeRange, range2: TimeRange): boolean {
   return range1.start < range2.end && range1.end > range2.start;
 }
 
-function getElementCenter(element: TimelineElement): number {
+// Calculate the center time position of the timeline element
+function calculateElementCenterTime(element: TimelineElement): number {
   return roundTime((element.startTime + element.endTime) / 2);
 }
 
-function findClosestElementByCenter<T extends TimelineElement>(
+// Find the closest element to the target(dragging element) center position
+function findElementClosestToCenter<T extends TimelineElement>(
   elements: T[],
-  targetCenter: number
+  targetCenter: number // dragged element center time
 ): T | null {
   if (elements.length === 0) return null;
 
   let closest = elements[0];
-  let minDistance = Math.abs(targetCenter - getElementCenter(closest));
+  let minDistance = Math.abs(
+    targetCenter - calculateElementCenterTime(closest)
+  );
 
   for (let i = 1; i < elements.length; i++) {
     const element = elements[i];
-    const distance = Math.abs(targetCenter - getElementCenter(element));
+    const distance = Math.abs(
+      targetCenter - calculateElementCenterTime(element)
+    );
     if (distance < minDistance) {
       closest = element;
       minDistance = distance;
@@ -55,21 +64,24 @@ function findClosestElementByCenter<T extends TimelineElement>(
   return closest;
 }
 
+// Factory function to provide functionality for detecting and handling overlaps of timeline elements
 export function createOverlapDetector<T extends TimelineElement>(
   elements: T[]
 ) {
-  function getSortedElements(excludeId?: string): T[] {
+  // Return the list of elements sorted by start time
+  function getFilteredAndSortedElements(excludeId?: string): T[] {
     return [...elements]
       .filter((el) => el.id !== excludeId)
       .sort((a, b) => a.startTime - b.startTime);
   }
 
+  // Find all elements that overlap with the target time range
   function findOverlappingElements(
     targetStartTime: number,
     duration: number,
     excludeId: string
   ): T[] {
-    const sortedElements = getSortedElements(excludeId);
+    const sortedElements = getFilteredAndSortedElements(excludeId);
     const targetRange = createTimeRange(targetStartTime, duration);
 
     return sortedElements.filter((element) => {
@@ -78,7 +90,8 @@ export function createOverlapDetector<T extends TimelineElement>(
     });
   }
 
-  function findPrimaryOverlapElement(
+  // Return the closest primary overlap element
+  function findClosestOverlappingElement(
     targetStartTime: number,
     duration: number,
     excludeId: string
@@ -90,16 +103,17 @@ export function createOverlapDetector<T extends TimelineElement>(
     );
 
     const targetCenter = roundTime(targetStartTime + duration / 2);
-    return findClosestElementByCenter(overlappingElements, targetCenter);
+    return findElementClosestToCenter(overlappingElements, targetCenter);
   }
 
+  // Check if there is an overlap at the candidate position
   function hasOverlapAt(
     candidateStart: number,
     duration: number,
     excludeId: string
   ): boolean {
     const candidateRange = createTimeRange(candidateStart, duration);
-    const sortedElements = getSortedElements(excludeId);
+    const sortedElements = getFilteredAndSortedElements(excludeId);
 
     return sortedElements.some((element) => {
       const elementRange = getElementTimeRange(element);
@@ -108,9 +122,9 @@ export function createOverlapDetector<T extends TimelineElement>(
   }
 
   return {
-    getSortedElements,
+    getFilteredAndSortedElements,
     findOverlappingElements,
-    findPrimaryOverlapElement,
+    findClosestOverlappingElement,
     hasOverlapAt,
     roundTime,
   };

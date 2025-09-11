@@ -4,7 +4,7 @@ import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useRef } from "react";
 import { AudioElement as AudioElementType } from "@/entities/media/types";
-import { useTrackElementDrag } from "../../../model/hooks/useTrackElementDrag";
+import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { EmptyState } from "../../_component/EmptyState";
@@ -22,7 +22,7 @@ export default function AudioTimeline() {
 
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
-  const { dragState, handleResizeStart } = useTrackElementDrag({
+  const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.audioElement,
     updateSelectedElements: updateAudioElement,
     updateMultipleSelectedElements: updateMultipleAudioElements,

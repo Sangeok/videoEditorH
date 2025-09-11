@@ -7,7 +7,7 @@ import {
   TextElement,
 } from "@/entities/media/types";
 import { createElementPositioner } from "./_internal/elementPositioning";
-import { useDragState } from "../useDragState";
+import { useDragState } from "./_internal/useDragState";
 import {
   pixelsToTime,
   roundTime,
