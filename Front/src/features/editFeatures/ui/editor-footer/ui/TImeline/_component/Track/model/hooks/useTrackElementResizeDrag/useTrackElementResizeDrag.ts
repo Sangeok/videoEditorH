@@ -39,10 +39,11 @@ export function useTrackElementResizeDrag<
     createElementConstraints(SelectedElements);
   const { dragState, startDrag, endDrag, updateMaxEndTime } =
     useResizeDragState<T>();
-  const { updateSingleElement, updateMultipleElements } = createElementUpdater({
-    updateSelectedElements,
-    updateMultipleSelectedElements,
-  });
+  const { updateElementTimeProperties, updateMultipleElementsTimeProperties } =
+    createElementUpdater({
+      updateSelectedElements,
+      updateMultipleSelectedElements,
+    });
 
   const handleResizeStart = useCallback(
     (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => {
@@ -73,13 +74,13 @@ export function useTrackElementResizeDrag<
         dragState.originalEndTime
       );
 
-      updateSingleElement(
+      updateElementTimeProperties(
         dragState.elementId,
         newStartTime,
         dragState.originalEndTime
       );
     },
-    [dragState, getSortedElements, getMinStartTime, updateSingleElement]
+    [dragState, getSortedElements, getMinStartTime, updateElementTimeProperties]
   );
 
   const handleRightResize = useCallback(
@@ -108,7 +109,7 @@ export function useTrackElementResizeDrag<
           )
         : [];
 
-      updateMultipleElements(
+      updateMultipleElementsTimeProperties(
         dragState.elementId,
         finalEndTime,
         dragState.originalStartTime,
@@ -123,7 +124,7 @@ export function useTrackElementResizeDrag<
       dragState,
       getSortedElements,
       adjustSubsequentElements,
-      updateMultipleElements,
+      updateMultipleElementsTimeProperties,
       updateMaxEndTime,
     ]
   );

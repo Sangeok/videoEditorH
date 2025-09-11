@@ -17,7 +17,7 @@ export function createElementUpdater<T extends TimelineElement>({
     updates: Array<{ id: string; updates: Partial<T> }>
   ) => void;
 }) {
-  function updateSingleElement(
+  function updateElementTimeProperties(
     elementId: string,
     startTime: number,
     endTime: number
@@ -30,7 +30,7 @@ export function createElementUpdater<T extends TimelineElement>({
     } as Partial<T>);
   }
 
-  function updateMultipleElements(
+  function updateMultipleElementsTimeProperties(
     currentElementId: string,
     newEndTime: number,
     originalStartTime: number,
@@ -63,7 +63,7 @@ export function createElementUpdater<T extends TimelineElement>({
   }
 
   return {
-    updateSingleElement,
-    updateMultipleElements,
+    updateElementTimeProperties,
+    updateMultipleElementsTimeProperties,
   };
 }
