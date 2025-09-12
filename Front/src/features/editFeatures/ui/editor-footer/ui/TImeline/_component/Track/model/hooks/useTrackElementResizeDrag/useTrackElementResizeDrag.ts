@@ -164,7 +164,7 @@ export function useTrackElementResizeDrag<
         ? roundTime(dragState.originalEndTime + deltaTime)
         : dragState.originalEndTime;
 
-      const xPx = timeToPixels(
+      const xPixels = timeToPixels(
         isLeftResize ? currentStart : currentEnd,
         pixelsPerSecond
       );
@@ -179,7 +179,7 @@ export function useTrackElementResizeDrag<
         dragState.elementId
       );
       const nearest = findNearestSnapCandidate(
-        xPx,
+        xPixels,
         candidates,
         SNAP_TOLERANCE_PX
       );

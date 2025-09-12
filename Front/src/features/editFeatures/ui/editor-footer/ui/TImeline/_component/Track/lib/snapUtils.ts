@@ -19,26 +19,31 @@ export interface SnapCandidate {
  * Caller should pass already filtered elements if needed (e.g., viewport range).
  */
 export function buildSnapCandidates(
-  allElements: TimelineAnyElement[],
+  elementsAcrossTracks: TimelineAnyElement[],
   pixelsPerSecond: number,
-  excludeElementId?: string | null
+  elementIdToExclude?: string | null
 ): SnapCandidate[] {
-  const result: SnapCandidate[] = [];
-  for (const el of allElements) {
-    if (excludeElementId && el.id === excludeElementId) continue;
-    const startPx = timeToPixels(el.startTime, pixelsPerSecond);
-    const endPx = timeToPixels(el.endTime, pixelsPerSecond);
-    result.push({
-      time: el.startTime,
-      px: startPx,
-      sourceId: el.id,
+  const snapCandidates: SnapCandidate[] = [];
+  for (const element of elementsAcrossTracks) {
+    if (elementIdToExclude && element.id === elementIdToExclude) continue;
+    const startPositionPx = timeToPixels(element.startTime, pixelsPerSecond);
+    const endPositionPx = timeToPixels(element.endTime, pixelsPerSecond);
+    snapCandidates.push({
+      time: element.startTime,
+      px: startPositionPx,
+      sourceId: element.id,
       edge: "start",
     });
-    result.push({ time: el.endTime, px: endPx, sourceId: el.id, edge: "end" });
+    snapCandidates.push({
+      time: element.endTime,
+      px: endPositionPx,
+      sourceId: element.id,
+      edge: "end",
+    });
   }
   // Sort by pixel position for quick nearest search
-  result.sort((a, b) => a.px - b.px);
-  return result;
+  snapCandidates.sort((a, b) => a.px - b.px);
+  return snapCandidates;
 }
 
 export interface NearestSnapResult {
@@ -50,40 +55,44 @@ export interface NearestSnapResult {
  * Find nearest candidate to a given pixel x within tolerance. Returns null if none under tolerance.
  */
 export function findNearestSnapCandidate(
-  xPx: number,
-  candidates: SnapCandidate[],
-  tolerancePx: number
+  targetPositionPx: number,
+  sortedCandidatesByPx: SnapCandidate[],
+  snapTolerancePx: number
 ): NearestSnapResult {
-  if (candidates.length === 0) return { candidate: null, distancePx: Infinity };
+  if (sortedCandidatesByPx.length === 0)
+    return { candidate: null, distancePx: Infinity };
 
-  // Binary search for insertion point
-  let lo = 0;
-  let hi = candidates.length - 1;
-  let idx = 0;
-  while (lo <= hi) {
-    const mid = (lo + hi) >> 1;
-    if (candidates[mid].px < xPx) lo = mid + 1;
+  // Binary search for insertion point (assumes candidates sorted by px asc)
+  let left = 0;
+  let right = sortedCandidatesByPx.length - 1;
+  let insertionIndex = 0;
+  while (left <= right) {
+    const midIndex = (left + right) >> 1;
+    if (sortedCandidatesByPx[midIndex].px < targetPositionPx)
+      left = midIndex + 1;
     else {
-      idx = mid;
-      hi = mid - 1;
+      insertionIndex = midIndex;
+      right = midIndex - 1;
     }
   }
 
-  const nearby = [idx - 1, idx, idx + 1].filter(
-    (i) => i >= 0 && i < candidates.length
-  );
-  let best: SnapCandidate | null = null;
-  let bestDist = Infinity;
-  for (const i of nearby) {
-    const c = candidates[i];
-    const d = Math.abs(c.px - xPx);
-    if (d < bestDist) {
-      best = c;
-      bestDist = d;
+  const candidateIndicesNearTarget = [
+    insertionIndex - 1,
+    insertionIndex,
+    insertionIndex + 1,
+  ].filter((index) => index >= 0 && index < sortedCandidatesByPx.length);
+  let nearestCandidate: SnapCandidate | null = null;
+  let nearestDistancePx = Infinity;
+  for (const index of candidateIndicesNearTarget) {
+    const candidate = sortedCandidatesByPx[index];
+    const distancePx = Math.abs(candidate.px - targetPositionPx);
+    if (distancePx < nearestDistancePx) {
+      nearestCandidate = candidate;
+      nearestDistancePx = distancePx;
     }
   }
 
-  if (best && bestDist <= tolerancePx)
-    return { candidate: best, distancePx: bestDist };
+  if (nearestCandidate && nearestDistancePx <= snapTolerancePx)
+    return { candidate: nearestCandidate, distancePx: nearestDistancePx };
   return { candidate: null, distancePx: Infinity };
 }
