@@ -12,6 +12,13 @@ import { createElementConstraints } from "./_internal/elementConstraints";
 import { createElementUpdater } from "./_internal/elementUpdater";
 import { useMouseEvents } from "./_internal/mouseEventHandler";
 import { useResizeDragState } from "./_internal/resizeDragState";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { useSnapGuideStore } from "@/features/editFeatures/model/store/useSnapGuideStore";
+import { timeToPixels } from "@/shared/lib/timeConversion";
+import {
+  buildSnapCandidates,
+  findNearestSnapCandidate,
+} from "../../../lib/snapUtils";
 
 interface UseTrackElementResizeDragProps<
   T extends MediaElement | AudioElement | TextElement
@@ -34,6 +41,10 @@ export function useTrackElementResizeDrag<
   updateMultipleSelectedElements,
 }: UseTrackElementResizeDragProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+  const { media } = useMediaStore();
+  const showGuide = useSnapGuideStore((s) => s.showGuide);
+  const hideGuide = useSnapGuideStore((s) => s.hideGuide);
+  const SNAP_TOLERANCE_PX = 6;
 
   const { getSortedElements, getMinStartTime, adjustSubsequentElements } =
     createElementConstraints(SelectedElements);
@@ -144,15 +155,55 @@ export function useTrackElementResizeDrag<
       } else if (isRightResize) {
         handleRightResize(deltaTime);
       }
+
+      // Visual vertical snap guide while resizing
+      const currentStart = isLeftResize
+        ? roundTime(dragState.originalStartTime + deltaTime)
+        : dragState.originalStartTime;
+      const currentEnd = isRightResize
+        ? roundTime(dragState.originalEndTime + deltaTime)
+        : dragState.originalEndTime;
+
+      const xPx = timeToPixels(
+        isLeftResize ? currentStart : currentEnd,
+        pixelsPerSecond
+      );
+      const allElements = [
+        ...media.mediaElement,
+        ...media.textElement,
+        ...media.audioElement,
+      ];
+      const candidates = buildSnapCandidates(
+        allElements,
+        pixelsPerSecond,
+        dragState.elementId
+      );
+      const nearest = findNearestSnapCandidate(
+        xPx,
+        candidates,
+        SNAP_TOLERANCE_PX
+      );
+      if (nearest.candidate)
+        showGuide(nearest.candidate.px, nearest.candidate.time);
+      else hideGuide();
     },
-    [dragState, pixelsPerSecond, handleLeftResize, handleRightResize]
+    [
+      dragState,
+      pixelsPerSecond,
+      handleLeftResize,
+      handleRightResize,
+      media,
+      showGuide,
+      hideGuide,
+    ]
   );
 
   const handleMouseUp = useCallback(() => {
     if (dragState.isDragging) {
       endDrag();
+      hideGuide();
     }
-  }, [dragState.isDragging, endDrag]);
+  }, [dragState.isDragging, endDrag, hideGuide]);
 
   useMouseEvents(dragState, handleMouseMove, handleMouseUp);
 

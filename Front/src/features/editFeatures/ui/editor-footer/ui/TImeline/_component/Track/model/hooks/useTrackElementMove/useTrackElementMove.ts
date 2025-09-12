@@ -13,6 +13,12 @@ import {
   roundTime,
   timeToPixels,
 } from "@/shared/lib/timeConversion";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { useSnapGuideStore } from "@/features/editFeatures/model/store/useSnapGuideStore";
+import {
+  buildSnapCandidates,
+  findNearestSnapCandidate,
+} from "../../../lib/snapUtils";
 
 interface UseTrackElementMoveProps<
   T extends MediaElement | AudioElement | TextElement
@@ -26,6 +32,10 @@ export function useTrackElementMove<
 >({ SelectedElements, updateSelectedElements }: UseTrackElementMoveProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
+  const { media } = useMediaStore();
+  const showGuide = useSnapGuideStore((s) => s.showGuide);
+  const hideGuide = useSnapGuideStore((s) => s.hideGuide);
+  const SNAP_TOLERANCE_PX = 6; // visual guide only
 
   const {
     moveDragState,
@@ -85,6 +95,43 @@ export function useTrackElementMove<
       const ghostPixelPosition = timeToPixels(snappedPosition, pixelsPerSecond);
 
       updateDragPositions(ghostPixelPosition, rawTargetTime);
+
+      // Visual vertical snap guide (no actual snapping)
+      const currentStartPx = timeToPixels(rawTargetTime, pixelsPerSecond);
+      const currentEndPx = timeToPixels(
+        rawTargetTime + elementDuration,
+        pixelsPerSecond
+      );
+      const allElements = [
+        ...media.mediaElement,
+        ...media.textElement,
+        ...media.audioElement,
+      ];
+      const candidates = buildSnapCandidates(
+        allElements,
+        pixelsPerSecond,
+        moveDragState.elementId!
+      );
+      const startNearest = findNearestSnapCandidate(
+        currentStartPx,
+        candidates,
+        SNAP_TOLERANCE_PX
+      );
+      const endNearest = findNearestSnapCandidate(
+        currentEndPx,
+        candidates,
+        SNAP_TOLERANCE_PX
+      );
+
+      const best =
+        startNearest.distancePx <= endNearest.distancePx
+          ? startNearest
+          : endNearest;
+      if (best.candidate) {
+        showGuide(best.candidate.px, best.candidate.time);
+      } else {
+        hideGuide();
+      }
     },
     [
       isDraggingElement,
@@ -92,12 +139,16 @@ export function useTrackElementMove<
       positioner,
       updateDragPositions,
       pixelsPerSecond,
+      media,
+      showGuide,
+      hideGuide,
     ]
   );
 
   const handleMouseUp = useCallback(() => {
     if (!isDraggingElement || !dropPreview.isVisible) {
       resetDragState();
+      hideGuide();
       return;
     }
 
@@ -120,6 +171,7 @@ export function useTrackElementMove<
     } as Partial<T>);
 
     resetDragState();
+    hideGuide();
   }, [
     isDraggingElement,
     dropPreview.isVisible,
@@ -128,6 +180,7 @@ export function useTrackElementMove<
     positioner,
     updateSelectedElements,
     resetDragState,
+    hideGuide,
   ]);
 
   // Global mouse event listeners

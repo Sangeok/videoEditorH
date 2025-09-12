@@ -3,6 +3,7 @@ import CurrentTimeIndicator from "./_component/CurrentTimeIndicator/ui/CurrentTi
 import TextTimeline from "./_component/Track/ui/TextTimeline/TextTimeline";
 import AudioTimeline from "./_component/Track/ui/AudioTimeline/ui/AudioTimeline";
 import MediaTimeline from "./_component/Track/ui/MediaTimeline/ui";
+import SnapGuideIndicator from "./_component/SnapGuide/SnapGuideIndicator";
 
 export default function Timeline() {
   return (
@@ -27,6 +28,8 @@ export default function Timeline() {
         </div>
       </div>
 
+      {/* Snap vertical guide overlay (beneath current time indicator) */}
+      <SnapGuideIndicator />
       <CurrentTimeIndicator />
     </div>
   );
