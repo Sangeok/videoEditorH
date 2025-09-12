@@ -3,22 +3,45 @@
 import React, { useRef } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useMediaDrag } from "../model/hooks/useMediaDrag";
-import { useMediaMove } from "../model/hooks/useMediaMove";
-import { useMediaInteraction } from "../model/hooks/useMediaInteraction";
-import { MediaElement } from "./_component/MediaElement";
-import { DropIndicator } from "./_component/DropIndicator";
-import { EmptyState } from "./_component/EmptyState";
-import { DragState, MoveDragState, DropPreview } from "../model/types";
+// import { useMediaDrag } from "../model/hooks/useMediaDrag";
+// import { useMediaMove } from "../model/hooks/useMediaMove";
+import {
+  ResizeDragState,
+  MoveDragState,
+  DropPreview,
+} from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
+import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
+import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
+import { EmptyState } from "../../_component/EmptyState";
+import { DropIndicator } from "../../_component/DropIndicator";
+import { MediaElement } from "./_component/MediaElement";
 
 export default function MediaTimeline() {
-  const { media } = useMediaStore();
+  const {
+    media,
+    updateMediaElement,
+    deleteMediaElement,
+    updateMultipleMediaElements,
+  } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
-  const { dragState, handleResizeStart } = useMediaDrag();
-  const { moveDragState, dropPreview, handleMoveStart } = useMediaMove();
-  const { handleMediaClick } = useMediaInteraction();
+  // const { dragState, handleResizeStart } = useMediaDrag();
+  const { dragState, handleResizeStart } = useTrackElementResizeDrag({
+    SelectedElements: media.mediaElement,
+    updateSelectedElements: updateMediaElement,
+    updateMultipleSelectedElements: updateMultipleMediaElements,
+  });
+  const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
+    SelectedElements: media.mediaElement,
+    updateSelectedElements: updateMediaElement,
+  });
+  const { handleTrackElementClick } = useTrackElementInteraction({
+    deleteSelectedElements: deleteMediaElement,
+  });
+  // const { moveDragState, dropPreview, handleMoveStart } = useMediaMove();
+  // const { handleMediaClick } = useMediaInteraction();
 
   const timelineRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +59,7 @@ export default function MediaTimeline() {
           dropPreview={dropPreview}
           onResizeStart={handleResizeStart}
           onMoveStart={handleMoveStart}
-          onMediaClick={handleMediaClick}
+          onTrackElementClick={handleTrackElementClick}
         />
       )}
       {!hasMediaElements && <EmptyState />}
@@ -53,11 +76,11 @@ function MediaElementsContainer({
   dropPreview,
   onResizeStart,
   onMoveStart,
-  onMediaClick,
+  onTrackElementClick,
 }: {
   mediaElements: MediaElementType[];
   pixelsPerSecond: number;
-  dragState: DragState;
+  dragState: ResizeDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
   onResizeStart: (
@@ -66,7 +89,7 @@ function MediaElementsContainer({
     dragType: "left" | "right"
   ) => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
-  onMediaClick: (mediaElement: MediaElementType) => void;
+  onTrackElementClick: (trackElementId: string) => void;
 }) {
   return (
     <div className="relative h-full">
@@ -87,7 +110,7 @@ function MediaElementsContainer({
           moveDragState={moveDragState}
           onResizeStart={onResizeStart}
           onMoveStart={onMoveStart}
-          onClick={onMediaClick}
+          onClick={onTrackElementClick}
         />
       ))}
     </div>

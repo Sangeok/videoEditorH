@@ -1,50 +1,64 @@
-"use client";
-
-import React from "react";
-import { MediaElement as MediaElementType } from "@/entities/media/types";
+import { TextElement as TextElementType } from "@/entities/media/types";
+import { MoveDragState, ResizeDragType } from "../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { DragState, DragType, MoveDragState } from "../../model/types";
-import { ResizeHandle } from "./ResizeHandle";
-import {
-  calculateTimelinePosition,
-  calculateElementWidth,
-  isElementDragging,
-  formatTimeDisplay,
-} from "../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
+import {
+  calculateElementWidth,
+  calculateTimelinePosition,
+  formatTimeDisplay,
+  isElementDragging,
+} from "../../lib/timelineLib";
+import { ResizeHandle } from "../_component/ResizeHandle";
 
-interface MediaElementProps {
-  mediaElement: MediaElementType;
+interface TextElementProps {
+  textElement: TextElementType;
   pixelsPerSecond: number;
-  dragState: DragState;
+  dragState: MoveDragState;
   moveDragState?: MoveDragState;
-  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: DragType) => void;
+  onResizeStart: (
+    e: React.MouseEvent,
+    elementId: string,
+    dragType: ResizeDragType
+  ) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (mediaElement: MediaElementType) => void;
+  onClick: (selectedElements: string) => void;
 }
 
-export function MediaElement({
-  mediaElement,
+export default function TextElement({
+  textElement,
   pixelsPerSecond,
   dragState,
   moveDragState,
   onResizeStart,
   onMoveStart,
   onClick,
-}: MediaElementProps) {
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+}: TextElementProps) {
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
+  const selectedTrackId = useSelectedTrackStore(
+    (state) => state.selectedTrackId
+  );
 
   // Calculate position and dimensions
-  const leftPosition = calculateTimelinePosition(mediaElement.startTime, pixelsPerSecond);
-  const width = calculateElementWidth(mediaElement.startTime, mediaElement.endTime, pixelsPerSecond);
+  const leftPosition = calculateTimelinePosition(
+    textElement.startTime,
+    pixelsPerSecond
+  );
+  const width = calculateElementWidth(
+    textElement.startTime,
+    textElement.endTime,
+    pixelsPerSecond
+  );
 
   // Check drag states
-  const isResizeDragging = isElementDragging(mediaElement.id, dragState);
-  const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === mediaElement.id);
+  const isResizeDragging = isElementDragging(textElement.id, dragState);
+  const isMoveDragging = Boolean(
+    moveDragState?.isDragging && moveDragState.elementId === textElement.id
+  );
   const isDragging = isResizeDragging || isMoveDragging;
-  const isSelected = selectedTrackId === mediaElement.id;
+  const isSelected = selectedTrackId === textElement.id;
 
   // Generate styles with visibility for move dragging
   const elementStyles = {
@@ -54,7 +68,7 @@ export function MediaElement({
   };
 
   const elementClasses = getElementClasses(isDragging, isMoveDragging);
-  const title = generateElementTitle(mediaElement);
+  const title = generateElementTitle(textElement);
 
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -62,29 +76,35 @@ export function MediaElement({
     if (!isDelete && onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
-      onMoveStart(e, mediaElement.id);
+      onMoveStart(e, textElement.id);
 
-      const clickedTrack = mediaElement.type === "video" ? "Video" : "Image";
-      setSelectedTrackAndId(clickedTrack, mediaElement.id);
+      setSelectedTrackAndId("Text", textElement.id);
     } else if (!e.defaultPrevented) {
       // Regular click - don't prevent default to allow normal interactions
-      onClick(mediaElement);
+      onClick(textElement.id);
     }
   };
 
   return (
-    <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
+    <div
+      className={elementClasses}
+      onMouseDown={handleMouseDown}
+      style={elementStyles}
+      title={title}
+    >
       {/* Left resize handle */}
       <ResizeHandle
         position="left"
         isVisible={isSelected}
         onMouseDown={(e) => {
           e.preventDefault();
-          onResizeStart(e, mediaElement.id, "left");
+          onResizeStart(e, textElement.id, "left");
         }}
       />
 
-      <span className="truncate px-3 pointer-events-none select-none">{mediaElement.id || "Media"}</span>
+      <span className="truncate px-3 pointer-events-none select-none">
+        {textElement.id || "Text"}
+      </span>
       {/* Media content */}
 
       {/* Right resize handle */}
@@ -93,14 +113,17 @@ export function MediaElement({
         isVisible={isSelected}
         onMouseDown={(e) => {
           e.preventDefault();
-          onResizeStart(e, mediaElement.id, "right");
+          onResizeStart(e, textElement.id, "right");
         }}
       />
     </div>
   );
 }
 
-function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): string {
+function getElementClasses(
+  isDragging: boolean,
+  isMoveDragging?: boolean
+): string {
   const baseClasses = [
     "absolute",
     "top-2",
@@ -137,7 +160,10 @@ function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): strin
   return [...baseClasses, cursorClass].join(" ");
 }
 
-function generateElementTitle(mediaElement: MediaElementType): string {
-  const timeDisplay = formatTimeDisplay(mediaElement.startTime, mediaElement.endTime);
-  return `${mediaElement.type} (${timeDisplay})`;
+function generateElementTitle(textElement: TextElementType): string {
+  const timeDisplay = formatTimeDisplay(
+    textElement.startTime,
+    textElement.endTime
+  );
+  return `${textElement.type} (${timeDisplay})`;
 }

@@ -1,4 +1,3 @@
-// Resize drag state (for ResizeHandle functionality)
 export interface ResizeDragState {
   isDragging: boolean;
   elementId: string | null;
@@ -11,7 +10,15 @@ export interface ResizeDragState {
   maxEndTimeDuringDrag?: number;
 }
 
-// Move drag state (for MediaElement positioning)
+export type ResizeDragType = "left" | "right";
+
+export interface ElementAdjustment {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+}
+
 export interface MoveDragState {
   isDragging: boolean;
   elementId: string | null;
@@ -27,27 +34,3 @@ export interface DropPreview {
   targetTime: number;
   elementId: string | null;
 }
-
-// Combined drag operation state
-export interface DragOperation {
-  resize: ResizeDragState;
-  move: MoveDragState;
-  dropPreview: DropPreview;
-}
-
-export interface MediaTimelineProps {
-  className?: string;
-}
-
-export type ResizeDragType = "left" | "right";
-
-export interface ElementAdjustment {
-  id: string;
-  startTime: number;
-  endTime: number;
-  duration: number;
-}
-
-// Legacy type alias for backward compatibility
-export type DragState = ResizeDragState;
-export type DragType = ResizeDragType;

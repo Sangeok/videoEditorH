@@ -17,15 +17,35 @@ interface MediaStore {
   setFps: (fps: number) => void;
   addTextElement: (textElement: TextElement, preserveTiming?: boolean) => void;
   deleteTextElement: (textElementId: string) => void;
-  updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
-  updateTextBackgroundColor: (textElementId: string, style: { backgroundColor: string; textColor: string }) => void;
+  updateTextElement: (
+    textElementId: string,
+    updates: Partial<TextElement>
+  ) => void;
+  updateTextBackgroundColor: (
+    textElementId: string,
+    style: { backgroundColor: string; textColor: string }
+  ) => void;
+  updateMultipleTextElements: (
+    updates: Array<{ id: string; updates: Partial<TextElement> }>
+  ) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
-  updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
-  updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
+  updateMediaElement: (
+    mediaElementId: string,
+    updates: Partial<MediaElement>
+  ) => void;
+  updateMultipleMediaElements: (
+    updates: Array<{ id: string; updates: Partial<MediaElement> }>
+  ) => void;
   addAudioElement: (audioElement: AudioElement) => void;
   deleteAudioElement: (audioElementId: string) => void;
-  updateAudioElement: (audioElementId: string, updates: Partial<AudioElement>) => void;
+  updateAudioElement: (
+    audioElementId: string,
+    updates: Partial<AudioElement>
+  ) => void;
+  updateMultipleAudioElements: (
+    updates: Array<{ id: string; updates: Partial<AudioElement> }>
+  ) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -55,7 +75,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const updatedTextElements = [...currentTextElements, newTextElement];
 
       // update projectDuration to the endTime of the last element
-      const newProjectDuration = Math.max(state.media.projectDuration, newTextElement.endTime);
+      const newProjectDuration = Math.max(
+        state.media.projectDuration,
+        newTextElement.endTime
+      );
 
       return {
         media: {
@@ -67,11 +90,21 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
     }),
   deleteTextElement: (textElementId: string) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.filter((textElement) => textElement.id !== textElementId);
+      const updatedTextElements = state.media.textElement.filter(
+        (textElement) => textElement.id !== textElementId
+      );
+
+      const allElements = [
+        ...state.media.textElement,
+        ...state.media.audioElement,
+        ...updatedTextElements,
+      ];
 
       // recalculate projectDuration after deletion
       const newProjectDuration =
-        updatedTextElements.length > 0 ? Math.max(...updatedTextElements.map((element) => element.endTime)) : 0;
+        allElements.length > 0
+          ? Math.max(...allElements.map((element) => element.endTime))
+          : 0;
 
       return {
         media: {
@@ -82,22 +115,71 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) =>
-    set((state) => ({
-      media: {
-        ...state.media,
-        textElement: state.media.textElement.map((element) =>
-          element.id === textElementId ? { ...element, ...updates } : element
-        ),
-      },
-    })),
+    set((state) => {
+      const updatedTextElements = state.media.textElement.map((element) =>
+        element.id === textElementId ? { ...element, ...updates } : element
+      );
 
-  updateTextBackgroundColor: (textElementId: string, style: { backgroundColor: string; textColor: string }) =>
+      const allEndTimes = [
+        ...updatedTextElements.map((element) => element.endTime),
+        ...state.media.mediaElement.map((element) => element.endTime),
+        ...state.media.audioElement.map((element) => element.endTime),
+      ];
+
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
+  updateMultipleTextElements: (
+    updates: Array<{ id: string; updates: Partial<TextElement> }>
+  ) =>
+    set((state) => {
+      const updatedTextElements = state.media.textElement.map((element) => {
+        const update = updates.find((u) => u.id === element.id);
+        return update ? { ...element, ...update.updates } : element;
+      });
+
+      // recalculate projectDuration after update
+      const allEndTimes = [
+        ...state.media.textElement.map((element) => element.endTime),
+        ...updatedTextElements.map((element) => element.endTime),
+        ...state.media.audioElement.map((element) => element.endTime),
+      ];
+
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
+  updateTextBackgroundColor: (
+    textElementId: string,
+    style: { backgroundColor: string; textColor: string }
+  ) =>
     set((state) => ({
       media: {
         ...state.media,
         textElement: state.media.textElement.map((element) =>
           element.id === textElementId
-            ? { ...element, backgroundColor: style.backgroundColor, textColor: style.textColor }
+            ? {
+                ...element,
+                backgroundColor: style.backgroundColor,
+                textColor: style.textColor,
+              }
             : element
         ),
       },
@@ -112,7 +194,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       if (currentMediaElements.length === 0) {
         newMediaElement = { ...mediaElement };
       } else {
-        const lastElement = currentMediaElements[currentMediaElements.length - 1];
+        const lastElement =
+          currentMediaElements[currentMediaElements.length - 1];
         newMediaElement = {
           ...mediaElement,
           startTime: lastElement.endTime,
@@ -122,7 +205,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
       const updatedMediaElements = [...currentMediaElements, newMediaElement];
 
-      const newProjectDuration = Math.max(state.media.projectDuration, newMediaElement.endTime);
+      const newProjectDuration = Math.max(
+        state.media.projectDuration,
+        newMediaElement.endTime
+      );
 
       return {
         media: {
@@ -138,10 +224,16 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         (mediaElement) => mediaElement.id !== mediaElementId
       );
 
-      const allElements = [...state.media.textElement, ...state.media.audioElement, ...updatedMediaElements];
+      const allElements = [
+        ...state.media.textElement,
+        ...state.media.audioElement,
+        ...updatedMediaElements,
+      ];
 
       const newProjectDuration =
-        allElements.length > 0 ? Math.max(...allElements.map((element) => element.endTime)) : 0;
+        allElements.length > 0
+          ? Math.max(...allElements.map((element) => element.endTime))
+          : 0;
 
       return {
         media: {
@@ -151,7 +243,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) =>
+  updateMediaElement: (
+    mediaElementId: string,
+    updates: Partial<MediaElement>
+  ) =>
     set((state) => {
       const updatedMediaElements = state.media.mediaElement.map((element) =>
         element.id === mediaElementId ? { ...element, ...updates } : element
@@ -164,7 +259,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         ...state.media.audioElement.map((element) => element.endTime),
       ];
 
-      const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
 
       return {
         media: {
@@ -175,10 +271,12 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
-  updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) =>
+  updateMultipleMediaElements: (
+    updates: Array<{ id: string; updates: Partial<MediaElement> }>
+  ) =>
     set((state) => {
       const updatedMediaElements = state.media.mediaElement.map((element) => {
-        const update = updates.find(u => u.id === element.id);
+        const update = updates.find((u) => u.id === element.id);
         return update ? { ...element, ...update.updates } : element;
       });
 
@@ -189,7 +287,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         ...state.media.audioElement.map((element) => element.endTime),
       ];
 
-      const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
 
       return {
         media: {
@@ -214,7 +313,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         };
       } else {
         // if existing audio elements, arrange after the last element
-        const lastElement = currentAudioElements[currentAudioElements.length - 1];
+        const lastElement =
+          currentAudioElements[currentAudioElements.length - 1];
 
         newAudioElement = {
           ...audioElement,
@@ -226,7 +326,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const updatedAudioElements = [...currentAudioElements, newAudioElement];
 
       // update projectDuration to include the endTime of the audio element
-      const newProjectDuration = Math.max(state.media.projectDuration, newAudioElement.endTime);
+      const newProjectDuration = Math.max(
+        state.media.projectDuration,
+        newAudioElement.endTime
+      );
 
       return {
         media: {
@@ -239,7 +342,9 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
   deleteAudioElement: (audioElementId: string) =>
     set((state) => {
-      const updatedAudioElements = state.media.audioElement.filter((element) => element.id !== audioElementId);
+      const updatedAudioElements = state.media.audioElement.filter(
+        (element) => element.id !== audioElementId
+      );
 
       // recalculate projectDuration after deletion
       const allEndTimes = [
@@ -248,7 +353,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         ...updatedAudioElements.map((element) => element.endTime),
       ];
 
-      const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
 
       return {
         media: {
@@ -259,7 +365,10 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
-  updateAudioElement: (audioElementId: string, updates: Partial<AudioElement>) =>
+  updateAudioElement: (
+    audioElementId: string,
+    updates: Partial<AudioElement>
+  ) =>
     set((state) => {
       const updatedAudioElements = state.media.audioElement.map((element) =>
         element.id === audioElementId ? { ...element, ...updates } : element
@@ -272,7 +381,36 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         ...updatedAudioElements.map((element) => element.endTime),
       ];
 
-      const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          audioElement: updatedAudioElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
+  updateMultipleAudioElements: (
+    updates: Array<{ id: string; updates: Partial<AudioElement> }>
+  ) =>
+    set((state) => {
+      const updatedAudioElements = state.media.audioElement.map((element) => {
+        const update = updates.find((u) => u.id === element.id);
+        return update ? { ...element, ...update.updates } : element;
+      });
+
+      // recalculate projectDuration after update
+      const allEndTimes = [
+        ...state.media.textElement.map((element) => element.endTime),
+        ...state.media.mediaElement.map((element) => element.endTime),
+        ...updatedAudioElements.map((element) => element.endTime),
+      ];
+
+      const newProjectDuration =
+        allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
 
       return {
         media: {
