@@ -11,8 +11,8 @@ import {
   DropPreview,
 } from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
-import { useTrackElementDrag } from "../../../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove";
+import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";
@@ -28,7 +28,7 @@ export default function MediaTimeline() {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   // const { dragState, handleResizeStart } = useMediaDrag();
-  const { dragState, handleResizeStart } = useTrackElementDrag({
+  const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.mediaElement,
     updateSelectedElements: updateMediaElement,
     updateMultipleSelectedElements: updateMultipleMediaElements,

@@ -2,8 +2,8 @@
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useTrackElementDrag } from "../../model/hooks/useTrackElementDrag";
-import { useTrackElementMove } from "../../model/hooks/useTrackElementMove";
+import { useTrackElementResizeDrag } from "../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
+import { useTrackElementMove } from "../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useRef } from "react";
 import { EmptyState } from "../_component/EmptyState";
 import { useTrackElementInteraction } from "../../model/hooks/useTrackElementInteraction";
@@ -22,7 +22,7 @@ export default function TextTimeline() {
 
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
-  const { dragState, handleResizeStart } = useTrackElementDrag({
+  const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.textElement,
     updateSelectedElements: updateTextElement,
     updateMultipleSelectedElements: updateMultipleTextElements,
