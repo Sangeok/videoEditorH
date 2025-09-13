@@ -20,7 +20,7 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
   const { media } = useMediaStore();
-  const SNAP_TOLERANCE_PX = 7; // visual guide only
+  const SNAP_TOLERANCE_PX = 7;
   const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond, SNAP_TOLERANCE_PX);
 
   const { moveDragState, dropPreview, isDraggingElement, startDragging, updateDragPositions, resetDragState } =
@@ -53,14 +53,16 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
       const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
 
       const rawTargetTime = roundTime(moveDragState.originalStartTime + deltaTime);
-      const snappedPosition = positioner.computeSnapPosition(rawTargetTime, elementDuration, moveDragState.elementId!);
+      // 1) 수직 가이드 스냅 계산(타 요소 엣지 기준). 반환값이 있으면 그 시각으로 스냅
+      const guideSnapStart = updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
 
-      const ghostPixelPosition = timeToPixels(snappedPosition, pixelsPerSecond);
+      // 2) 겹침 방지 규칙 최종 적용: 가이드 스냅 기준으로 유효한 드롭 시간 산출
+      const baseSnapStart = guideSnapStart ?? rawTargetTime;
+      const finalSnapStart = positioner.computeSnapPosition(baseSnapStart, elementDuration, moveDragState.elementId!);
+      const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
 
-      updateDragPositions(ghostPixelPosition, rawTargetTime);
-
-      // Visual vertical snap guide (no actual snapping)
-      updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
+      // dropPreview.targetTime을 스냅된 시간으로 유지하여 마우스업 시점에도 동일한 결과 보장
+      updateDragPositions(ghostPixelPosition, finalSnapStart);
     },
     [isDraggingElement, moveDragState, positioner, updateDragPositions, pixelsPerSecond, media, updateSnapGuide]
   );

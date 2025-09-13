@@ -61,8 +61,10 @@ export function useTrackElementResizeDrag<T extends MediaElement | AudioElement 
       const sortedElements = getSortedElements();
       const minStartTime = getMinStartTime(dragState.elementId, sortedElements);
       const desiredStartTime = dragState.originalStartTime + deltaTime;
-
-      const newStartTime = validateStartTime(desiredStartTime, minStartTime, dragState.originalEndTime);
+      // Guide snap for left edge
+      const snappedStart = updateSnapGuide("start", roundTime(desiredStartTime), dragState.elementId);
+      const candidateStart = snappedStart ?? desiredStartTime;
+      const newStartTime = validateStartTime(candidateStart, minStartTime, dragState.originalEndTime);
 
       updateElementTimeProperties(dragState.elementId, newStartTime, dragState.originalEndTime);
     },
@@ -75,7 +77,10 @@ export function useTrackElementResizeDrag<T extends MediaElement | AudioElement 
 
       // user wants to extend the end time
       const desiredEndTime = dragState.originalEndTime + deltaTime;
-      const validatedEndTime = validateEndTime(desiredEndTime, dragState.originalStartTime);
+      // Guide snap for right edge
+      const snappedEnd = updateSnapGuide("end", roundTime(desiredEndTime), dragState.elementId);
+      const endCandidate = snappedEnd ?? desiredEndTime;
+      const validatedEndTime = validateEndTime(endCandidate, dragState.originalStartTime);
       const finalEndTime = roundTime(validatedEndTime);
 
       // check if the end time is extending beyond the max end time reached during the drag
@@ -118,7 +123,7 @@ export function useTrackElementResizeDrag<T extends MediaElement | AudioElement 
         : dragState.originalStartTime;
       const currentEnd = isRightResize ? roundTime(dragState.originalEndTime + deltaTime) : dragState.originalEndTime;
 
-      updateSnapGuide(isLeftResize ? currentStart : currentEnd, dragState.elementId);
+      updateSnapGuide(isLeftResize ? "start" : "end", isLeftResize ? currentStart : currentEnd, dragState.elementId);
     },
     [dragState, pixelsPerSecond, handleLeftResize, handleRightResize, media, updateSnapGuide]
   );

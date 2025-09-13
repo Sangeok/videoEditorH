@@ -10,7 +10,7 @@ export function useSnapGuide(pixelsPerSecond: number, snapTolerancePx: number = 
   const hideGuide = useSnapGuideStore((s) => s.hideGuide);
 
   const updateSnapGuide = useCallback(
-    (edgeTimeSeconds: number, excludedElementId?: string | null) => {
+    (edge: "start" | "end", edgeTimeSeconds: number, excludedElementId?: string | null): number | null => {
       const xPixels = timeToPixels(edgeTimeSeconds, pixelsPerSecond);
 
       const allElements = [...media.mediaElement, ...media.textElement, ...media.audioElement];
@@ -20,9 +20,11 @@ export function useSnapGuide(pixelsPerSecond: number, snapTolerancePx: number = 
 
       if (nearest.candidate) {
         showGuide(nearest.candidate.px, nearest.candidate.time);
-      } else {
-        hideGuide();
+        // For resize, snap the dragged edge directly to the candidate time
+        return nearest.candidate.time;
       }
+      hideGuide();
+      return null;
     },
     [media, pixelsPerSecond, snapTolerancePx, showGuide, hideGuide]
   );

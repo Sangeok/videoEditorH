@@ -10,7 +10,7 @@ export function useSnapGuide(pixelsPerSecond: number, snapTolerancePx: number = 
   const hideGuide = useSnapGuideStore((s) => s.hideGuide);
 
   const updateSnapGuide = useCallback(
-    (startTimeSeconds: number, durationSeconds: number, excludedElementId?: string | null) => {
+    (startTimeSeconds: number, durationSeconds: number, excludedElementId?: string | null): number | null => {
       const currentStartPx = timeToPixels(startTimeSeconds, pixelsPerSecond);
       const currentEndPx = timeToPixels(startTimeSeconds + durationSeconds, pixelsPerSecond);
 
@@ -23,9 +23,13 @@ export function useSnapGuide(pixelsPerSecond: number, snapTolerancePx: number = 
       const best = startNearest.distancePx <= endNearest.distancePx ? startNearest : endNearest;
       if (best.candidate) {
         showGuide(best.candidate.px, best.candidate.time);
-      } else {
-        hideGuide();
+        // If start edge is nearer, snap start to candidate. If end edge is nearer, align end to candidate.
+        const snappedStartTime =
+          best === startNearest ? best.candidate.time : Math.max(0, best.candidate.time - durationSeconds);
+        return snappedStartTime;
       }
+      hideGuide();
+      return null;
     },
     [media, pixelsPerSecond, snapTolerancePx, showGuide, hideGuide]
   );
