@@ -9,7 +9,6 @@ import {
   roundTime,
   timeToPixels,
 } from "@/shared/lib/timeConversion";
-import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useSnapGuide } from "./_internal/useSnapGuide";
 
 interface UseTrackElementMoveProps<T extends TrackElement> {
@@ -23,7 +22,6 @@ export function useTrackElementMove<T extends TrackElement>({
 }: UseTrackElementMoveProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
-  const { media } = useMediaStore();
   const SNAP_TOLERANCE_PX = 7;
   const { updateSnapGuide, clearSnapGuide } = useSnapGuide(
     pixelsPerSecond,
@@ -79,14 +77,15 @@ export function useTrackElementMove<T extends TrackElement>({
       const rawTargetTime = roundTime(
         moveDragState.originalStartTime + deltaTime
       );
-      // 1) Vertical guide snap calculation (based on other element edges). If there's a return value, snap to that time
+
+      // Vertical guide snap calculation (based on other element edges). If there's a return value, snap to that time
       const guideSnapStart = updateSnapGuide(
         rawTargetTime,
         elementDuration,
         moveDragState.elementId!
       );
 
-      // 2) Final application of overlap prevention rules: calculate valid drop time based on guide snap
+      // Final application of overlap prevention rules: calculate valid drop time based on guide snap
       const baseSnapStart = guideSnapStart ?? rawTargetTime;
       const finalSnapStart = positioner.computeSnapPosition(
         baseSnapStart,
@@ -96,7 +95,7 @@ export function useTrackElementMove<T extends TrackElement>({
       const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
 
       // Maintain dropPreview.targetTime as snapped time to ensure same result at mouse up
-      updateDragPositions(ghostPixelPosition, finalSnapStart);
+      updateDragPositions(ghostPixelPosition, baseSnapStart);
     },
     [
       isDraggingElement,
@@ -104,7 +103,6 @@ export function useTrackElementMove<T extends TrackElement>({
       positioner,
       updateDragPositions,
       pixelsPerSecond,
-      media,
       updateSnapGuide,
     ]
   );
