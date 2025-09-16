@@ -61,7 +61,7 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
       const finalSnapStart = positioner.computeSnapPosition(baseSnapStart, elementDuration, moveDragState.elementId!);
       const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
 
-      // dropPreview.targetTime을 스냅된 시간으로 유지하여 마우스업 시점에도 동일한 결과 보장
+      // Maintain dropPreview.targetTime as snapped time to ensure same result at mouse up
       updateDragPositions(ghostPixelPosition, finalSnapStart);
     },
     [isDraggingElement, moveDragState, positioner, updateDragPositions, pixelsPerSecond, media, updateSnapGuide]
