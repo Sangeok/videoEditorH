@@ -8,10 +8,9 @@ const CurrentTimeIndicator = memo(() => {
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
 
-  // currentTimeIndicator 위치 정보만 사용
   const { currentTimePosition, leftPosition } = useCurrentTimeIndicator();
 
-  // Timeline 컨테이너와 ruler에 data 속성 추가 (DOM 쿼리용)
+  // add data attribute to timeline container and ruler
   useEffect(() => {
     const timelineContainer = document.querySelector(
       ".relative.flex-1.flex.flex-col.border.border-gray-700.overflow-x-auto"
@@ -21,27 +20,28 @@ const CurrentTimeIndicator = memo(() => {
     }
   }, []);
 
-  // 에러 처리 및 경계값 검증
+  // if there is no duration( any media is not loaded), hide the current time indicator
   if (duration <= 0) {
-    return null; // 비디오가 없으면 currentTimeIndicator 숨김
+    return null;
   }
 
+  // if the current time position or left position is less than 0, hide the current time indicator
   if (currentTimePosition < 0 || leftPosition < 0) {
-    return null; // 잘못된 위치 값은 렌더링하지 않음
+    return null;
   }
 
   return (
     <div
       className="absolute pointer-events-none z-[150]"
       style={{
-        left: "0px", // transform으로 위치 조정하므로 기본값
+        left: "0px",
         top: "0px",
         width: "2px",
         height: "100%",
         transform: `translateX(${leftPosition}px)`,
       }}
     >
-      {/* 세로 라인 */}
+      {/* vertical line */}
       <div
         className="absolute left-0 w-0.5 h-full bg-white shadow-md"
         style={{
@@ -51,7 +51,7 @@ const CurrentTimeIndicator = memo(() => {
         }}
       />
 
-      {/* 상단 원형 표시 */}
+      {/* top circular display */}
       <div
         className="absolute top-1 left-1/2 transform -translate-x-1/2 rounded-full border-2"
         style={{

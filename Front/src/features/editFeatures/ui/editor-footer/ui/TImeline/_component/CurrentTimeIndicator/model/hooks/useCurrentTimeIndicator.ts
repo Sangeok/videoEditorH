@@ -6,7 +6,7 @@ import useTimelineStore, {
 } from "@/features/editFeatures/model/store/useTimelineStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 
-// 고정밀 타이머 (id)
+// high precision timer
 let playbackTimer: number | null = null;
 
 const startTimer = (store: () => TimelineStore) => {
@@ -47,7 +47,7 @@ const stopTimer = () => {
 export const useCurrentTimeIndicator = () => {
   const { currentTime, pixelsPerSecond, isPlaying } = useTimelineStore();
 
-  // 고정밀 타이머 관리
+  // high precision timer management
   useEffect(() => {
     if (isPlaying) {
       startTimer(useTimelineStore.getState);
@@ -58,13 +58,13 @@ export const useCurrentTimeIndicator = () => {
     return () => stopTimer();
   }, [isPlaying]);
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // when the component is unmounted, stop the timer
   useEffect(() => {
     return () => stopTimer();
   }, []);
 
-  // currentTimeIndicator 위치 계산
-  // currentTimeIndicator : 현재 재생 시간 (초 단위)
+  // calculate the position of the current time indicator
+  // currentTimeIndicator : current time (seconds)
   const currentTimePosition = useMemo(() => {
     return currentTime;
   }, [currentTime]);
@@ -74,9 +74,9 @@ export const useCurrentTimeIndicator = () => {
     return currentTimePosition * pixelsPerSecond;
   }, [currentTimePosition, pixelsPerSecond]);
 
-  // 자동 스크롤 시스템
+  // automatic scroll system
   useEffect(() => {
-    // DOM 쿼리로 timeline container 찾기
+    // find the timeline container using DOM query
     const container = document.querySelector(
       "[data-timeline-container]"
     ) as HTMLDivElement;
@@ -86,7 +86,7 @@ export const useCurrentTimeIndicator = () => {
     const scrollLeft = container.scrollLeft;
     const indicatorPx = leftPosition;
 
-    // 100px 버퍼로 예측적 스크롤
+    // 100px buffer for predictive scroll
     const bufferZone = 100;
     const shouldScrollLeft = indicatorPx < scrollLeft + bufferZone;
     const shouldScrollRight =

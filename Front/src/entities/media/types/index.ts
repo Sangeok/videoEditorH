@@ -59,6 +59,8 @@ export interface AudioElement {
   speed: number;
 }
 
+export type TrackElement = MediaElement | AudioElement | TextElement;
+
 export type FadeEffectType = "fadeIn" | "fadeOut" | "none";
 
 export type EffectType = FadeEffectType | "none";

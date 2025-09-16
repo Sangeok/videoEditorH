@@ -1,14 +1,8 @@
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { ElementAdjustment } from "../../../types";
 
-type TimelineElement = MediaElement | AudioElement | TextElement;
-
 // Creates constraint management functions for timeline element positioning
-export function createElementConstraints<T extends TimelineElement>(
+export function createElementConstraints<T extends TrackElement>(
   elements: T[]
 ) {
   // Get elements sorted by start time for position calculations

@@ -1,12 +1,6 @@
 import { useState, useCallback } from "react";
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { ResizeDragState, ResizeDragType } from "../../../types";
-
-type TimelineElement = MediaElement | AudioElement | TextElement;
 
 const initialDragState: ResizeDragState = {
   isDragging: false,
@@ -17,7 +11,7 @@ const initialDragState: ResizeDragState = {
   originalEndTime: 0,
 };
 
-export function useResizeDragState<T extends TimelineElement>() {
+export function useResizeDragState<T extends TrackElement>() {
   const [dragState, setDragState] = useState<ResizeDragState>(initialDragState);
 
   const startDrag = useCallback(

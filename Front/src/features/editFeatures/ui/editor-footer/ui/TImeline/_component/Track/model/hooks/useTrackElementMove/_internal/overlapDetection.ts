@@ -1,11 +1,5 @@
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { roundTime } from "@/shared/lib/timeConversion";
-
-type TimelineElement = MediaElement | AudioElement | TextElement;
 
 interface TimeRange {
   start: number;
@@ -21,7 +15,7 @@ function createTimeRange(startTime: number, duration: number): TimeRange {
 }
 
 // Extract the time range of the timeline element
-function getElementTimeRange(element: TimelineElement): TimeRange {
+function getElementTimeRange(element: TrackElement): TimeRange {
   return {
     start: roundTime(element.startTime),
     end: roundTime(element.endTime),
@@ -34,12 +28,12 @@ function doTimeRangesOverlap(range1: TimeRange, range2: TimeRange): boolean {
 }
 
 // Calculate the center time position of the timeline element
-function calculateElementCenterTime(element: TimelineElement): number {
+function calculateElementCenterTime(element: TrackElement): number {
   return roundTime((element.startTime + element.endTime) / 2);
 }
 
 // Find the closest element to the target(dragging element) center position
-function findElementClosestToCenter<T extends TimelineElement>(
+function findElementClosestToCenter<T extends TrackElement>(
   elements: T[],
   targetCenter: number // dragged element center time
 ): T | null {
@@ -65,9 +59,7 @@ function findElementClosestToCenter<T extends TimelineElement>(
 }
 
 // Factory function to provide functionality for detecting and handling overlaps of timeline elements
-export function createOverlapDetector<T extends TimelineElement>(
-  elements: T[]
-) {
+export function createOverlapDetector<T extends TrackElement>(elements: T[]) {
   // Return the list of elements sorted by start time
   function getFilteredAndSortedElements(excludeId?: string): T[] {
     return [...elements]

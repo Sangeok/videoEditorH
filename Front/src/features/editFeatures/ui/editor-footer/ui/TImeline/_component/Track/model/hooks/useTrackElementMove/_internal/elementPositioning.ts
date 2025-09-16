@@ -1,16 +1,8 @@
 import { createOverlapDetector } from "./overlapDetection";
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
-
-type TimelineElement = MediaElement | AudioElement | TextElement;
+import { TrackElement } from "@/entities/media/types";
 
 // Creates element positioner for timeline drag-and-drop positioning
-export function createElementPositioner<T extends TimelineElement>(
-  elements: T[]
-) {
+export function createElementPositioner<T extends TrackElement>(elements: T[]) {
   const detector = createOverlapDetector(elements);
   const { roundTime, hasOverlapAt, findClosestOverlappingElement } = detector;
 
