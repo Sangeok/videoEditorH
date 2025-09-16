@@ -1,9 +1,5 @@
 import { useCallback } from "react";
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { pixelsToTime, roundTime } from "@/shared/lib/timeConversion";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { ResizeDragType } from "../../types";
@@ -14,9 +10,7 @@ import { useMouseEvents } from "./_internal/mouseEventHandler";
 import { useResizeDragState } from "./_internal/resizeDragState";
 import { useSnapGuide } from "./_internal/useSnapGuide";
 
-interface UseTrackElementResizeDragProps<
-  T extends MediaElement | AudioElement | TextElement
-> {
+interface UseTrackElementResizeDragProps<T extends TrackElement> {
   SelectedElements: T[];
   updateSelectedElements: (elementId: string, updates: Partial<T>) => void;
   updateMultipleSelectedElements: (
@@ -27,9 +21,7 @@ interface UseTrackElementResizeDragProps<
   ) => void;
 }
 
-export function useTrackElementResizeDrag<
-  T extends MediaElement | AudioElement | TextElement
->({
+export function useTrackElementResizeDrag<T extends TrackElement>({
   SelectedElements,
   updateSelectedElements,
   updateMultipleSelectedElements,

@@ -1,19 +1,23 @@
 import { useCallback, useEffect } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { AudioElement, MediaElement, TextElement } from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { createElementPositioner } from "./_internal/elementPositioning";
 import { useDragState } from "./_internal/useDragState";
-import { pixelsToTime, roundTime, timeToPixels } from "@/shared/lib/timeConversion";
+import {
+  pixelsToTime,
+  roundTime,
+  timeToPixels,
+} from "@/shared/lib/timeConversion";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useSnapGuide } from "./_internal/useSnapGuide";
 
-interface UseTrackElementMoveProps<T extends MediaElement | AudioElement | TextElement> {
+interface UseTrackElementMoveProps<T extends TrackElement> {
   SelectedElements: T[];
   updateSelectedElements: (elementId: string, updates: Partial<T>) => void;
 }
 
-export function useTrackElementMove<T extends MediaElement | AudioElement | TextElement>({
+export function useTrackElementMove<T extends TrackElement>({
   SelectedElements,
   updateSelectedElements,
 }: UseTrackElementMoveProps<T>) {
@@ -21,10 +25,19 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
   const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
   const { media } = useMediaStore();
   const SNAP_TOLERANCE_PX = 7;
-  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond, SNAP_TOLERANCE_PX);
+  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(
+    pixelsPerSecond,
+    SNAP_TOLERANCE_PX
+  );
 
-  const { moveDragState, dropPreview, isDraggingElement, startDragging, updateDragPositions, resetDragState } =
-    useDragState();
+  const {
+    moveDragState,
+    dropPreview,
+    isDraggingElement,
+    startDragging,
+    updateDragPositions,
+    resetDragState,
+  } = useDragState();
 
   const positioner = createElementPositioner(SelectedElements);
 
@@ -37,9 +50,18 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
 
       const elementStartTime = roundTime(element.startTime);
       const elementEndTime = roundTime(element.endTime);
-      const initialGhostPosition = timeToPixels(elementStartTime, pixelsPerSecond);
+      const initialGhostPosition = timeToPixels(
+        elementStartTime,
+        pixelsPerSecond
+      );
 
-      startDragging(elementId, e.clientX, elementStartTime, elementEndTime, initialGhostPosition);
+      startDragging(
+        elementId,
+        e.clientX,
+        elementStartTime,
+        elementEndTime,
+        initialGhostPosition
+      );
     },
     [SelectedElements, pixelsPerSecond, isDeleteMode, startDragging]
   );
@@ -50,21 +72,41 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
 
       const deltaX = e.clientX - moveDragState.startX;
       const deltaTime = pixelsToTime(deltaX, pixelsPerSecond);
-      const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
+      const elementDuration = roundTime(
+        moveDragState.originalEndTime - moveDragState.originalStartTime
+      );
 
-      const rawTargetTime = roundTime(moveDragState.originalStartTime + deltaTime);
+      const rawTargetTime = roundTime(
+        moveDragState.originalStartTime + deltaTime
+      );
       // 1) Vertical guide snap calculation (based on other element edges). If there's a return value, snap to that time
-      const guideSnapStart = updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
+      const guideSnapStart = updateSnapGuide(
+        rawTargetTime,
+        elementDuration,
+        moveDragState.elementId!
+      );
 
       // 2) Final application of overlap prevention rules: calculate valid drop time based on guide snap
       const baseSnapStart = guideSnapStart ?? rawTargetTime;
-      const finalSnapStart = positioner.computeSnapPosition(baseSnapStart, elementDuration, moveDragState.elementId!);
+      const finalSnapStart = positioner.computeSnapPosition(
+        baseSnapStart,
+        elementDuration,
+        moveDragState.elementId!
+      );
       const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
 
       // Maintain dropPreview.targetTime as snapped time to ensure same result at mouse up
       updateDragPositions(ghostPixelPosition, finalSnapStart);
     },
-    [isDraggingElement, moveDragState, positioner, updateDragPositions, pixelsPerSecond, media, updateSnapGuide]
+    [
+      isDraggingElement,
+      moveDragState,
+      positioner,
+      updateDragPositions,
+      pixelsPerSecond,
+      media,
+      updateSnapGuide,
+    ]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -74,10 +116,16 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
       return;
     }
 
-    const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
+    const elementDuration = roundTime(
+      moveDragState.originalEndTime - moveDragState.originalStartTime
+    );
     const rawStartTime = roundTime(dropPreview.targetTime);
 
-    const finalStartTime = positioner.computeSnapPosition(rawStartTime, elementDuration, moveDragState.elementId!);
+    const finalStartTime = positioner.computeSnapPosition(
+      rawStartTime,
+      elementDuration,
+      moveDragState.elementId!
+    );
     const finalEndTime = roundTime(finalStartTime + elementDuration);
 
     updateSelectedElements(moveDragState.elementId!, {

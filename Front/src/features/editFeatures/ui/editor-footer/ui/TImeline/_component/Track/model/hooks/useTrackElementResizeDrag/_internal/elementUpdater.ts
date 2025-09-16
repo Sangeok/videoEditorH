@@ -1,14 +1,8 @@
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { roundTime } from "@/shared/lib/timeConversion";
 import { ElementAdjustment } from "../../../types";
 
-type TimelineElement = MediaElement | AudioElement | TextElement;
-
-export function createElementUpdater<T extends TimelineElement>({
+export function createElementUpdater<T extends TrackElement>({
   updateSelectedElements,
   updateMultipleSelectedElements,
 }: {
