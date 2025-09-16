@@ -56,7 +56,7 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
       // 1) Vertical guide snap calculation (based on other element edges). If there's a return value, snap to that time
       const guideSnapStart = updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
 
-      // 2) 겹침 방지 규칙 최종 적용: 가이드 스냅 기준으로 유효한 드롭 시간 산출
+      // 2) Final application of overlap prevention rules: calculate valid drop time based on guide snap
       const baseSnapStart = guideSnapStart ?? rawTargetTime;
       const finalSnapStart = positioner.computeSnapPosition(baseSnapStart, elementDuration, moveDragState.elementId!);
       const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
