@@ -27,8 +27,8 @@ const SnapGuideIndicator = memo(() => {
         className="absolute left-0 h-full"
         style={{
           width: 1,
-          background: "#22c55e", // green-500
-          boxShadow: "0 0 0 1px rgba(34,197,94,0.6)",
+          background: "#9370DB",
+          boxShadow: "0 0 0 1px rgba(147,112,219,0.6)",
           opacity: 0.9,
         }}
       />
