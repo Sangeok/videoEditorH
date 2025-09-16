@@ -53,7 +53,7 @@ export function useTrackElementMove<T extends MediaElement | AudioElement | Text
       const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
 
       const rawTargetTime = roundTime(moveDragState.originalStartTime + deltaTime);
-      // 1) 수직 가이드 스냅 계산(타 요소 엣지 기준). 반환값이 있으면 그 시각으로 스냅
+      // 1) Vertical guide snap calculation (based on other element edges). If there's a return value, snap to that time
       const guideSnapStart = updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
 
       // 2) 겹침 방지 규칙 최종 적용: 가이드 스냅 기준으로 유효한 드롭 시간 산출
