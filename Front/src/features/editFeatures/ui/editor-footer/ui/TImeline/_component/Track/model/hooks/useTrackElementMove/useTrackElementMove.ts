@@ -1,40 +1,30 @@
 import { useCallback, useEffect } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { AudioElement, MediaElement, TextElement } from "@/entities/media/types";
 import { createElementPositioner } from "./_internal/elementPositioning";
 import { useDragState } from "./_internal/useDragState";
-import {
-  pixelsToTime,
-  roundTime,
-  timeToPixels,
-} from "@/shared/lib/timeConversion";
+import { pixelsToTime, roundTime, timeToPixels } from "@/shared/lib/timeConversion";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { useSnapGuide } from "./_internal/useSnapGuide";
 
-interface UseTrackElementMoveProps<
-  T extends MediaElement | AudioElement | TextElement
-> {
+interface UseTrackElementMoveProps<T extends MediaElement | AudioElement | TextElement> {
   SelectedElements: T[];
   updateSelectedElements: (elementId: string, updates: Partial<T>) => void;
 }
 
-export function useTrackElementMove<
-  T extends MediaElement | AudioElement | TextElement
->({ SelectedElements, updateSelectedElements }: UseTrackElementMoveProps<T>) {
+export function useTrackElementMove<T extends MediaElement | AudioElement | TextElement>({
+  SelectedElements,
+  updateSelectedElements,
+}: UseTrackElementMoveProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
   const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
+  const { media } = useMediaStore();
+  const SNAP_TOLERANCE_PX = 7;
+  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond, SNAP_TOLERANCE_PX);
 
-  const {
-    moveDragState,
-    dropPreview,
-    isDraggingElement,
-    startDragging,
-    updateDragPositions,
-    resetDragState,
-  } = useDragState();
+  const { moveDragState, dropPreview, isDraggingElement, startDragging, updateDragPositions, resetDragState } =
+    useDragState();
 
   const positioner = createElementPositioner(SelectedElements);
 
@@ -47,18 +37,9 @@ export function useTrackElementMove<
 
       const elementStartTime = roundTime(element.startTime);
       const elementEndTime = roundTime(element.endTime);
-      const initialGhostPosition = timeToPixels(
-        elementStartTime,
-        pixelsPerSecond
-      );
+      const initialGhostPosition = timeToPixels(elementStartTime, pixelsPerSecond);
 
-      startDragging(
-        elementId,
-        e.clientX,
-        elementStartTime,
-        elementEndTime,
-        initialGhostPosition
-      );
+      startDragging(elementId, e.clientX, elementStartTime, elementEndTime, initialGhostPosition);
     },
     [SelectedElements, pixelsPerSecond, isDeleteMode, startDragging]
   );
@@ -69,48 +50,34 @@ export function useTrackElementMove<
 
       const deltaX = e.clientX - moveDragState.startX;
       const deltaTime = pixelsToTime(deltaX, pixelsPerSecond);
-      const elementDuration = roundTime(
-        moveDragState.originalEndTime - moveDragState.originalStartTime
-      );
+      const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
 
-      const rawTargetTime = roundTime(
-        moveDragState.originalStartTime + deltaTime
-      );
-      const snappedPosition = positioner.computeSnapPosition(
-        rawTargetTime,
-        elementDuration,
-        moveDragState.elementId!
-      );
+      const rawTargetTime = roundTime(moveDragState.originalStartTime + deltaTime);
+      // 1) 수직 가이드 스냅 계산(타 요소 엣지 기준). 반환값이 있으면 그 시각으로 스냅
+      const guideSnapStart = updateSnapGuide(rawTargetTime, elementDuration, moveDragState.elementId!);
 
-      const ghostPixelPosition = timeToPixels(snappedPosition, pixelsPerSecond);
+      // 2) 겹침 방지 규칙 최종 적용: 가이드 스냅 기준으로 유효한 드롭 시간 산출
+      const baseSnapStart = guideSnapStart ?? rawTargetTime;
+      const finalSnapStart = positioner.computeSnapPosition(baseSnapStart, elementDuration, moveDragState.elementId!);
+      const ghostPixelPosition = timeToPixels(finalSnapStart, pixelsPerSecond);
 
-      updateDragPositions(ghostPixelPosition, rawTargetTime);
+      // dropPreview.targetTime을 스냅된 시간으로 유지하여 마우스업 시점에도 동일한 결과 보장
+      updateDragPositions(ghostPixelPosition, finalSnapStart);
     },
-    [
-      isDraggingElement,
-      moveDragState,
-      positioner,
-      updateDragPositions,
-      pixelsPerSecond,
-    ]
+    [isDraggingElement, moveDragState, positioner, updateDragPositions, pixelsPerSecond, media, updateSnapGuide]
   );
 
   const handleMouseUp = useCallback(() => {
     if (!isDraggingElement || !dropPreview.isVisible) {
       resetDragState();
+      clearSnapGuide();
       return;
     }
 
-    const elementDuration = roundTime(
-      moveDragState.originalEndTime - moveDragState.originalStartTime
-    );
+    const elementDuration = roundTime(moveDragState.originalEndTime - moveDragState.originalStartTime);
     const rawStartTime = roundTime(dropPreview.targetTime);
 
-    const finalStartTime = positioner.computeSnapPosition(
-      rawStartTime,
-      elementDuration,
-      moveDragState.elementId!
-    );
+    const finalStartTime = positioner.computeSnapPosition(rawStartTime, elementDuration, moveDragState.elementId!);
     const finalEndTime = roundTime(finalStartTime + elementDuration);
 
     updateSelectedElements(moveDragState.elementId!, {
@@ -120,6 +87,7 @@ export function useTrackElementMove<
     } as Partial<T>);
 
     resetDragState();
+    clearSnapGuide();
   }, [
     isDraggingElement,
     dropPreview.isVisible,
@@ -128,6 +96,7 @@ export function useTrackElementMove<
     positioner,
     updateSelectedElements,
     resetDragState,
+    clearSnapGuide,
   ]);
 
   // Global mouse event listeners

@@ -1,9 +1,5 @@
 import { useCallback } from "react";
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { AudioElement, MediaElement, TextElement } from "@/entities/media/types";
 import { pixelsToTime, roundTime } from "@/shared/lib/timeConversion";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { ResizeDragType } from "../../types";
@@ -12,10 +8,10 @@ import { createElementConstraints } from "./_internal/elementConstraints";
 import { createElementUpdater } from "./_internal/elementUpdater";
 import { useMouseEvents } from "./_internal/mouseEventHandler";
 import { useResizeDragState } from "./_internal/resizeDragState";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { useSnapGuide } from "./_internal/useSnapGuide";
 
-interface UseTrackElementResizeDragProps<
-  T extends MediaElement | AudioElement | TextElement
-> {
+interface UseTrackElementResizeDragProps<T extends MediaElement | AudioElement | TextElement> {
   SelectedElements: T[];
   updateSelectedElements: (elementId: string, updates: Partial<T>) => void;
   updateMultipleSelectedElements: (
@@ -26,24 +22,22 @@ interface UseTrackElementResizeDragProps<
   ) => void;
 }
 
-export function useTrackElementResizeDrag<
-  T extends MediaElement | AudioElement | TextElement
->({
+export function useTrackElementResizeDrag<T extends MediaElement | AudioElement | TextElement>({
   SelectedElements,
   updateSelectedElements,
   updateMultipleSelectedElements,
 }: UseTrackElementResizeDragProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+  const { media } = useMediaStore();
+  const SNAP_TOLERANCE_PX = 7;
+  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond, SNAP_TOLERANCE_PX);
 
-  const { getSortedElements, getMinStartTime, adjustSubsequentElements } =
-    createElementConstraints(SelectedElements);
-  const { dragState, startDrag, endDrag, updateMaxEndTime } =
-    useResizeDragState<T>();
-  const { updateElementTimeProperties, updateMultipleElementsTimeProperties } =
-    createElementUpdater({
-      updateSelectedElements,
-      updateMultipleSelectedElements,
-    });
+  const { getSortedElements, getMinStartTime, adjustSubsequentElements } = createElementConstraints(SelectedElements);
+  const { dragState, startDrag, endDrag, updateMaxEndTime } = useResizeDragState<T>();
+  const { updateElementTimeProperties, updateMultipleElementsTimeProperties } = createElementUpdater({
+    updateSelectedElements,
+    updateMultipleSelectedElements,
+  });
 
   const handleResizeStart = useCallback(
     (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => {
@@ -67,18 +61,12 @@ export function useTrackElementResizeDrag<
       const sortedElements = getSortedElements();
       const minStartTime = getMinStartTime(dragState.elementId, sortedElements);
       const desiredStartTime = dragState.originalStartTime + deltaTime;
+      // Guide snap for left edge
+      const snappedStart = updateSnapGuide("start", roundTime(desiredStartTime), dragState.elementId);
+      const candidateStart = snappedStart ?? desiredStartTime;
+      const newStartTime = validateStartTime(candidateStart, minStartTime, dragState.originalEndTime);
 
-      const newStartTime = validateStartTime(
-        desiredStartTime,
-        minStartTime,
-        dragState.originalEndTime
-      );
-
-      updateElementTimeProperties(
-        dragState.elementId,
-        newStartTime,
-        dragState.originalEndTime
-      );
+      updateElementTimeProperties(dragState.elementId, newStartTime, dragState.originalEndTime);
     },
     [dragState, getSortedElements, getMinStartTime, updateElementTimeProperties]
   );
@@ -89,44 +77,28 @@ export function useTrackElementResizeDrag<
 
       // user wants to extend the end time
       const desiredEndTime = dragState.originalEndTime + deltaTime;
-      const validatedEndTime = validateEndTime(
-        desiredEndTime,
-        dragState.originalStartTime
-      );
+      // Guide snap for right edge
+      const snappedEnd = updateSnapGuide("end", roundTime(desiredEndTime), dragState.elementId);
+      const endCandidate = snappedEnd ?? desiredEndTime;
+      const validatedEndTime = validateEndTime(endCandidate, dragState.originalStartTime);
       const finalEndTime = roundTime(validatedEndTime);
 
       // check if the end time is extending beyond the max end time reached during the drag
       const isExtendingBeyondMaxReachedDuringDrag =
-        finalEndTime >
-        (dragState.maxEndTimeDuringDrag ?? dragState.originalEndTime);
+        finalEndTime > (dragState.maxEndTimeDuringDrag ?? dragState.originalEndTime);
 
       const sortedElements = getSortedElements();
       const adjustments = isExtendingBeyondMaxReachedDuringDrag
-        ? adjustSubsequentElements(
-            dragState.elementId,
-            finalEndTime,
-            sortedElements
-          )
+        ? adjustSubsequentElements(dragState.elementId, finalEndTime, sortedElements)
         : [];
 
-      updateMultipleElementsTimeProperties(
-        dragState.elementId,
-        finalEndTime,
-        dragState.originalStartTime,
-        adjustments
-      );
+      updateMultipleElementsTimeProperties(dragState.elementId, finalEndTime, dragState.originalStartTime, adjustments);
 
       if (isExtendingBeyondMaxReachedDuringDrag) {
         updateMaxEndTime(finalEndTime);
       }
     },
-    [
-      dragState,
-      getSortedElements,
-      adjustSubsequentElements,
-      updateMultipleElementsTimeProperties,
-      updateMaxEndTime,
-    ]
+    [dragState, getSortedElements, adjustSubsequentElements, updateMultipleElementsTimeProperties, updateMaxEndTime]
   );
 
   const handleMouseMove = useCallback(
@@ -144,15 +116,24 @@ export function useTrackElementResizeDrag<
       } else if (isRightResize) {
         handleRightResize(deltaTime);
       }
+
+      // Visual vertical snap guide while resizing
+      const currentStart = isLeftResize
+        ? roundTime(dragState.originalStartTime + deltaTime)
+        : dragState.originalStartTime;
+      const currentEnd = isRightResize ? roundTime(dragState.originalEndTime + deltaTime) : dragState.originalEndTime;
+
+      updateSnapGuide(isLeftResize ? "start" : "end", isLeftResize ? currentStart : currentEnd, dragState.elementId);
     },
-    [dragState, pixelsPerSecond, handleLeftResize, handleRightResize]
+    [dragState, pixelsPerSecond, handleLeftResize, handleRightResize, media, updateSnapGuide]
   );
 
   const handleMouseUp = useCallback(() => {
     if (dragState.isDragging) {
       endDrag();
+      clearSnapGuide();
     }
-  }, [dragState.isDragging, endDrag]);
+  }, [dragState.isDragging, endDrag, clearSnapGuide]);
 
   useMouseEvents(dragState, handleMouseMove, handleMouseUp);
 
