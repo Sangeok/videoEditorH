@@ -1,15 +1,15 @@
 import { AudioElement as AudioElementType } from "@/entities/media/types";
-import { ResizeDragType } from "../../../model/types";
-import { MoveDragState } from "../../../model/types";
+import { ResizeDragType } from "../../../../model/types";
+import { MoveDragState } from "../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { ResizeHandle } from "../../_component/ResizeHandle";
 import {
   calculateElementWidth,
   calculateTimelinePosition,
   formatTimeDisplay,
   isElementDragging,
-} from "../../../lib/timelineLib";
+} from "../../../../lib/timelineLib";
+import { ResizeHandle } from "../../../_component/ResizeHandle";
 
 interface TextElementProps {
   audioElement: AudioElementType;

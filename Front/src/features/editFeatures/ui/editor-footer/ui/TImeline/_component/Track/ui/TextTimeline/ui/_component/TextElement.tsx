@@ -1,5 +1,5 @@
 import { TextElement as TextElementType } from "@/entities/media/types";
-import { MoveDragState, ResizeDragType } from "../../model/types";
+import { MoveDragState, ResizeDragType } from "../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import {
@@ -7,8 +7,8 @@ import {
   calculateTimelinePosition,
   formatTimeDisplay,
   isElementDragging,
-} from "../../lib/timelineLib";
-import { ResizeHandle } from "../_component/ResizeHandle";
+} from "../../../../lib/timelineLib";
+import { ResizeHandle } from "../../../_component/ResizeHandle";
 
 interface TextElementProps {
   textElement: TextElementType;

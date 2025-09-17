@@ -9,7 +9,6 @@ interface ImageFileUploadAreaProps {
     handleFileSelect: (files: FileList | null) => void;
     handleDrag: (e: React.DragEvent) => void;
     handleDrop: (e: React.DragEvent) => void;
-    removeImage: (index: number) => void;
     selectImage: (imageId: string) => void;
     updateImageSettings: (
       imageId: string,

@@ -9,7 +9,7 @@ import { useTrackElementInteraction } from "../../../model/hooks/useTrackElement
 import { EmptyState } from "../../_component/EmptyState";
 import { DropPreview, MoveDragState } from "../../../model/types";
 import { DropIndicator } from "../../_component/DropIndicator";
-import AudioElement from "./AudioElement";
+import AudioElement from "./_component/AudioElement";
 
 export default function AudioTimeline() {
   const {

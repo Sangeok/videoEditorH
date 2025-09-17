@@ -1,6 +1,6 @@
 import TimelineRuler from "./_component/TimelineRuler/TimelineRuler";
 import CurrentTimeIndicator from "./_component/CurrentTimeIndicator/ui/CurrentTimeIndicator";
-import TextTimeline from "./_component/Track/ui/TextTimeline/TextTimeline";
+import TextTimeline from "./_component/Track/ui/TextTimeline/ui/TextTimeline";
 import AudioTimeline from "./_component/Track/ui/AudioTimeline/ui/AudioTimeline";
 import MediaTimeline from "./_component/Track/ui/MediaTimeline/ui";
 import SnapGuideIndicator from "./_component/SnapGuide/SnapGuideIndicator";
