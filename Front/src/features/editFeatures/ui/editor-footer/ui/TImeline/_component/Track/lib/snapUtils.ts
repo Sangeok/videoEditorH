@@ -1,11 +1,5 @@
-import {
-  AudioElement,
-  MediaElement,
-  TextElement,
-} from "@/entities/media/types";
+import { TrackElement } from "@/entities/media/types";
 import { timeToPixels } from "@/shared/lib/timeConversion";
-
-export type TimelineAnyElement = MediaElement | AudioElement | TextElement;
 
 export interface SnapCandidate {
   time: number; // seconds
@@ -19,7 +13,7 @@ export interface SnapCandidate {
  * Caller should pass already filtered elements if needed (e.g., viewport range).
  */
 export function buildSnapCandidates(
-  elementsAcrossTracks: TimelineAnyElement[],
+  elementsAcrossTracks: TrackElement[],
   pixelsPerSecond: number,
   elementIdToExclude?: string | null
 ): SnapCandidate[] {

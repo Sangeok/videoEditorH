@@ -2,7 +2,6 @@
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useRef } from "react";
 import { AudioElement as AudioElementType } from "@/entities/media/types";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
@@ -37,12 +36,10 @@ export default function AudioTimeline() {
     deleteSelectedElements: deleteAudioElement,
   });
 
-  const timelineRef = useRef<HTMLDivElement>(null);
-
   const hasAudioElements = media.audioElement.length > 0;
 
   return (
-    <div ref={timelineRef} className="relative w-full h-full bg-zinc-900">
+    <div className="relative w-full h-full bg-zinc-900">
       {hasAudioElements && (
         <AudioElementsContainer
           audioElements={media.audioElement}
