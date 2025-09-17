@@ -19,7 +19,7 @@ export default function ImageEditSubSide() {
 
       <ImagePreviewArea
         uploadedImages={state.uploadedImages}
-        deleteImage={actions.deleteImage}
+        removeImage={actions.removeImage}
       />
     </div>
   );
