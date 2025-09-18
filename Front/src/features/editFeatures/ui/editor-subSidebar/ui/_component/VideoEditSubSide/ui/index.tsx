@@ -16,7 +16,7 @@ export default function VideoEditSubSide() {
       <VideoPreviewArea
         uploadedVideos={state.uploadedVideos}
         removeVideo={actions.removeVideo}
-        handleFileSelect={actions.handleFileSelect}
+        addVideoToTimeLine={actions.addVideoToTimeLine}
       />
     </div>
   );
