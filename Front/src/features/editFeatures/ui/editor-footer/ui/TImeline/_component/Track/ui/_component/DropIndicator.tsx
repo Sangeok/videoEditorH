@@ -15,9 +15,6 @@ export function DropIndicator({
   moveDragState,
   pixelsPerSecond,
 }: DropIndicatorProps) {
-  console.log("dropPreview", dropPreview);
-  console.log("moveDragState", moveDragState);
-  console.log("pixelsPerSecond", pixelsPerSecond);
   if (
     !dropPreview.isVisible ||
     !moveDragState.isDragging ||

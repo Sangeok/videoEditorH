@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-// import { useMediaDrag } from "../model/hooks/useMediaDrag";
-// import { useMediaMove } from "../model/hooks/useMediaMove";
 import {
   ResizeDragState,
   MoveDragState,
@@ -27,7 +25,6 @@ export default function MediaTimeline() {
   } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
-  // const { dragState, handleResizeStart } = useMediaDrag();
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.mediaElement,
     updateSelectedElements: updateMediaElement,
@@ -40,16 +37,12 @@ export default function MediaTimeline() {
   const { handleTrackElementClick } = useTrackElementInteraction({
     deleteSelectedElements: deleteMediaElement,
   });
-  // const { moveDragState, dropPreview, handleMoveStart } = useMediaMove();
-  // const { handleMediaClick } = useMediaInteraction();
-
-  const timelineRef = useRef<HTMLDivElement>(null);
 
   // Check if media elements exist
   const hasMediaElements = media.mediaElement.length > 0;
 
   return (
-    <div ref={timelineRef} className="relative w-full h-full bg-zinc-900">
+    <div className="relative w-full h-full bg-zinc-900">
       {hasMediaElements && (
         <MediaElementsContainer
           mediaElements={media.mediaElement}

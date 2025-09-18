@@ -11,15 +11,12 @@ export default function VideoEditSubSide() {
     <div className="p-4 space-y-4 w-full">
       <h3 className="text-lg font-semibold text-white mb-4">Import Video</h3>
 
-      <VideoFileUploadArea
-        fileInputRef={fileInputRef}
-        actions={actions}
-        dragActive={state.dragActive}
-      />
+      <VideoFileUploadArea fileInputRef={fileInputRef} actions={actions} dragActive={state.dragActive} />
 
       <VideoPreviewArea
         uploadedVideos={state.uploadedVideos}
         removeVideo={actions.removeVideo}
+        addVideoToTimeLine={actions.addVideoToTimeLine}
       />
     </div>
   );

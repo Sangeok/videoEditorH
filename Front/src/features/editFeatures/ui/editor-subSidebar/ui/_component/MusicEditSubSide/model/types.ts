@@ -17,4 +17,5 @@ export interface AudioEditActions {
   handleDrop: (e: React.DragEvent) => void;
   togglePreview: (audioUrl: string, index: number) => void;
   removeAudio: (index: number) => void;
+  addAudioToTimeLine: (audio: UploadedAudio) => void;
 }

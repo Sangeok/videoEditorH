@@ -15,7 +15,7 @@ export function useFileUpload() {
 
   const handleFileSelect = async (
     files: FileList | null,
-    addVideoToProject: (videoData: { url: string; duration: number; width: number; height: number }) => void
+    addVideoToTimeLine: (videoData: { url: string; duration: number; width: number; height: number }) => void
   ) => {
     if (!files) return;
 
@@ -44,7 +44,7 @@ export function useFileUpload() {
           };
 
           setUploadedVideos((prev) => [...prev, uploadedVideo]);
-          addVideoToProject(videoData);
+          addVideoToTimeLine(videoData);
           resolve();
         };
       });

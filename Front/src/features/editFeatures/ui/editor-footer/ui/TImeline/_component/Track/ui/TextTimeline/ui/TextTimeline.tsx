@@ -2,15 +2,14 @@
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useTrackElementResizeDrag } from "../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
-import { useTrackElementMove } from "../../model/hooks/useTrackElementMove/useTrackElementMove";
-import { useRef } from "react";
-import { EmptyState } from "../_component/EmptyState";
-import { useTrackElementInteraction } from "../../model/hooks/useTrackElementInteraction";
+import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
+import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
+import { EmptyState } from "../../_component/EmptyState";
+import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { TextElement as TextElementType } from "@/entities/media/types";
-import { DropIndicator } from "../_component/DropIndicator";
-import TextElement from "./TextElement";
-import { DropPreview, MoveDragState } from "../../model/types";
+import { DropIndicator } from "../../_component/DropIndicator";
+import { DropPreview, MoveDragState } from "../../../model/types";
+import TextElement from "./_component/TextElement";
 
 export default function TextTimeline() {
   const {
@@ -37,12 +36,10 @@ export default function TextTimeline() {
     deleteSelectedElements: deleteTextElement,
   });
 
-  const timelineRef = useRef<HTMLDivElement>(null);
-
   const hasTextElements = media.textElement.length > 0;
 
   return (
-    <div ref={timelineRef} className="relative w-full h-full bg-zinc-900">
+    <div className="relative w-full h-full bg-zinc-900">
       {hasTextElements && (
         <TextElementsContainer
           textElements={media.textElement}

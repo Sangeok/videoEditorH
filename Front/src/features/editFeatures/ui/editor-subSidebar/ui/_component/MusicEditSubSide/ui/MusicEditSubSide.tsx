@@ -24,6 +24,7 @@ export default function MusicEditSubSide() {
         playingIndex={state.playingIndex}
         togglePreview={actions.togglePreview}
         removeAudio={actions.removeAudio}
+        addAudioToTimeLine={actions.addAudioToTimeLine}
       />
 
       <AudioInstructions />

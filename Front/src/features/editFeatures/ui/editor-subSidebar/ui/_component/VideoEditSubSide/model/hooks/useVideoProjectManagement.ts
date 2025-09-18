@@ -10,18 +10,21 @@ interface VideoData {
 }
 
 export function useVideoProjectManagement() {
-  const { addMediaElement, updateMediaElement, deleteMediaElement } =
-    useMediaStore();
+  const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
 
-  const addVideoToProject = (videoData: VideoData) => {
+  const addVideoToTimeLine = (videoData: VideoData) => {
     const videoElement = createVideoElement(videoData);
+
+    const existingVideo = media.mediaElement.find((el) => el.url === videoData.url);
+    if (existingVideo) {
+      alert("Video already exists in the timeline");
+      return;
+    }
+
     addMediaElement(videoElement);
   };
 
-  const updateVideoSettings = (
-    videoId: string,
-    updates: Partial<MediaElement>
-  ) => {
+  const updateVideoSettings = (videoId: string, updates: Partial<MediaElement>) => {
     updateMediaElement(videoId, updates);
   };
 
@@ -30,7 +33,7 @@ export function useVideoProjectManagement() {
   };
 
   return {
-    addVideoToProject,
+    addVideoToTimeLine,
     updateVideoSettings,
     deleteVideo,
   };
