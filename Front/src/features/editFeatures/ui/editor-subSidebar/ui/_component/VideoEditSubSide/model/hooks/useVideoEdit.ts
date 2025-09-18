@@ -10,12 +10,12 @@ export function useVideoEdit() {
   const projectManagement = useVideoProjectManagement();
 
   const handleFileSelect = (files: FileList | null) => {
-    fileUpload.handleFileSelect(files, projectManagement.addVideoToProject);
+    fileUpload.handleFileSelect(files, projectManagement.addVideoToTimeLine);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     dragAndDrop.handleDrop(e, (files) => {
-      fileUpload.handleFileSelect(files, projectManagement.addVideoToProject);
+      fileUpload.handleFileSelect(files, projectManagement.addVideoToTimeLine);
     });
   };
 
@@ -42,6 +42,7 @@ export function useVideoEdit() {
       selectVideo: videoSelection.selectVideo,
       updateVideoSettings: projectManagement.updateVideoSettings,
       deleteVideo,
+      addVideoToTimeLine: projectManagement.addVideoToTimeLine,
     },
   };
 }

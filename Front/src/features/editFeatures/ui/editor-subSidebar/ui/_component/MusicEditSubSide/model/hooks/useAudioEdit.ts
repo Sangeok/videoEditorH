@@ -1,14 +1,19 @@
+"use client";
+
 import { useFileUpload } from "./useFileUpload";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { useAudioPreview } from "./useAudioPreview";
 import { useAudioFileProcessor } from "./useAudioFileProcessor";
-import { AudioEditState, AudioEditActions } from "../types";
+import { AudioEditState, AudioEditActions, UploadedAudio } from "../types";
+import { useMediaStore } from "@/entities/media/useMediaStore";
+import { createAudioElement } from "../../lib/audioElementFactory";
 
 export function useAudioEdit(): {
   state: AudioEditState;
   actions: AudioEditActions;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
 } {
+  const { media, addAudioElement } = useMediaStore();
   const fileUpload = useFileUpload();
   const dragAndDrop = useDragAndDrop();
   const audioPreview = useAudioPreview();
@@ -34,6 +39,18 @@ export function useAudioEdit(): {
     });
   };
 
+  const addAudioToTimeLine = async (audio: UploadedAudio) => {
+    const existingAudio = media.audioElement.find((el) => el.url === audio.url);
+
+    if (existingAudio) {
+      alert("Audio already exists in the timeline");
+      return;
+    }
+
+    const audioElement = await createAudioElement(audio.url);
+    addAudioElement(audioElement);
+  };
+
   const removeAudio = (index: number) => {
     audioPreview.stopPreviewForIndex(index);
     fileUpload.removeAudio(index);
@@ -54,6 +71,7 @@ export function useAudioEdit(): {
       handleDrop,
       togglePreview: audioPreview.togglePreview,
       removeAudio,
+      addAudioToTimeLine,
     },
   };
 }

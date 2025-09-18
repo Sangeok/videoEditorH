@@ -3,12 +3,10 @@ import { X } from "lucide-react";
 interface ImagePreviewAreaProps {
   uploadedImages: string[];
   removeImage: (index: number) => void;
+  addImageToTimeLine: (imageUrl: string) => void;
 }
 
-export default function ImagePreviewArea({
-  uploadedImages,
-  removeImage,
-}: ImagePreviewAreaProps) {
+export default function ImagePreviewArea({ uploadedImages, removeImage, addImageToTimeLine }: ImagePreviewAreaProps) {
   const isUploaded = uploadedImages.length > 0;
 
   if (!isUploaded) return;
@@ -24,6 +22,7 @@ export default function ImagePreviewArea({
               src={imageUrl}
               alt={`Uploaded ${index + 1}`}
               className="w-full h-24 object-cover rounded border border-zinc-600"
+              onDoubleClick={() => addImageToTimeLine(imageUrl)}
             />
             <button
               onClick={() => removeImage(index)}

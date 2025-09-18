@@ -10,12 +10,12 @@ export function useImageEdit() {
   const projectManagement = useImageProjectManagement();
 
   const handleFileSelect = (files: FileList | null) => {
-    fileUpload.handleFileSelect(files, projectManagement.addImageToProject);
+    fileUpload.handleFileSelect(files, projectManagement.addImageToTimeLine);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     dragAndDrop.handleDrop(e, (files) => {
-      fileUpload.handleFileSelect(files, projectManagement.addImageToProject);
+      fileUpload.handleFileSelect(files, projectManagement.addImageToTimeLine);
     });
   };
 
@@ -36,6 +36,7 @@ export function useImageEdit() {
     },
     actions: {
       handleFileSelect,
+      addImageToTimeLine: projectManagement.addImageToTimeLine,
       handleDrag: dragAndDrop.handleDrag,
       handleDrop,
       removeImage: fileUpload.removeImage,

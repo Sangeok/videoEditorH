@@ -3,18 +3,21 @@ import { createImageElement } from "../../lib/imageElementFactory";
 import { MediaElement } from "@/entities/media/types";
 
 export function useImageProjectManagement() {
-  const { addMediaElement, updateMediaElement, deleteMediaElement } =
-    useMediaStore();
+  const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
 
-  const addImageToProject = (imageUrl: string) => {
+  const addImageToTimeLine = (imageUrl: string) => {
     const imageElement = createImageElement(imageUrl);
+
+    const existingImage = media.mediaElement.find((el) => el.url === imageUrl);
+    if (existingImage) {
+      alert("Image already exists in the timeline");
+      return;
+    }
+
     addMediaElement(imageElement);
   };
 
-  const updateImageSettings = (
-    imageId: string,
-    updates: Partial<MediaElement>
-  ) => {
+  const updateImageSettings = (imageId: string, updates: Partial<MediaElement>) => {
     updateMediaElement(imageId, updates);
   };
 
@@ -23,7 +26,7 @@ export function useImageProjectManagement() {
   };
 
   return {
-    addImageToProject,
+    addImageToTimeLine,
     updateImageSettings,
     deleteImage,
   };

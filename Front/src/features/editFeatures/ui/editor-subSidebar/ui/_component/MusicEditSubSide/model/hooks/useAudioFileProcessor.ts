@@ -26,10 +26,7 @@ export function useAudioFileProcessor() {
       onSuccess(uploadedAudio);
 
       try {
-        const audioElement = await createAudioElement(
-          audioUrl,
-          media.projectDuration
-        );
+        const audioElement = await createAudioElement(audioUrl);
         addAudioElement(audioElement);
       } catch (error: unknown) {
         console.error("Error uploading audio element:", error);
