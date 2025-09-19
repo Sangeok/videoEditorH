@@ -3,26 +3,17 @@
 import React from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import {
-  ResizeDragState,
-  MoveDragState,
-  DropPreview,
-} from "../../../model/types";
+import { ResizeDragState, MoveDragState, DropPreview } from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";
-import { MediaElement } from "./_component/MediaElement";
+import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 
 export default function MediaTimeline() {
-  const {
-    media,
-    updateMediaElement,
-    deleteMediaElement,
-    updateMultipleMediaElements,
-  } = useMediaStore();
+  const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
@@ -76,22 +67,14 @@ function MediaElementsContainer({
   dragState: ResizeDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
-  onResizeStart: (
-    e: React.MouseEvent,
-    elementId: string,
-    dragType: "left" | "right"
-  ) => void;
+  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
   onTrackElementClick: (trackElementId: string) => void;
 }) {
   return (
     <div className="relative h-full">
       {/* Drop indicator for move preview */}
-      <DropIndicator
-        dropPreview={dropPreview}
-        moveDragState={moveDragState}
-        pixelsPerSecond={pixelsPerSecond}
-      />
+      <DropIndicator dropPreview={dropPreview} moveDragState={moveDragState} pixelsPerSecond={pixelsPerSecond} />
 
       {/* Media elements */}
       {mediaElements.map((mediaElement) => (

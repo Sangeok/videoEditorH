@@ -3,16 +3,16 @@
 import React from "react";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { ResizeDragState, ResizeDragType, MoveDragState } from "../../../../model/types";
-import { ResizeHandle } from "../../../../ui/_component/ResizeHandle";
+import { ResizeDragState, ResizeDragType, MoveDragState } from "../../../../../../model/types";
+import { ResizeHandle } from "../../../../../_component/ResizeHandle";
 import {
   calculateTimelinePosition,
   calculateElementWidth,
   isElementDragging,
   formatTimeDisplay,
-} from "../../../../lib/timelineLib";
+} from "../../../../../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { VideoFilmstrip } from "./VideoFilmstrip";
+import MediaTrackPreview from "./_component/MediaTrackPreview/ui";
 
 interface MediaElementProps {
   mediaElement: MediaElementType;
@@ -89,7 +89,7 @@ MediaElementProps) {
 
       {/* Media preview (image/video) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {renderMediaPreview(mediaElement, isResizeDragging)}
+        <MediaTrackPreview mediaElement={mediaElement} isResizeDragging={isResizeDragging} />
         {/* subtle bottom gradient for legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" aria-hidden />
       </div>
@@ -147,55 +147,4 @@ function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): strin
 function generateElementTitle(mediaElement: MediaElementType): string {
   const timeDisplay = formatTimeDisplay(mediaElement.startTime, mediaElement.endTime);
   return `${mediaElement.type} (${timeDisplay})`;
-}
-
-function renderMediaPreview(mediaElement: MediaElementType, isResizeDragging?: boolean) {
-  const commonClass = "object-cover opacity-90";
-  if (mediaElement.type === "image" && mediaElement.url) {
-    // Filmstrip effect by repeating the image horizontally (contain height)
-    // Use CSS background with repeat-x to avoid creating many DOM nodes
-    if (isResizeDragging) {
-      // degrade during resize: no repeat for lower repaint cost
-      return (
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage: `url(${mediaElement.url})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "contain",
-            backgroundPosition: "center",
-            imageRendering: "auto",
-          }}
-        />
-      );
-    }
-    return (
-      <div
-        className="w-full h-full"
-        style={{
-          backgroundImage: `url(${mediaElement.url})`,
-          backgroundRepeat: "repeat-x",
-          backgroundSize: "auto 100%", // fit height, keep aspect
-          backgroundPosition: "left center",
-          imageRendering: "auto",
-        }}
-      />
-    );
-  }
-  if (mediaElement.type === "video" && mediaElement.url) {
-    return (
-      <VideoFilmstrip
-        src={mediaElement.url}
-        startTime={mediaElement.startTime}
-        endTime={mediaElement.endTime}
-        isResizing={isResizeDragging}
-      />
-    );
-  }
-  // fallback (audio or missing url)
-  return (
-    <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-300 bg-gray-800/50">
-      {mediaElement.type.toUpperCase()}
-    </div>
-  );
 }
