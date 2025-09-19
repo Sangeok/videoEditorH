@@ -19,7 +19,7 @@ const TrackPannelItems = [
 export default function TrackPannel() {
   return (
     <div className="w-12 border-r border-white/20 bg-black">
-      {/* TimelineRuler와 동일한 height의 div */}
+      {/* Div with same height as TimelineRuler */}
       <div className="h-8" />
       <div className="flex-1">
         <div className="flex flex-col h-full">
