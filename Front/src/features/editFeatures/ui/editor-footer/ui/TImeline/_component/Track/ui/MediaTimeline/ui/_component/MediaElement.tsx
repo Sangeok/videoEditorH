@@ -73,6 +73,7 @@ MediaElementProps) {
     left: `${leftPosition}px`,
     width: `${width}px`,
     opacity: isMoveDragging ? 0.3 : 1, // Make original element semi-transparent during move
+    willChange: isDragging ? ("left, width" as unknown as string) : undefined,
   };
 
   const elementClasses = getElementClasses(isDragging, isMoveDragging);
@@ -111,10 +112,15 @@ MediaElementProps) {
         }}
       />
 
-      <span className="truncate px-3 pointer-events-none select-none">
-        {mediaElement.id || "Media"}
-      </span>
-      {/* Media content */}
+      {/* Media preview (image/video) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {renderMediaPreview(mediaElement, isResizeDragging)}
+        {/* subtle bottom gradient for legibility */}
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"
+          aria-hidden
+        />
+      </div>
 
       {/* Right resize handle */}
       <ResizeHandle
@@ -175,4 +181,62 @@ function generateElementTitle(mediaElement: MediaElementType): string {
     mediaElement.endTime
   );
   return `${mediaElement.type} (${timeDisplay})`;
+}
+
+function renderMediaPreview(
+  mediaElement: MediaElementType,
+  isResizeDragging?: boolean
+) {
+  const commonClass = "object-cover opacity-90";
+  if (mediaElement.type === "image" && mediaElement.url) {
+    // Filmstrip effect by repeating the image horizontally (contain height)
+    // Use CSS background with repeat-x to avoid creating many DOM nodes
+    if (isResizeDragging) {
+      // degrade during resize: no repeat for lower repaint cost
+      return (
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `url(${mediaElement.url})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            imageRendering: "auto",
+          }}
+        />
+      );
+    }
+    return (
+      <div
+        className="w-full h-full"
+        style={{
+          backgroundImage: `url(${mediaElement.url})`,
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "auto 100%", // fit height, keep aspect
+          backgroundPosition: "left center",
+          imageRendering: "auto",
+        }}
+      />
+    );
+  }
+  if (mediaElement.type === "video" && mediaElement.url) {
+    return (
+      <video
+        src={mediaElement.url}
+        className={`w-full h-full ${commonClass}`}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        disablePictureInPicture
+        controls={false}
+      />
+    );
+  }
+  // fallback (audio or missing url)
+  return (
+    <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-300 bg-gray-800/50">
+      {mediaElement.type.toUpperCase()}
+    </div>
+  );
 }
