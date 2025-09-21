@@ -225,6 +225,8 @@ export const SequenceItem: Record<
     const fromFrame = Math.floor(audioElement.startTime * options.fps);
     const durationInFrames = Math.floor((audioElement.endTime - audioElement.startTime) * options.fps);
 
+    const offsetSeconds = audioElement.sourceStart ?? 0;
+
     return (
       <Sequence
         key={audioElement.id}
@@ -233,7 +235,11 @@ export const SequenceItem: Record<
         name={`Audio: ${audioElement.id}`}
       >
         <AbsoluteFill>
-          <Audio src={audioElement.url || ""} volume={audioElement.volume || 100} />
+          <Audio
+            src={audioElement.url || ""}
+            volume={audioElement.volume || 100}
+            startFrom={Math.floor(offsetSeconds * options.fps)}
+          />
         </AbsoluteFill>
       </Sequence>
     );

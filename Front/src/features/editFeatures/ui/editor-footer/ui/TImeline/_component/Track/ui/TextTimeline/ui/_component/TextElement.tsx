@@ -102,8 +102,8 @@ export default function TextElement({
         }}
       />
 
-      <span className="truncate px-3 pointer-events-none select-none">
-        {textElement.id || "Text"}
+      <span className="w-full min-w-0 truncate px-3 pointer-events-none select-none">
+        {textElement.text || "Text"}
       </span>
       {/* Media content */}
 

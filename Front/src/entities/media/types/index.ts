@@ -57,6 +57,8 @@ export interface AudioElement {
   url: string;
   volume: number;
   speed: number;
+  // source trim offset in seconds (how much to skip from the start of the file)
+  sourceStart?: number;
 }
 
 export type TrackElement = MediaElement | AudioElement | TextElement;
