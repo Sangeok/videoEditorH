@@ -15,6 +15,7 @@ export function createAudioElement(audioUrl: string): Promise<AudioElement> {
         url: audioUrl,
         volume: 1,
         speed: 1,
+        sourceStart: 0,
       };
       resolve(audioElement);
     });
