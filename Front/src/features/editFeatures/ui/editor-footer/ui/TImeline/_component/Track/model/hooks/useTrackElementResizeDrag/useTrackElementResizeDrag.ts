@@ -64,32 +64,9 @@ export function useTrackElementResizeDrag<T extends TrackElement>({
       const candidateStart = snappedStart ?? desiredStartTime;
       const newStartTime = validateStartTime(candidateStart, minStartTime, dragState.originalEndTime);
 
-      // Maintain audio source trim offset when resizing from the left
-      const leftDelta = roundTime(newStartTime - dragState.originalStartTime);
-      const element = SelectedElements.find((el) => el.id === dragState.elementId);
-      if (element?.type === "audio") {
-        const currentOffset = (element as any).sourceStart ?? 0;
-        const newOffset = Math.max(0, roundTime(currentOffset + leftDelta));
-        updateSelectedElements(dragState.elementId, {
-          startTime: newStartTime,
-          endTime: dragState.originalEndTime,
-          duration: roundTime(dragState.originalEndTime - newStartTime),
-          // @ts-ignore - only for audio elements
-          sourceStart: newOffset as any,
-        } as any);
-      } else {
-        updateElementTimeProperties(dragState.elementId, newStartTime, dragState.originalEndTime);
-      }
+      updateElementTimeProperties(dragState.elementId, newStartTime, dragState.originalEndTime);
     },
-    [
-      dragState,
-      getSortedElements,
-      getMinStartTime,
-      updateElementTimeProperties,
-      updateSnapGuide,
-      SelectedElements,
-      updateSelectedElements,
-    ]
+    [dragState, getSortedElements, getMinStartTime, updateElementTimeProperties, updateSnapGuide]
   );
 
   const handleRightResize = useCallback(

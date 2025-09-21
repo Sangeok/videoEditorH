@@ -35,7 +35,7 @@ export function createElementUpdater<T extends TrackElement>({
       updates: {
         endTime: newEndTime,
         duration,
-      },
+      } as Partial<T>,
     };
 
     const subsequentUpdates = adjustments.map((adj) => ({

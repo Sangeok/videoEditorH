@@ -75,7 +75,9 @@ function mergeAbortSignals(signals: AbortSignal[]): AbortSignal | undefined {
 }
 
 async function decodeAudioData(arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
-  const AudioCtx: typeof AudioContext | undefined = (window as any).AudioContext || (window as any).webkitAudioContext;
+  const w = window as Window & { webkitAudioContext?: typeof AudioContext };
+  const AudioCtx: typeof AudioContext | undefined =
+    typeof AudioContext !== "undefined" ? AudioContext : w.webkitAudioContext;
   if (!AudioCtx) {
     throw new Error("Web Audio API not supported in this browser");
   }
@@ -123,7 +125,10 @@ function dataUrlToArrayBuffer(dataUrl: string): ArrayBuffer {
   // URL-encoded fallback
   const decoded = decodeURIComponent(data);
   const encoder = new TextEncoder();
-  return encoder.encode(decoded).buffer;
+  const bytes = encoder.encode(decoded);
+  const ab = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(ab).set(bytes);
+  return ab;
 }
 
 function computePeaks(buffer: AudioBuffer, peaksPerSecond: number): Float32Array {

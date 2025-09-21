@@ -9,7 +9,6 @@ import {
   formatTimeDisplay,
   isElementDragging,
 } from "../../../../lib/timelineLib";
-import { ResizeHandle } from "../../../_component/ResizeHandle";
 import Waveform from "@/shared/ui/Waveform/ui/Waveform";
 
 interface TextElementProps {
@@ -27,13 +26,11 @@ export default function AudioElement({
   pixelsPerSecond,
   dragState,
   moveDragState,
-  onResizeStart,
   onMoveStart,
   onClick,
 }: TextElementProps) {
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   // Calculate position and dimensions
   const leftPosition = calculateTimelinePosition(audioElement.startTime, pixelsPerSecond);
@@ -43,7 +40,6 @@ export default function AudioElement({
   const isResizeDragging = isElementDragging(audioElement.id, dragState);
   const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === audioElement.id);
   const isDragging = isResizeDragging || isMoveDragging;
-  const isSelected = selectedTrackId === audioElement.id;
 
   // Generate styles with visibility for move dragging
   const elementStyles = {
