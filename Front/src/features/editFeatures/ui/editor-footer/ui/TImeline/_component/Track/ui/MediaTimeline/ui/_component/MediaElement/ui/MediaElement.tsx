@@ -3,30 +3,23 @@
 import React from "react";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import {
-  ResizeDragState,
-  ResizeDragType,
-  MoveDragState,
-} from "../../../../model/types";
-import { ResizeHandle } from "../../../../ui/_component/ResizeHandle";
+import { ResizeDragState, ResizeDragType, MoveDragState } from "../../../../../../model/types";
+import { ResizeHandle } from "../../../../../_component/ResizeHandle";
 import {
   calculateTimelinePosition,
   calculateElementWidth,
   isElementDragging,
   formatTimeDisplay,
-} from "../../../../lib/timelineLib";
+} from "../../../../../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
+import MediaTrackPreview from "./_component/MediaTrackPreview/ui";
 
 interface MediaElementProps {
   mediaElement: MediaElementType;
   pixelsPerSecond: number;
   dragState: ResizeDragState;
   moveDragState?: MoveDragState;
-  onResizeStart: (
-    e: React.MouseEvent,
-    elementId: string,
-    dragType: ResizeDragType
-  ) => void;
+  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
   onClick: (trackElementId: string) => void;
 }
@@ -41,30 +34,17 @@ export function MediaElement({
   onClick,
 }: // onClick,
 MediaElementProps) {
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const selectedTrackId = useSelectedTrackStore(
-    (state) => state.selectedTrackId
-  );
+  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   // Calculate position and dimensions
-  const leftPosition = calculateTimelinePosition(
-    mediaElement.startTime,
-    pixelsPerSecond
-  );
-  const width = calculateElementWidth(
-    mediaElement.startTime,
-    mediaElement.endTime,
-    pixelsPerSecond
-  );
+  const leftPosition = calculateTimelinePosition(mediaElement.startTime, pixelsPerSecond);
+  const width = calculateElementWidth(mediaElement.startTime, mediaElement.endTime, pixelsPerSecond);
 
   // Check drag states
   const isResizeDragging = isElementDragging(mediaElement.id, dragState);
-  const isMoveDragging = Boolean(
-    moveDragState?.isDragging && moveDragState.elementId === mediaElement.id
-  );
+  const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === mediaElement.id);
   const isDragging = isResizeDragging || isMoveDragging;
   const isSelected = selectedTrackId === mediaElement.id;
 
@@ -73,6 +53,7 @@ MediaElementProps) {
     left: `${leftPosition}px`,
     width: `${width}px`,
     opacity: isMoveDragging ? 0.3 : 1, // Make original element semi-transparent during move
+    willChange: isDragging ? ("left, width" as unknown as string) : undefined,
   };
 
   const elementClasses = getElementClasses(isDragging, isMoveDragging);
@@ -95,12 +76,7 @@ MediaElementProps) {
   };
 
   return (
-    <div
-      className={elementClasses}
-      onMouseDown={handleMouseDown}
-      style={elementStyles}
-      title={title}
-    >
+    <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
       {/* Left resize handle */}
       <ResizeHandle
         position="left"
@@ -111,10 +87,12 @@ MediaElementProps) {
         }}
       />
 
-      <span className="truncate px-3 pointer-events-none select-none">
-        {mediaElement.id || "Media"}
-      </span>
-      {/* Media content */}
+      {/* Media preview (image/video) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <MediaTrackPreview mediaElement={mediaElement} isResizeDragging={isResizeDragging} />
+        {/* subtle bottom gradient for legibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" aria-hidden />
+      </div>
 
       {/* Right resize handle */}
       <ResizeHandle
@@ -129,10 +107,7 @@ MediaElementProps) {
   );
 }
 
-function getElementClasses(
-  isDragging: boolean,
-  isMoveDragging?: boolean
-): string {
+function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): string {
   const baseClasses = [
     "absolute",
     "top-2",
@@ -170,9 +145,6 @@ function getElementClasses(
 }
 
 function generateElementTitle(mediaElement: MediaElementType): string {
-  const timeDisplay = formatTimeDisplay(
-    mediaElement.startTime,
-    mediaElement.endTime
-  );
+  const timeDisplay = formatTimeDisplay(mediaElement.startTime, mediaElement.endTime);
   return `${mediaElement.type} (${timeDisplay})`;
 }
