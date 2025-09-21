@@ -1,22 +1,14 @@
 import { AudioElement as AudioElementType } from "@/entities/media/types";
-import { ResizeDragType } from "../../../../model/types";
-import { MoveDragState } from "../../../../model/types";
+import { MoveDragState } from "../../../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import {
-  calculateElementWidth,
-  calculateTimelinePosition,
-  formatTimeDisplay,
-  isElementDragging,
-} from "../../../../lib/timelineLib";
-import Waveform from "@/shared/ui/Waveform/ui/Waveform";
+import { calculateElementWidth, calculateTimelinePosition, formatTimeDisplay } from "../../../../../../lib/timelineLib";
+import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTimeline/ui/_component/AudioElement/ui/_component/Waveform";
 
 interface TextElementProps {
   audioElement: AudioElementType;
   pixelsPerSecond: number;
-  dragState: MoveDragState;
   moveDragState?: MoveDragState;
-  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
   onClick: (selectedElements: string) => void;
 }
@@ -24,7 +16,6 @@ interface TextElementProps {
 export default function AudioElement({
   audioElement,
   pixelsPerSecond,
-  dragState,
   moveDragState,
   onMoveStart,
   onClick,
@@ -37,9 +28,7 @@ export default function AudioElement({
   const width = calculateElementWidth(audioElement.startTime, audioElement.endTime, pixelsPerSecond);
 
   // Check drag states
-  const isResizeDragging = isElementDragging(audioElement.id, dragState);
   const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === audioElement.id);
-  const isDragging = isResizeDragging || isMoveDragging;
 
   // Generate styles with visibility for move dragging
   const elementStyles = {
@@ -48,7 +37,7 @@ export default function AudioElement({
     opacity: isMoveDragging ? 0.3 : 1, // Make original element semi-transparent during move
   };
 
-  const elementClasses = getElementClasses(isDragging, isMoveDragging);
+  const elementClasses = getElementClasses(isMoveDragging);
   const title = generateElementTitle(audioElement);
 
   // Handle move drag start on element body
@@ -68,16 +57,6 @@ export default function AudioElement({
 
   return (
     <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
-      {/* Left resize handle */}
-      {/* <ResizeHandle
-        position="left"
-        isVisible={isSelected}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          onResizeStart(e, audioElement.id, "left");
-        }}
-      /> */}
-
       <Waveform
         url={audioElement.url}
         segmentStartSec={audioElement.sourceStart ?? 0}
@@ -86,22 +65,11 @@ export default function AudioElement({
         color="#86efac" // tailwind lime-300
         backgroundColor="transparent"
       />
-      {/* Media content */}
-
-      {/* Right resize handle */}
-      {/* <ResizeHandle
-        position="right"
-        isVisible={isSelected}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          onResizeStart(e, audioElement.id, "right");
-        }}
-      /> */}
     </div>
   );
 }
 
-function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): string {
+function getElementClasses(isMoveDragging?: boolean): string {
   const baseClasses = [
     "absolute",
     "top-2",
@@ -129,8 +97,6 @@ function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): strin
   let cursorClass: string;
   if (isMoveDragging) {
     cursorClass = "cursor-grabbing";
-  } else if (isDragging) {
-    cursorClass = "cursor-grabbing"; // resize dragging
   } else {
     cursorClass = "cursor-grab hover:cursor-grab"; // ready to be dragged
   }
