@@ -2,12 +2,16 @@ import { AudioElement as AudioElementType } from "@/entities/media/types";
 import { MoveDragState } from "../../../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
-import { calculateElementWidth, calculateTimelinePosition, formatTimeDisplay } from "../../../../../../lib/timelineLib";
+import {
+  calculateElementWidth,
+  calculateTimelinePosition,
+  formatTimeDisplay,
+} from "../../../../../../lib/timelineLib";
 import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTimeline/ui/_component/AudioElement/ui/_component/Waveform";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 
 interface TextElementProps {
   audioElement: AudioElementType;
-  pixelsPerSecond: number;
   moveDragState?: MoveDragState;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
   onClick: (selectedElements: string) => void;
@@ -15,20 +19,32 @@ interface TextElementProps {
 
 export default function AudioElement({
   audioElement,
-  pixelsPerSecond,
   moveDragState,
   onMoveStart,
   onClick,
 }: TextElementProps) {
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
   const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   // Calculate position and dimensions
-  const leftPosition = calculateTimelinePosition(audioElement.startTime, pixelsPerSecond);
-  const width = calculateElementWidth(audioElement.startTime, audioElement.endTime, pixelsPerSecond);
+  const leftPosition = calculateTimelinePosition(
+    audioElement.startTime,
+    pixelsPerSecond
+  );
+  const width = calculateElementWidth(
+    audioElement.startTime,
+    audioElement.endTime,
+    pixelsPerSecond
+  );
 
   // Check drag states
-  const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === audioElement.id);
+  const isMoveDragging = Boolean(
+    moveDragState?.isDragging && moveDragState.elementId === audioElement.id
+  );
 
   // Generate styles with visibility for move dragging
   const elementStyles = {
@@ -56,11 +72,19 @@ export default function AudioElement({
   };
 
   return (
-    <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
+    <div
+      className={elementClasses}
+      onMouseDown={handleMouseDown}
+      style={elementStyles}
+      title={title}
+    >
       <Waveform
         url={audioElement.url}
         segmentStartSec={audioElement.sourceStart ?? 0}
-        segmentEndSec={(audioElement.sourceStart ?? 0) + (audioElement.endTime - audioElement.startTime)}
+        segmentEndSec={
+          (audioElement.sourceStart ?? 0) +
+          (audioElement.endTime - audioElement.startTime)
+        }
         className="flex-1 h-full"
         color="#86efac" // tailwind lime-300
         backgroundColor="transparent"
@@ -105,6 +129,9 @@ function getElementClasses(isMoveDragging?: boolean): string {
 }
 
 function generateElementTitle(audioElement: AudioElementType): string {
-  const timeDisplay = formatTimeDisplay(audioElement.startTime, audioElement.endTime);
+  const timeDisplay = formatTimeDisplay(
+    audioElement.startTime,
+    audioElement.endTime
+  );
   return `${audioElement.type} (${timeDisplay})`;
 }

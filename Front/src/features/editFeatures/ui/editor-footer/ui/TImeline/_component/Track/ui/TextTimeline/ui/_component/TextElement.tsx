@@ -9,10 +9,10 @@ import {
   isElementDragging,
 } from "../../../../lib/timelineLib";
 import { ResizeHandle } from "../../../_component/ResizeHandle";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 
 interface TextElementProps {
   textElement: TextElementType;
-  pixelsPerSecond: number;
   dragState: MoveDragState;
   moveDragState?: MoveDragState;
   onResizeStart: (
@@ -26,13 +26,14 @@ interface TextElementProps {
 
 export default function TextElement({
   textElement,
-  pixelsPerSecond,
   dragState,
   moveDragState,
   onResizeStart,
   onMoveStart,
   onClick,
 }: TextElementProps) {
+  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+
   const setSelectedTrackAndId = useSelectedTrackStore(
     (state) => state.setSelectedTrackAndId
   );
