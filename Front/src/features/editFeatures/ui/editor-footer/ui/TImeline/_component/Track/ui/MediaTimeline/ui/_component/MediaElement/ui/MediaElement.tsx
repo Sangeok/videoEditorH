@@ -13,11 +13,11 @@ import {
   calculateTimelinePosition,
   calculateElementWidth,
   isElementDragging,
-  formatTimeDisplay,
 } from "../../../../../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import MediaTrackPreview from "./_component/MediaTrackPreview/ui";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import { generateElementTitle } from "../../../../../../lib/generateElementTitle";
 
 interface MediaElementProps {
   mediaElement: MediaElementType;
@@ -178,12 +178,4 @@ function getElementClasses(
   }
 
   return [...baseClasses, cursorClass].join(" ");
-}
-
-function generateElementTitle(mediaElement: MediaElementType): string {
-  const timeDisplay = formatTimeDisplay(
-    mediaElement.startTime,
-    mediaElement.endTime
-  );
-  return `${mediaElement.type} (${timeDisplay})`;
 }

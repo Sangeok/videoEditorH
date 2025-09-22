@@ -5,10 +5,10 @@ import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTim
 import {
   calculateElementWidth,
   calculateTimelinePosition,
-  formatTimeDisplay,
 } from "../../../../../../lib/timelineLib";
 import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTimeline/ui/_component/AudioElement/ui/_component/Waveform";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import { generateElementTitle } from "../../../../../../lib/generateElementTitle";
 
 interface TextElementProps {
   audioElement: AudioElementType;
@@ -126,12 +126,4 @@ function getElementClasses(isMoveDragging?: boolean): string {
   }
 
   return [...baseClasses, cursorClass].join(" ");
-}
-
-function generateElementTitle(audioElement: AudioElementType): string {
-  const timeDisplay = formatTimeDisplay(
-    audioElement.startTime,
-    audioElement.endTime
-  );
-  return `${audioElement.type} (${timeDisplay})`;
 }
