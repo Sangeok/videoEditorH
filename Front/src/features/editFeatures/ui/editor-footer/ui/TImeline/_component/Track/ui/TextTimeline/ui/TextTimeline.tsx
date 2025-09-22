@@ -1,7 +1,6 @@
 "use client";
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { EmptyState } from "../../_component/EmptyState";
@@ -18,8 +17,6 @@ export default function TextTimeline() {
     deleteTextElement,
     updateMultipleTextElements,
   } = useMediaStore();
-
-  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.textElement,
@@ -43,7 +40,6 @@ export default function TextTimeline() {
       {hasTextElements && (
         <TextElementsContainer
           textElements={media.textElement}
-          pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}
           dropPreview={dropPreview}
@@ -60,7 +56,6 @@ export default function TextTimeline() {
 // Separated container component for text elements
 function TextElementsContainer({
   textElements,
-  pixelsPerSecond,
   dragState,
   moveDragState,
   dropPreview,
@@ -69,7 +64,6 @@ function TextElementsContainer({
   onTrackElementClick,
 }: {
   textElements: TextElementType[];
-  pixelsPerSecond: number;
   dragState: MoveDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
@@ -84,18 +78,13 @@ function TextElementsContainer({
   return (
     <div className="relative h-full">
       {/* Drop indicator for move preview */}
-      <DropIndicator
-        dropPreview={dropPreview}
-        moveDragState={moveDragState}
-        pixelsPerSecond={pixelsPerSecond}
-      />
+      <DropIndicator dropPreview={dropPreview} moveDragState={moveDragState} />
 
       {/* Text elements */}
       {textElements.map((textElement) => (
         <TextElement
           key={textElement.id}
           textElement={textElement}
-          pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}
           onResizeStart={onResizeStart}

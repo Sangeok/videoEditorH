@@ -5,14 +5,14 @@ import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTim
 import {
   calculateElementWidth,
   calculateTimelinePosition,
-  formatTimeDisplay,
   isElementDragging,
 } from "../../../../lib/timelineLib";
 import { ResizeHandle } from "../../../_component/ResizeHandle";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
+import { generateElementTitle } from "../../../../lib/generateElementTitle";
 
 interface TextElementProps {
   textElement: TextElementType;
-  pixelsPerSecond: number;
   dragState: MoveDragState;
   moveDragState?: MoveDragState;
   onResizeStart: (
@@ -26,13 +26,14 @@ interface TextElementProps {
 
 export default function TextElement({
   textElement,
-  pixelsPerSecond,
   dragState,
   moveDragState,
   onResizeStart,
   onMoveStart,
   onClick,
 }: TextElementProps) {
+  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+
   const setSelectedTrackAndId = useSelectedTrackStore(
     (state) => state.setSelectedTrackAndId
   );
@@ -105,7 +106,6 @@ export default function TextElement({
       <span className="w-full min-w-0 truncate px-3 pointer-events-none select-none">
         {textElement.text || "Text"}
       </span>
-      {/* Media content */}
 
       {/* Right resize handle */}
       <ResizeHandle
@@ -158,12 +158,4 @@ function getElementClasses(
   }
 
   return [...baseClasses, cursorClass].join(" ");
-}
-
-function generateElementTitle(textElement: TextElementType): string {
-  const timeDisplay = formatTimeDisplay(
-    textElement.startTime,
-    textElement.endTime
-  );
-  return `${textElement.type} (${timeDisplay})`;
 }
