@@ -1,9 +1,10 @@
 import TimelineRuler from "./_component/TimelineRuler/TimelineRuler";
 import CurrentTimeIndicator from "./_component/CurrentTimeIndicator/ui/CurrentTimeIndicator";
-import TextTimeline from "./_component/Track/ui/TextTimeline/ui/TextTimeline";
-import AudioTimeline from "./_component/Track/ui/AudioTimeline/ui/AudioTimeline";
-import MediaTimeline from "./_component/Track/ui/MediaTimeline/ui";
+
 import SnapGuideIndicator from "./_component/SnapGuide/SnapGuideIndicator";
+import TextTrack from "./_component/Track/ui/TextTrack/ui/TextTrack";
+import MediaTrack from "./_component/Track/ui/MediaTrack/ui";
+import AudioTrack from "./_component/Track/ui/AudioTrack/ui/AudioTrack";
 
 export default function Timeline() {
   return (
@@ -16,13 +17,13 @@ export default function Timeline() {
         {/* area for timeline tracks */}
         <div className="h-full min-h-[100px] relative flex flex-col overflow-y-auto">
           <div className="flex-1">
-            <TextTimeline />
+            <TextTrack />
           </div>
           <div className="flex-1">
-            <MediaTimeline />
+            <MediaTrack />
           </div>
           <div className="flex-1">
-            <AudioTimeline />
+            <AudioTrack />
           </div>
           {/* future timeline track components will be rendered here */}
         </div>

@@ -6,7 +6,7 @@ import {
   calculateElementWidth,
   calculateTimelinePosition,
 } from "../../../../../../lib/timelineLib";
-import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTimeline/ui/_component/AudioElement/ui/_component/Waveform";
+import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTrack/ui/_component/AudioElement/ui/_component/Waveform";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { generateElementTitle } from "../../../../../../lib/generateElementTitle";
 

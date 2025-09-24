@@ -33,11 +33,11 @@ export default function TextElement({
   onClick,
 }: TextElementProps) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   const setSelectedTrackAndId = useSelectedTrackStore(
     (state) => state.setSelectedTrackAndId
   );
-  const isDelete = useTimelineToolStore((state) => state.isDelete);
   const selectedTrackId = useSelectedTrackStore(
     (state) => state.selectedTrackId
   );
