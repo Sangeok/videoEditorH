@@ -15,7 +15,7 @@ import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";
 import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 
-export default function MediaTimeline() {
+export default function MediaTrack() {
   const {
     media,
     updateMediaElement,

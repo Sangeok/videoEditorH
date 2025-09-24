@@ -9,7 +9,7 @@ import { DropPreview, MoveDragState } from "../../../model/types";
 import { DropIndicator } from "../../_component/DropIndicator";
 import AudioElement from "./_component/AudioElement/ui/AudioElement";
 
-export default function AudioTimeline() {
+export default function AudioTrack() {
   const { media, updateAudioElement, deleteAudioElement } = useMediaStore();
 
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({

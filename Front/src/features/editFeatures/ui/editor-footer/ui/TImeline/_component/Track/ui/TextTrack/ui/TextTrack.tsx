@@ -10,7 +10,7 @@ import { DropIndicator } from "../../_component/DropIndicator";
 import { DropPreview, MoveDragState } from "../../../model/types";
 import TextElement from "./_component/TextElement";
 
-export default function TextTimeline() {
+export default function TextTrack() {
   const {
     media,
     updateTextElement,
