@@ -2,11 +2,7 @@
 
 import React from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import {
-  ResizeDragState,
-  MoveDragState,
-  DropPreview,
-} from "../../../model/types";
+import { ResizeDragState, MoveDragState, DropPreview } from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
@@ -16,12 +12,7 @@ import { DropIndicator } from "../../_component/DropIndicator";
 import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 
 export default function MediaTrack() {
-  const {
-    media,
-    updateMediaElement,
-    deleteMediaElement,
-    updateMultipleMediaElements,
-  } = useMediaStore();
+  const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.mediaElement,
@@ -52,7 +43,7 @@ export default function MediaTrack() {
           onTrackElementClick={handleTrackElementClick}
         />
       )}
-      {!hasMediaElements && <EmptyState />}
+      {!hasMediaElements && <EmptyState message="There is no media element." />}
     </div>
   );
 }
@@ -71,11 +62,7 @@ function MediaElementsContainer({
   dragState: ResizeDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
-  onResizeStart: (
-    e: React.MouseEvent,
-    elementId: string,
-    dragType: "left" | "right"
-  ) => void;
+  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
   onTrackElementClick: (trackElementId: string) => void;
 }) {

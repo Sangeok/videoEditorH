@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { clsx } from "clsx";
 
 interface ResizeHandleProps {
   position: "left" | "right";
@@ -9,27 +10,13 @@ interface ResizeHandleProps {
 }
 
 export function ResizeHandle({ position, isVisible, onMouseDown }: ResizeHandleProps) {
-  const positionClasses = getPositionClasses(position);
-  const visibilityClass = isVisible ? "opacity-100" : "opacity-0";
-  const cursorClass = position === "left" ? "cursor-w-resize" : "cursor-e-resize";
-
-  const handleClasses = [
-    "absolute",
-    "top-0",
-    "w-1",
-    "h-full",
-    "bg-indigo-500",
-    "transition-opacity",
-    positionClasses,
-    cursorClass,
-    visibilityClass,
-  ].join(" ");
+  const handleClasses = clsx(
+    "absolute top-0 w-1 h-full bg-indigo-500 transition-opacity",
+    position === "left" ? "left-0 cursor-w-resize" : "right-0 cursor-e-resize",
+    isVisible ? "opacity-100" : "opacity-0"
+  );
 
   const title = position === "left" ? "Resize start time" : "Resize end time";
 
   return <div className={handleClasses} onMouseDown={onMouseDown} title={title} />;
-}
-
-function getPositionClasses(position: "left" | "right"): string {
-  return position === "left" ? "left-0" : "right-0";
 }

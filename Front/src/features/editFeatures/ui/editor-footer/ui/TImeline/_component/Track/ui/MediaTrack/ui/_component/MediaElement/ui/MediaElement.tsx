@@ -1,19 +1,12 @@
 "use client";
 
 import React from "react";
+import { clsx } from "clsx";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import {
-  ResizeDragState,
-  ResizeDragType,
-  MoveDragState,
-} from "../../../../../../model/types";
+import { ResizeDragState, ResizeDragType, MoveDragState } from "../../../../../../model/types";
 import { ResizeHandle } from "../../../../../_component/ResizeHandle";
-import {
-  calculateTimelinePosition,
-  calculateElementWidth,
-  isElementDragging,
-} from "../../../../../../lib/timelineLib";
+import { calculateTimelinePosition, calculateElementWidth, isElementDragging } from "../../../../../../lib/timelineLib";
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import MediaTrackPreview from "./_component/MediaTrackPreview/ui";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
@@ -23,11 +16,7 @@ interface MediaElementProps {
   mediaElement: MediaElementType;
   dragState: ResizeDragState;
   moveDragState?: MoveDragState;
-  onResizeStart: (
-    e: React.MouseEvent,
-    elementId: string,
-    dragType: ResizeDragType
-  ) => void;
+  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
   onClick: (trackElementId: string) => void;
 }
@@ -43,30 +32,17 @@ export function MediaElement({
 MediaElementProps) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
   const isDelete = useTimelineToolStore((state) => state.isDelete);
-  const selectedTrackId = useSelectedTrackStore(
-    (state) => state.selectedTrackId
-  );
+  const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   // Calculate position and dimensions
-  const leftPosition = calculateTimelinePosition(
-    mediaElement.startTime,
-    pixelsPerSecond
-  );
-  const width = calculateElementWidth(
-    mediaElement.startTime,
-    mediaElement.endTime,
-    pixelsPerSecond
-  );
+  const leftPosition = calculateTimelinePosition(mediaElement.startTime, pixelsPerSecond);
+  const width = calculateElementWidth(mediaElement.startTime, mediaElement.endTime, pixelsPerSecond);
 
   // Check drag states
   const isResizeDragging = isElementDragging(mediaElement.id, dragState);
-  const isMoveDragging = Boolean(
-    moveDragState?.isDragging && moveDragState.elementId === mediaElement.id
-  );
+  const isMoveDragging = Boolean(moveDragState?.isDragging && moveDragState.elementId === mediaElement.id);
   const isDragging = isResizeDragging || isMoveDragging;
   const isSelected = selectedTrackId === mediaElement.id;
 
@@ -74,7 +50,6 @@ MediaElementProps) {
   const elementStyles = {
     left: `${leftPosition}px`,
     width: `${width}px`,
-    opacity: isMoveDragging ? 0.3 : 1, // Make original element semi-transparent during move
     willChange: isDragging ? ("left, width" as unknown as string) : undefined,
   };
 
@@ -98,12 +73,7 @@ MediaElementProps) {
   };
 
   return (
-    <div
-      className={elementClasses}
-      onMouseDown={handleMouseDown}
-      style={elementStyles}
-      title={title}
-    >
+    <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
       {/* Left resize handle */}
       <ResizeHandle
         position="left"
@@ -116,15 +86,9 @@ MediaElementProps) {
 
       {/* Media preview (image/video) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <MediaTrackPreview
-          mediaElement={mediaElement}
-          isResizeDragging={isResizeDragging}
-        />
+        <MediaTrackPreview mediaElement={mediaElement} isResizeDragging={isResizeDragging} />
         {/* subtle bottom gradient for legibility */}
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"
-          aria-hidden
-        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" aria-hidden />
       </div>
 
       {/* Right resize handle */}
@@ -140,42 +104,15 @@ MediaElementProps) {
   );
 }
 
-function getElementClasses(
-  isDragging: boolean,
-  isMoveDragging?: boolean
-): string {
-  const baseClasses = [
-    "absolute",
-    "top-2",
-    "h-12",
-    "bg-gray-700",
-    "border-b-4",
-    "hover:bg-gray-800",
-    "border-1",
-    "border-gray-500",
-    "rounded",
-    "transition-colors",
-    "duration-200",
-    "flex",
-    "items-center",
-    "justify-center",
-    "text-white",
-    "text-xs",
-    "font-medium",
-    "overflow-hidden",
-    "select-none", // Prevent text selection
-    "user-select-none", // Additional browser compatibility
-  ];
+function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): string {
+  const isAnyDragging = isDragging || Boolean(isMoveDragging);
 
-  // Different cursor styles for different drag states
-  let cursorClass: string;
-  if (isMoveDragging) {
-    cursorClass = "cursor-grabbing";
-  } else if (isDragging) {
-    cursorClass = "cursor-grabbing"; // resize dragging
-  } else {
-    cursorClass = "cursor-grab hover:cursor-grab"; // ready to be dragged
-  }
-
-  return [...baseClasses, cursorClass].join(" ");
+  return clsx(
+    "absolute top-2 h-12 bg-gray-700 border-b-4 hover:bg-gray-800 border-1 border-gray-500 rounded transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden select-none user-select-none",
+    {
+      "cursor-grabbing": isAnyDragging,
+      "cursor-grab hover:cursor-grab": !isAnyDragging,
+      "opacity-30": Boolean(isMoveDragging),
+    }
+  );
 }

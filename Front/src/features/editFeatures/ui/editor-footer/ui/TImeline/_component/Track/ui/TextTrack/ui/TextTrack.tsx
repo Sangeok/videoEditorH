@@ -11,12 +11,7 @@ import { DropPreview, MoveDragState } from "../../../model/types";
 import TextElement from "./_component/TextElement";
 
 export default function TextTrack() {
-  const {
-    media,
-    updateTextElement,
-    deleteTextElement,
-    updateMultipleTextElements,
-  } = useMediaStore();
+  const { media, updateTextElement, deleteTextElement, updateMultipleTextElements } = useMediaStore();
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.textElement,
@@ -48,7 +43,7 @@ export default function TextTrack() {
           onTrackElementClick={handleTrackElementClick}
         />
       )}
-      {!hasTextElements && <EmptyState />}
+      {!hasTextElements && <EmptyState message="There is no text element." />}
     </div>
   );
 }
@@ -67,11 +62,7 @@ function TextElementsContainer({
   dragState: MoveDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
-  onResizeStart: (
-    e: React.MouseEvent,
-    elementId: string,
-    dragType: "left" | "right"
-  ) => void;
+  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
   onTrackElementClick: (trackElementId: string) => void;
 }) {

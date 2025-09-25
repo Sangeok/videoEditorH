@@ -34,7 +34,7 @@ export default function AudioTrack() {
           onTrackElementClick={handleTrackElementClick}
         />
       )}
-      {!hasAudioElements && <EmptyState />}
+      {!hasAudioElements && <EmptyState message="There is no audio element." />}
     </div>
   );
 }
