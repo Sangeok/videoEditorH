@@ -3,18 +3,19 @@
 import React from "react";
 import { calculateElementWidth } from "../../lib/timelineLib";
 import { DropPreview, MoveDragState } from "../../model/types";
+import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 
 interface DropIndicatorProps {
   dropPreview: DropPreview;
   moveDragState: MoveDragState;
-  pixelsPerSecond: number;
 }
 
 export function DropIndicator({
   dropPreview,
   moveDragState,
-  pixelsPerSecond,
 }: DropIndicatorProps) {
+  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+
   if (
     !dropPreview.isVisible ||
     !moveDragState.isDragging ||

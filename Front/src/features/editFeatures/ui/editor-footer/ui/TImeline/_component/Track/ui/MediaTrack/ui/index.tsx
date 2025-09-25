@@ -2,8 +2,11 @@
 
 import React from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { ResizeDragState, MoveDragState, DropPreview } from "../../../model/types";
+import {
+  ResizeDragState,
+  MoveDragState,
+  DropPreview,
+} from "../../../model/types";
 import { MediaElement as MediaElementType } from "@/entities/media/types";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
@@ -12,9 +15,13 @@ import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";
 import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 
-export default function MediaTimeline() {
-  const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
-  const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
+export default function MediaTrack() {
+  const {
+    media,
+    updateMediaElement,
+    deleteMediaElement,
+    updateMultipleMediaElements,
+  } = useMediaStore();
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: media.mediaElement,
@@ -37,7 +44,6 @@ export default function MediaTimeline() {
       {hasMediaElements && (
         <MediaElementsContainer
           mediaElements={media.mediaElement}
-          pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}
           dropPreview={dropPreview}
@@ -54,7 +60,6 @@ export default function MediaTimeline() {
 // Separated container component for media elements
 function MediaElementsContainer({
   mediaElements,
-  pixelsPerSecond,
   dragState,
   moveDragState,
   dropPreview,
@@ -63,25 +68,27 @@ function MediaElementsContainer({
   onTrackElementClick,
 }: {
   mediaElements: MediaElementType[];
-  pixelsPerSecond: number;
   dragState: ResizeDragState;
   moveDragState: MoveDragState;
   dropPreview: DropPreview;
-  onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
+  onResizeStart: (
+    e: React.MouseEvent,
+    elementId: string,
+    dragType: "left" | "right"
+  ) => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
   onTrackElementClick: (trackElementId: string) => void;
 }) {
   return (
     <div className="relative h-full">
       {/* Drop indicator for move preview */}
-      <DropIndicator dropPreview={dropPreview} moveDragState={moveDragState} pixelsPerSecond={pixelsPerSecond} />
+      <DropIndicator dropPreview={dropPreview} moveDragState={moveDragState} />
 
       {/* Media elements */}
       {mediaElements.map((mediaElement) => (
         <MediaElement
           key={mediaElement.id}
           mediaElement={mediaElement}
-          pixelsPerSecond={pixelsPerSecond}
           dragState={dragState}
           moveDragState={moveDragState}
           onResizeStart={onResizeStart}
