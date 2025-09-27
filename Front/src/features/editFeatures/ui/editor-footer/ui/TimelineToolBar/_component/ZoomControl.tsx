@@ -1,6 +1,7 @@
 "use client";
 
 import { ZoomIn, ZoomOut } from "lucide-react";
+import clsx from "clsx";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 
@@ -26,11 +27,10 @@ export default function ZoomControl() {
       {/* Zoom Out 버튼 */}
       <IconButton
         onClick={zoomOut}
-        className={`p-1 hover:bg-white/10 rounded ${
-          isZoomOutDisabled
-            ? "opacity-50 cursor-not-allowed"
-            : "cursor-pointer "
-        }`}
+        className={clsx(
+          "p-1 hover:bg-white/10 rounded",
+          isZoomOutDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        )}
         disabled={isZoomOutDisabled}
       >
         <ZoomOut size={16} />
@@ -64,9 +64,10 @@ export default function ZoomControl() {
       {/* Zoom In 버튼 */}
       <IconButton
         onClick={zoomIn}
-        className={`p-1 hover:bg-white/10 rounded ${
-          isZoomInDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer "
-        }`}
+        className={clsx(
+          "p-1 hover:bg-white/10 rounded",
+          isZoomInDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        )}
         disabled={isZoomInDisabled}
       >
         <ZoomIn size={16} />
