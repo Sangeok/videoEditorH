@@ -27,8 +27,7 @@ export function useTrackElementResizeDrag<T extends TrackElement>({
   updateMultipleSelectedElements,
 }: UseTrackElementResizeDragProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
-  const SNAP_TOLERANCE_PX = 7;
-  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond, SNAP_TOLERANCE_PX);
+  const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond);
 
   const { getSortedElements, getMinStartTime, adjustSubsequentElements } = createElementConstraints(SelectedElements);
   const { dragState, startDrag, endDrag, updateMaxEndTime } = useResizeDragState<T>();

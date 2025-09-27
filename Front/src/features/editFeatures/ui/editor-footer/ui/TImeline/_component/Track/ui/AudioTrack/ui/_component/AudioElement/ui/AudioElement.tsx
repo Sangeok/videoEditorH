@@ -47,7 +47,6 @@ export default function AudioElement({ audioElement, moveDragState, onMoveStart,
 
       setSelectedTrackAndId("Audio", audioElement.id);
     } else if (!e.defaultPrevented) {
-      console.log("동작?");
       // Regular click - don't prevent default to allow normal interactions
       onClick(audioElement.id);
     }
