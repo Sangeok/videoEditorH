@@ -9,15 +9,8 @@ import { useTextEdit } from "../model/useTextEdit";
 
 export default function DraggableText({ element }: DraggableTextProps) {
   const { isPlaying } = useTimelineStore();
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
 
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleSelect = useCallback(() => {
-    setSelectedTrackAndId("Text", element.id);
-  }, [setSelectedTrackAndId, element.id]);
 
   const {
     isEditing,
@@ -41,12 +34,10 @@ export default function DraggableText({ element }: DraggableTextProps) {
     positionY: element.positionY,
     isPlaying,
     isEditing,
-    onSelect: handleSelect,
   });
 
   // Style calculations
-  const showBorder =
-    !isPlaying && (isHovered || dragState.isDragging || isEditing);
+  const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
   const getCursor = (): CursorType => {
     if (isPlaying) return "default";
@@ -70,9 +61,7 @@ export default function DraggableText({ element }: DraggableTextProps) {
         whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
         borderRadius: "4px",
         boxSizing: "border-box",
-        border: showBorder
-          ? `1px solid ${borderColor}`
-          : "1px solid transparent",
+        border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
         cursor: getCursor(),
         textAlign: "center",
         userSelect: isEditing ? "text" : "none",
