@@ -17,19 +17,11 @@ const initialDropPreview: DropPreview = {
 };
 
 export function useDragState() {
-  const [moveDragState, setMoveDragState] =
-    useState<MoveDragState>(initialMoveDragState);
-  const [dropPreview, setDropPreview] =
-    useState<DropPreview>(initialDropPreview);
+  const [moveDragState, setMoveDragState] = useState<MoveDragState>(initialMoveDragState);
+  const [dropPreview, setDropPreview] = useState<DropPreview>(initialDropPreview);
 
   const startDragging = useCallback(
-    (
-      elementId: string,
-      startX: number,
-      originalStartTime: number,
-      originalEndTime: number,
-      ghostPosition: number
-    ) => {
+    (elementId: string, startX: number, originalStartTime: number, originalEndTime: number, ghostPosition: number) => {
       setMoveDragState({
         isDragging: true,
         elementId,
@@ -48,27 +40,24 @@ export function useDragState() {
     []
   );
 
-  const updateDragPositions = useCallback(
-    (ghostPosition: number, targetTime: number) => {
-      setMoveDragState((prev) => ({
-        ...prev,
-        ghostPosition,
-      }));
+  const updateDragPositions = useCallback((ghostPosition: number, targetTime: number) => {
+    setMoveDragState((prev) => ({
+      ...prev,
+      ghostPosition,
+    }));
 
-      setDropPreview((prev) => ({
-        ...prev,
-        targetTime,
-      }));
-    },
-    []
-  );
+    setDropPreview((prev) => ({
+      ...prev,
+      targetTime,
+    }));
+  }, []);
 
   const resetDragState = useCallback(() => {
     setMoveDragState(initialMoveDragState);
     setDropPreview(initialDropPreview);
   }, []);
 
-  const isDraggingElement = moveDragState.isDragging && moveDragState.elementId;
+  const isDraggingElement = Boolean(moveDragState.isDragging && moveDragState.elementId);
 
   return {
     moveDragState,

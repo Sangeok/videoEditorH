@@ -1,10 +1,11 @@
+import { roundTime } from "@/shared/lib/timeConversion";
 import { createOverlapDetector } from "./overlapDetection";
 import { TrackElement } from "@/entities/media/types";
 
 // Creates element positioner for timeline drag-and-drop positioning
 export function createElementPositioner<T extends TrackElement>(elements: T[]) {
   const detector = createOverlapDetector(elements);
-  const { roundTime, hasOverlapAt, findClosestOverlappingElement } = detector;
+  const { hasOverlapAt, findClosestOverlappingElement } = detector;
 
   // Finds valid drop position without overlaps
   function calculateValidDropTime(
@@ -20,9 +21,7 @@ export function createElementPositioner<T extends TrackElement>(elements: T[]) {
       const elementStart = roundTime(element.startTime);
       const elementEnd = roundTime(element.endTime);
 
-      const wouldOverlapWithElement =
-        validStartTime < elementEnd &&
-        validStartTime + roundedDuration > elementStart;
+      const wouldOverlapWithElement = validStartTime < elementEnd && validStartTime + roundedDuration > elementStart;
 
       if (wouldOverlapWithElement) {
         validStartTime = roundTime(elementEnd);
@@ -33,61 +32,35 @@ export function createElementPositioner<T extends TrackElement>(elements: T[]) {
   }
 
   // Calculates smart snap position relative to closest overlapping element
-  function computeSnapPosition(
-    targetStartTime: number,
-    duration: number,
-    excludeId: string
-  ): number {
-    const closestOverlappingElement = findClosestOverlappingElement(
-      targetStartTime,
-      duration,
-      excludeId
-    );
+  function computeSnapPosition(targetStartTime: number, duration: number, excludeId: string): number {
+    const closestOverlappingElement = findClosestOverlappingElement(targetStartTime, duration, excludeId);
 
     if (!closestOverlappingElement) {
       return calculateValidDropTime(targetStartTime, duration, excludeId);
     }
 
     const overlappingElementCenter = roundTime(
-      (closestOverlappingElement.startTime +
-        closestOverlappingElement.endTime) /
-        2
+      (closestOverlappingElement.startTime + closestOverlappingElement.endTime) / 2
     );
     const targetElementCenter = roundTime(targetStartTime + duration / 2);
-    const isTargetLeftOfOverlapping =
-      targetElementCenter < overlappingElementCenter;
+    const isTargetLeftOfOverlapping = targetElementCenter < overlappingElementCenter;
 
     let proposedStartTime: number;
 
     if (isTargetLeftOfOverlapping) {
-      proposedStartTime = roundTime(
-        Math.max(0, roundTime(closestOverlappingElement.startTime) - duration)
-      );
+      proposedStartTime = roundTime(Math.max(0, roundTime(closestOverlappingElement.startTime) - duration));
     } else {
       proposedStartTime = roundTime(closestOverlappingElement.endTime);
     }
 
-    const proposedPositionHasOverlap = hasOverlapAt(
-      proposedStartTime,
-      duration,
-      excludeId
-    );
+    const proposedPositionHasOverlap = hasOverlapAt(proposedStartTime, duration, excludeId);
 
     if (proposedPositionHasOverlap) {
       const fallbackStartTime = isTargetLeftOfOverlapping
         ? roundTime(closestOverlappingElement.endTime)
-        : roundTime(
-            Math.max(
-              0,
-              roundTime(closestOverlappingElement.startTime) - duration
-            )
-          );
+        : roundTime(Math.max(0, roundTime(closestOverlappingElement.startTime) - duration));
 
-      const fallbackPositionIsValid = !hasOverlapAt(
-        fallbackStartTime,
-        duration,
-        excludeId
-      );
+      const fallbackPositionIsValid = !hasOverlapAt(fallbackStartTime, duration, excludeId);
 
       if (fallbackPositionIsValid) {
         return fallbackStartTime;
