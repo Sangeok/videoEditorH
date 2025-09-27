@@ -5,6 +5,7 @@ import SnapGuideIndicator from "./_component/SnapGuide/SnapGuideIndicator";
 import TextTrack from "./_component/Track/ui/TextTrack/ui/TextTrack";
 import MediaTrack from "./_component/Track/ui/MediaTrack/ui";
 import AudioTrack from "./_component/Track/ui/AudioTrack/ui/AudioTrack";
+import DeleteSelectedElementListener from "./_component/DeleteSelectedElementListener";
 
 export default function Timeline() {
   return (
@@ -29,6 +30,7 @@ export default function Timeline() {
         </div>
       </div>
 
+      <DeleteSelectedElementListener />
       {/* Snap vertical guide overlay (beneath current time indicator) */}
       <SnapGuideIndicator />
       <CurrentTimeIndicator />
