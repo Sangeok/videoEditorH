@@ -3,9 +3,11 @@
 import { useCaptionUpload } from "../model/hooks/useCaptionUpload";
 import { useFileHandler } from "../model/hooks/useFileHandler";
 import FileUploadArea from "./_components/FileUploadArea";
-import { RefObject, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import type { RefObject } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import { formatPlaybackTime } from "@/features/editFeatures/ui/editor-footer/lib/formatTimelineTime";
+import TextEdit from "./_components/TextEdit/ui";
+import ClockField from "./_components/TimeEdit/ui/ClockField";
 
 export default function CaptionEditSubSide() {
   const { state, actions } = useCaptionUpload();
@@ -16,8 +18,7 @@ export default function CaptionEditSubSide() {
   const { media, updateTextElement } = useMediaStore();
 
   // Inline edit state
-  const [editing, setEditing] = useState<{ id: string; field: "start" | "end" } | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [editing, setEditing] = useState<{ id: string; field: "start" | "end" | "text" } | null>(null);
 
   // Parse time inputs like mm:ss or h:mm:ss into seconds
   const parseClockTime = useCallback((value: string): number | null => {
@@ -40,14 +41,16 @@ export default function CaptionEditSubSide() {
     return hours * 3600 + minutes * 60 + seconds;
   }, []);
 
-  const beginEdit = useCallback((id: string, field: "start" | "end", currentSeconds: number) => {
+  const beginEdit = useCallback((id: string, field: "start" | "end") => {
     setEditing({ id, field });
-    setInputValue(formatPlaybackTime(currentSeconds));
+  }, []);
+
+  const beginTextEdit = useCallback((id: string) => {
+    setEditing({ id, field: "text" });
   }, []);
 
   const cancelEdit = useCallback(() => {
     setEditing(null);
-    setInputValue("");
   }, []);
 
   const hasOverlap = useCallback(
@@ -61,12 +64,14 @@ export default function CaptionEditSubSide() {
     [media.textElement]
   );
 
-  const commitEdit = useCallback(
-    (elementId: string, field: "start" | "end") => {
+  // inline TimeEditable, caret, sanitize 로직은 외부 컴포넌트로 이동
+
+  const commitClockEdit = useCallback(
+    (elementId: string, field: "start" | "end", draftText: string) => {
       const element = media.textElement.find((el) => el.id === elementId);
       if (!element) return cancelEdit();
 
-      const parsed = parseClockTime(inputValue);
+      const parsed = parseClockTime(draftText);
       if (parsed === null || parsed < 0) {
         return cancelEdit();
       }
@@ -74,14 +79,12 @@ export default function CaptionEditSubSide() {
       const newStart = field === "start" ? parsed : element.startTime;
       const newEnd = field === "end" ? parsed : element.endTime;
 
-      // basic validation to avoid invalid ranges
       if (newEnd <= newStart) {
         return cancelEdit();
       }
 
-      // prevent overlapping with other text elements
       if (hasOverlap(elementId, newStart, newEnd)) {
-        alert("다른 자막과 시간이 겹칩니다. 겹치지 않도록 시간을 조정해주세요.");
+        alert("Overlap detected between other captions");
         return cancelEdit();
       }
 
@@ -93,12 +96,26 @@ export default function CaptionEditSubSide() {
 
       cancelEdit();
     },
-    [cancelEdit, hasOverlap, inputValue, media.textElement, parseClockTime, updateTextElement]
+    [cancelEdit, hasOverlap, media.textElement, parseClockTime, updateTextElement]
+  );
+
+  // text edit
+  const commitTextEdit = useCallback(
+    (elementId: string, newText: string) => {
+      const element = media.textElement.find((el) => el.id === elementId);
+      if (!element) return cancelEdit();
+
+      updateTextElement(elementId, { text: newText });
+      cancelEdit();
+    },
+    [cancelEdit, media.textElement, updateTextElement]
   );
 
   const sortedTextElements = useMemo(() => {
     return [...media.textElement].sort((a, b) => a.startTime - b.startTime);
   }, [media.textElement]);
+
+  const hasNoTextElement = sortedTextElements.length === 0;
 
   return (
     <div className="p-4 space-y-4 w-full">
@@ -115,55 +132,35 @@ export default function CaptionEditSubSide() {
       <div className="w-full">
         <h4 className="text-md font-medium text-white mb-2">Captions</h4>
         <div className="border border-gray-700 rounded-md max-h-64 overflow-y-auto divide-y divide-gray-800">
-          {sortedTextElements.length === 0 ? (
+          {hasNoTextElement ? (
             <div className="p-3 text-sm text-gray-400">No captions loaded</div>
           ) : (
             sortedTextElements.map((el) => (
               <div key={el.id} className="flex flex-col p-2 gap-2">
                 <div className="flex w-full justify-center items-center gap-1 text-sm text-gray-200">
-                  {editing?.id === el.id && editing.field === "start" ? (
-                    <input
-                      autoFocus
-                      className="w-16 bg-transparent text-white text-center px-1 py-0.5 border border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onBlur={() => commitEdit(el.id, "start")}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") commitEdit(el.id, "start");
-                        if (e.key === "Escape") cancelEdit();
-                      }}
-                    />
-                  ) : (
-                    <button
-                      className="px-1 hover:text-white/90 decoration-dotted underline-offset-4"
-                      onClick={() => beginEdit(el.id, "start", el.startTime)}
-                    >
-                      {formatPlaybackTime(el.startTime)}
-                    </button>
-                  )}
+                  <ClockField
+                    isEditing={editing?.id === el.id && editing.field === "start"}
+                    valueSeconds={el.startTime}
+                    onBegin={() => beginEdit(el.id, "start")}
+                    onCommit={(text) => commitClockEdit(el.id, "start", text)}
+                    onCancel={cancelEdit}
+                  />
                   <span className="opacity-70">-</span>
-                  {editing?.id === el.id && editing.field === "end" ? (
-                    <input
-                      autoFocus
-                      className="w-16 bg-transparent text-white text-center px-1 py-0.5 border border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onBlur={() => commitEdit(el.id, "end")}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") commitEdit(el.id, "end");
-                        if (e.key === "Escape") cancelEdit();
-                      }}
-                    />
-                  ) : (
-                    <button
-                      className="px-1 hover:text-white/90 decoration-dotted underline-offset-4"
-                      onClick={() => beginEdit(el.id, "end", el.endTime)}
-                    >
-                      {formatPlaybackTime(el.endTime)}
-                    </button>
-                  )}
+                  <ClockField
+                    isEditing={editing?.id === el.id && editing.field === "end"}
+                    valueSeconds={el.endTime}
+                    onBegin={() => beginEdit(el.id, "end")}
+                    onCommit={(text) => commitClockEdit(el.id, "end", text)}
+                    onCancel={cancelEdit}
+                  />
                 </div>
-                <div className="text-sm text-gray-100 whitespace-pre-wrap break-words text-center">{el.text}</div>
+                <TextEdit
+                  editing={editing}
+                  element={el}
+                  commitTextEdit={commitTextEdit}
+                  cancelEdit={cancelEdit}
+                  beginTextEdit={beginTextEdit}
+                />
               </div>
             ))
           )}
