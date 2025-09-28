@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { DraggableTextProps, CursorType } from "../model/types";
 import { useDragText } from "../model/useDragText";
 import { useTextEdit } from "../model/useTextEdit";

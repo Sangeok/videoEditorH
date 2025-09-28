@@ -41,7 +41,7 @@ export default function TimeEditable({ valueSeconds, className, onCommit, onCanc
       className={className}
       onInput={(e) => {
         const native = e.nativeEvent as InputEvent;
-        if ((native as any).isComposing) return;
+        if ((native as InputEvent).isComposing) return;
         const target = e.currentTarget as HTMLSpanElement;
         const sanitized = sanitizeClockText(target.textContent ?? "");
         if (sanitized !== (target.textContent ?? "")) {
@@ -52,7 +52,7 @@ export default function TimeEditable({ valueSeconds, className, onCommit, onCanc
       }}
       onBeforeInput={(e) => {
         const native = e.nativeEvent as InputEvent;
-        const data = (native as any).data as string | null | undefined;
+        const data = (native as InputEvent).data as string | null | undefined;
         if (data && /[^0-9:]/.test(data)) e.preventDefault();
       }}
       onCompositionUpdate={(e) => {
@@ -75,7 +75,7 @@ export default function TimeEditable({ valueSeconds, className, onCommit, onCanc
       }}
       onPaste={(e) => {
         e.preventDefault();
-        const text = (e.clipboardData || (window as any).clipboardData).getData("text");
+        const text = (e.clipboardData || (window as unknown as ClipboardEvent).clipboardData).getData("text");
         const sanitized = sanitizeClockText(text);
         const selection = window.getSelection();
         if (!selection) return;
@@ -87,7 +87,7 @@ export default function TimeEditable({ valueSeconds, className, onCommit, onCanc
       }}
       onBlur={(e) => onCommit(e.currentTarget.textContent ?? "")}
       onKeyDown={(e) => {
-        if ((e.nativeEvent as any).isComposing || (e as any).keyCode === 229) {
+        if ((e.nativeEvent as unknown as InputEvent).isComposing || (e as unknown as KeyboardEvent).keyCode === 229) {
           e.preventDefault();
           return;
         }
