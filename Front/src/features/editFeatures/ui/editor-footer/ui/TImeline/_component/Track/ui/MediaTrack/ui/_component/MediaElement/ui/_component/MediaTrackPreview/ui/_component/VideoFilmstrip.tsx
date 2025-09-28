@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 interface VideoFilmstripProps {
@@ -218,7 +219,7 @@ export default function VideoFilmstrip({ src, startTime, endTime, isResizing }: 
     <div ref={containerRef} className="w-full h-full overflow-hidden">
       <div className="flex h-full">
         {thumbnails.map((thumbnail, index) => (
-          <img
+          <Image
             key={index}
             src={thumbnail}
             alt=""

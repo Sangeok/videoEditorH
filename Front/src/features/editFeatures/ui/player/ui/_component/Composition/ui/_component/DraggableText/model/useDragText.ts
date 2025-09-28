@@ -1,4 +1,7 @@
+"use client";
+
 import { useMediaStore } from "@/entities/media/useMediaStore";
+import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { useState, useCallback, useEffect } from "react";
 
 interface DragState {
@@ -23,19 +26,17 @@ interface UseDragTextProps {
   positionY: number;
   isPlaying: boolean;
   isEditing: boolean;
-  onSelect: () => void;
 }
 
-export const useDragText = ({
-  elementId,
-  positionX,
-  positionY,
-  isPlaying,
-  isEditing,
-  onSelect,
-}: UseDragTextProps) => {
+export const useDragText = ({ elementId, positionX, positionY, isPlaying, isEditing }: UseDragTextProps) => {
   const { updateTextElement } = useMediaStore();
   const [dragState, setDragState] = useState<DragState>(INITIAL_DRAG_STATE);
+
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+
+  const handleSelect = useCallback(() => {
+    setSelectedTrackAndId("Text", elementId);
+  }, [setSelectedTrackAndId, elementId]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -44,7 +45,7 @@ export const useDragText = ({
       e.preventDefault();
       e.stopPropagation();
 
-      onSelect();
+      handleSelect();
 
       setDragState({
         isDragging: true,
@@ -54,7 +55,7 @@ export const useDragText = ({
         startPosY: positionY,
       });
     },
-    [isPlaying, isEditing, positionX, positionY, onSelect]
+    [isPlaying, isEditing, positionX, positionY, handleSelect]
   );
 
   const handleMouseMove = useCallback(
