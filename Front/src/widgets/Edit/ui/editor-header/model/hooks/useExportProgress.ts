@@ -65,16 +65,6 @@ export const useExportProgress = () => {
       }));
     });
 
-    // socket.on("cancel", (data: { jobId: string }) => {
-    //   console.log("작업 취소됨:", data);
-    //   setState((prev) => ({
-    //     ...prev,
-    //     jobId: data.jobId,
-    //     status: "error",
-    //     error: "작업이 취소되었습니다.",
-    //   }));
-    // });
-
     socket.on("error", (data: { jobId: string; error: string }) => {
       console.log("내보내기 오류:", data);
       setState((prev) => ({
