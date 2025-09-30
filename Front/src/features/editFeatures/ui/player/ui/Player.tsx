@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { Player as RemotionPlayer } from "@remotion/player";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import Composition from "./_component/Composition/ui";
@@ -21,26 +20,6 @@ export default function Player() {
     fps,
   });
 
-  // Memoize inputProps to prevent unnecessary re-renders
-  const inputProps = useMemo(
-    () => ({
-      textElements: media.textElement || [],
-    }),
-    [media.textElement]
-  );
-
-  // Memoize style object to prevent unnecessary re-renders
-  const playerStyle = useMemo(
-    () => ({
-      width: "225px",
-      height: "100%",
-      border: "2px solid #333",
-      borderRadius: "10px",
-      overflow: "hidden",
-    }),
-    []
-  );
-
   // show message if no media
   if (projectDuration === 0) {
     return <div>No media</div>;
@@ -55,12 +34,17 @@ export default function Player() {
     <RemotionPlayer
       ref={playerController.playerRef}
       component={Composition}
-      inputProps={inputProps}
       durationInFrames={durationInFrames}
       compositionWidth={1080}
       compositionHeight={1920}
       fps={fps}
-      style={playerStyle}
+      style={{
+        width: "225px",
+        height: "100%",
+        border: "2px solid #333",
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}
       overflowVisible
       acknowledgeRemotionLicense={true}
       controls={false}
