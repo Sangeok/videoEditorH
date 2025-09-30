@@ -22,9 +22,15 @@ export function useDebouncedTextEdit(
   });
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserEditingRef = useRef<boolean>(false);
 
-  // Sync local state with textElement changes
+  // Sync local state with textElement changes (only when values actually change)
   useEffect(() => {
+    // Don't sync if user is currently editing (debounce in progress)
+    if (isUserEditingRef.current) {
+      return;
+    }
+
     const newState = textElement
       ? {
           localText: textElement.text || "",
@@ -37,7 +43,17 @@ export function useDebouncedTextEdit(
           localFontSize: "",
         };
 
-    setLocalState(newState);
+    // Only update if values actually changed
+    setLocalState((prevState) => {
+      if (
+        prevState.localText === newState.localText &&
+        prevState.localWidth === newState.localWidth &&
+        prevState.localFontSize === newState.localFontSize
+      ) {
+        return prevState; // No change, return same reference
+      }
+      return newState;
+    });
   }, [textElement]);
 
   // Cleanup timeout on unmount
@@ -46,6 +62,7 @@ export function useDebouncedTextEdit(
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
+      isUserEditingRef.current = false;
     };
   }, []);
 
@@ -53,12 +70,17 @@ export function useDebouncedTextEdit(
     (field: keyof TextElement, value: number | string) => {
       if (!selectedTrackId) return;
 
+      // Mark that user is editing
+      isUserEditingRef.current = true;
+
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
 
       debounceTimeoutRef.current = setTimeout(() => {
         updateTextElement(selectedTrackId, { [field]: value });
+        // Mark editing complete after update
+        isUserEditingRef.current = false;
       }, DEBOUNCE_DELAY);
     },
     [selectedTrackId, updateTextElement]

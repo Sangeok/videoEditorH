@@ -36,7 +36,8 @@ export default function DraggableText({ element }: DraggableTextProps) {
   });
 
   // Style calculations
-  const showBorder = !isPlaying && (isHovered || dragState.isDragging || isEditing);
+  const showBorder =
+    !isPlaying && (isHovered || dragState.isDragging || isEditing);
   const borderColor = isEditing ? "#3b82f6" : "#ffffff";
   const getCursor = (): CursorType => {
     if (isPlaying) return "default";
@@ -60,7 +61,9 @@ export default function DraggableText({ element }: DraggableTextProps) {
         whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
         borderRadius: "4px",
         boxSizing: "border-box",
-        border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
+        border: showBorder
+          ? `1px solid ${borderColor}`
+          : "1px solid transparent",
         cursor: getCursor(),
         textAlign: "center",
         userSelect: isEditing ? "text" : "none",
