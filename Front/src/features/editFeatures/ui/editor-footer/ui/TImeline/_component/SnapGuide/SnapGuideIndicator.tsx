@@ -14,22 +14,16 @@ const SnapGuideIndicator = memo(() => {
 
   return (
     <div
-      className="absolute pointer-events-none z-[140]"
+      className="absolute left-0 top-0 w-0.5 h-full pointer-events-none z-[140]"
       style={{
-        left: 0,
-        top: 0,
-        width: 2,
-        height: "100%",
         transform: `translateX(${xPositionPx}px)`,
       }}
     >
       <div
-        className="absolute left-0 h-full"
+        className="absolute left-0 h-full w-px opacity-90"
         style={{
-          width: 1,
           background: "#9370DB",
           boxShadow: "0 0 0 1px rgba(147,112,219,0.6)",
-          opacity: 0.9,
         }}
       />
     </div>

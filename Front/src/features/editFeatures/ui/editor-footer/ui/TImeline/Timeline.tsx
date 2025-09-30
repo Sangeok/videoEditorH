@@ -9,7 +9,10 @@ import DeleteSelectedElementListener from "./_component/DeleteSelectedElementLis
 
 export default function Timeline() {
   return (
-    <div className="relative flex-1 flex flex-col border border-gray-700 overflow-x-auto">
+    <div
+      className="relative flex-1 flex flex-col border border-gray-700 overflow-x-auto"
+      data-timeline-container="true"
+    >
       {/* dynamic ruler */}
       <TimelineRuler />
 

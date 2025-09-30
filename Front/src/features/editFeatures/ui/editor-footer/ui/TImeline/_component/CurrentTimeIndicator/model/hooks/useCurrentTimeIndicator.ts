@@ -17,7 +17,7 @@ const startTimer = (store: () => TimelineStore) => {
     const state = store();
     if (state.isPlaying) {
       const now = performance.now();
-      const delta = (now - lastUpdate) / 1000; // 밀리초 → 초 변환
+      const delta = (now - lastUpdate) / 1000; // milliseconds to seconds
       lastUpdate = now;
 
       const newTime = state.currentTime + delta;
