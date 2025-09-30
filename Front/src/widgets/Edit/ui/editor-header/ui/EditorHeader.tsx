@@ -19,7 +19,16 @@ export default function EditorHeader() {
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const { project } = useProjectStore();
   const { media } = useMediaStore();
-  const { jobId, progress, status, error, outputPath, subscribeToJob, cancelJob, resetState } = useExportProgress();
+  const {
+    jobId,
+    progress,
+    status,
+    error,
+    outputPath,
+    subscribeToJob,
+    cancelJob,
+    resetState,
+  } = useExportProgress();
 
   const router = useRouter();
 
@@ -27,7 +36,7 @@ export default function EditorHeader() {
     setLoading(true);
     try {
       await ProjectPersistenceService.saveCurrentProject();
-      // You could add a toast notification here
+      // TODO : add toast notification here
     } catch (error) {
       console.error("Failed to save project:", error);
     }
@@ -36,14 +45,15 @@ export default function EditorHeader() {
 
   const handleExport = async () => {
     try {
-      // 상태 초기화 및 모달 열기
+      // reset state and open modal
       resetState();
       setExportModalOpen(true);
 
-      // 백엔드 API 엔드포인트 (환경변수로 관리 권장)
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      // backend API endpoint
+      const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-      // 비디오 생성을 위한 데이터 준비
+      // prepare data for video creation
       const exportData = {
         project: {
           id: project.id,
@@ -75,15 +85,19 @@ export default function EditorHeader() {
       const result = await response.json();
 
       if (result.success) {
-        console.log("비디오 생성 시작됨:", result.jobId);
-        // WebSocket으로 진행률 구독
+        console.log("Video creation started:", result.jobId);
+        // subscribe to progress via WebSocket
         subscribeToJob(result.jobId);
       } else {
-        throw new Error(result.message || "비디오 생성 요청 실패");
+        throw new Error(result.message || "Video creation request failed");
       }
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`비디오 내보내기 실패: ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
+      alert(
+        `Video export failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
       setExportModalOpen(false);
     }
   };
@@ -105,7 +119,13 @@ export default function EditorHeader() {
     {
       icon: <Menu size={18} />,
       label: "Menu",
-      children: <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} dropdownItems={MenuItem} />,
+      children: (
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          dropdownItems={MenuItem}
+        />
+      ),
       onClick: () => {
         setIsOpen(!isOpen);
       },
@@ -146,14 +166,23 @@ export default function EditorHeader() {
           ))}
         </div>
 
-        <span className="text-white text-sm mr-4">{project.id ? project.name : "Loading..."}</span>
+        <span className="text-white text-sm mr-4">
+          {project.id ? project.name : "Loading..."}
+        </span>
 
         <div className="flex items-center gap-2">
           {HeaderRightButton.map((button) => (
-            <Button variant="dark" key={button.label} onClick={button.onClick} disabled={button.disabled}>
+            <Button
+              variant="dark"
+              key={button.label}
+              onClick={button.onClick}
+              disabled={button.disabled}
+            >
               <div className="flex items-center gap-2">
                 {button.icon}
-                {button.disabled && button.label === "Export" ? "Exporting..." : button.label}
+                {button.disabled && button.label === "Export"
+                  ? "Exporting..."
+                  : button.label}
               </div>
             </Button>
           ))}

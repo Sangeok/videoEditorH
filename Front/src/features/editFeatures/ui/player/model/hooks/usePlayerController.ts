@@ -6,15 +6,15 @@ import useTimelineStore from "@/features/editFeatures/model/store/useTimelineSto
 import { PlayerService } from "../services/playerService";
 
 interface UsePlayerControllerReturn {
-  playerRef: RefObject<PlayerRef | null>; // null 허용으로 변경
+  playerRef: RefObject<PlayerRef | null>;
   play: () => void;
   pause: () => void;
   seekTo: (time: number, fps: number) => void;
 }
 
 /**
- * RemotionPlayer 제어를 담당하는 훅
- * 재생/일시정지, 시크 기능을 제공
+ * control RemotionPlayer
+ * provide play/pause, seek functionality
  */
 export const usePlayerController = ({
   projectDuration,
@@ -24,7 +24,7 @@ export const usePlayerController = ({
   const playerRef = useRef<PlayerRef>(null);
   const isPlaying = useTimelineStore((state) => state.isPlaying);
 
-  // Timeline의 재생 상태에 따라 RemotionPlayer 제어
+  // control RemotionPlayer based on timeline's playing state
   useEffect(() => {
     if (playerRef.current) {
       if (isPlaying) {

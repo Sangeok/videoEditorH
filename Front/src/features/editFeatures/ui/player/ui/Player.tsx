@@ -7,12 +7,7 @@ import Composition from "./_component/Composition/ui";
 import { usePlayerController } from "../model/hooks/usePlayerController";
 import { usePlayerSync } from "../model/hooks/usePlayerSync";
 import { PlayerService } from "../model/services/playerService";
-// import NoMediaMessage from "./_component/NoMediaMessage";
 
-/**
- * 비디오 플레이어 컴포넌트
- * RemotionPlayer를 래핑하여 타임라인과 동기화된 재생 기능 제공
- */
 export default function Player() {
   const { media } = useMediaStore();
   const fps = media.fps || 30;
@@ -20,7 +15,7 @@ export default function Player() {
 
   const playerController = usePlayerController({ projectDuration });
 
-  // Timeline과 Player 동기화
+  // synchronize timeline and player
   usePlayerSync({
     playerRef: playerController.playerRef,
     fps,
@@ -46,7 +41,7 @@ export default function Player() {
     []
   );
 
-  // 미디어가 없는 경우 메시지 표시
+  // show message if no media
   if (projectDuration === 0) {
     return <div>No media</div>;
   }
