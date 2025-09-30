@@ -28,11 +28,19 @@ interface UseDragTextProps {
   isEditing: boolean;
 }
 
-export const useDragText = ({ elementId, positionX, positionY, isPlaying, isEditing }: UseDragTextProps) => {
+export const useDragText = ({
+  elementId,
+  positionX,
+  positionY,
+  isPlaying,
+  isEditing,
+}: UseDragTextProps) => {
   const { updateTextElement } = useMediaStore();
   const [dragState, setDragState] = useState<DragState>(INITIAL_DRAG_STATE);
 
-  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
+  const setSelectedTrackAndId = useSelectedTrackStore(
+    (state) => state.setSelectedTrackAndId
+  );
 
   const handleSelect = useCallback(() => {
     setSelectedTrackAndId("Text", elementId);
