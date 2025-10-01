@@ -55,10 +55,10 @@ export default function DraggableText({ element }: DraggableTextProps) {
         top: `${element.positionY}px`,
         width: "fit-content",
         height: "auto",
-        maxWidth: element?.maxWidth ? element?.maxWidth : "",
+        maxWidth: element?.maxWidth ?? "",
         display: "inline-block",
         padding: "10px",
-        whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
+        whiteSpace: element?.whiteSpace ?? "nowrap", // pre-wrap에서 nowrap으로 변경
         borderRadius: "4px",
         boxSizing: "border-box",
         border: showBorder
