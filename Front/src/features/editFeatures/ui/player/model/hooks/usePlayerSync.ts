@@ -16,25 +16,32 @@ interface UsePlayerSyncProps {
  */
 export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
   const { currentTime, isPlaying, setCurrentTime } = useTimelineStore();
-  const lastUpdateTimeRef = useRef<number>(-1);
-  // flag to check if the update comes from the player
-  const isUpdatingFromPlayerRef = useRef<boolean>(false);
+
+  // Track sync state with timestamps to prevent circular updates
+  const syncStateRef = useRef<{
+    lastPlayerUpdate: number;
+    lastTimelineUpdate: number;
+  }>({
+    lastPlayerUpdate: -1,
+    lastTimelineUpdate: -1,
+  });
 
   // synchronize player based on timeline's currentTime
   // Works when stopping the player and dragging the timeline
   useEffect(() => {
-    // don't seek if the update comes from the player
-    // prevent circular reference
-    if (isUpdatingFromPlayerRef.current) {
-      isUpdatingFromPlayerRef.current = false;
+    // Ignore timeline updates that happen within 100ms of player updates
+    // This prevents circular references
+    if (Date.now() - syncStateRef.current.lastPlayerUpdate < 100) {
       return;
     }
 
     if (playerRef.current && !isPlaying) {
       const frameToSeek = PlayerService.timeToFrame(currentTime, fps);
       const currentFrame = playerRef.current.getCurrentFrame();
+
       // only seek if the current frame is different
       if (Math.abs(currentFrame - frameToSeek) > 1) {
+        syncStateRef.current.lastTimelineUpdate = Date.now();
         playerRef.current.seekTo(frameToSeek);
       }
     }
@@ -52,17 +59,13 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
         const roundedTime = PlayerService.roundTime(timeInSeconds);
 
         // only update if the value actually changed
-        if (roundedTime !== lastUpdateTimeRef.current) {
-          lastUpdateTimeRef.current = roundedTime;
-          isUpdatingFromPlayerRef.current = true;
+        if (roundedTime !== currentTime) {
+          syncStateRef.current.lastPlayerUpdate = Date.now();
           setCurrentTime(roundedTime);
         }
       }
     }, 100);
 
-    return () => {
-      clearInterval(interval);
-      lastUpdateTimeRef.current = -1;
-    };
-  }, [isPlaying, fps, playerRef, setCurrentTime]);
+    return () => clearInterval(interval);
+  }, [isPlaying, fps, playerRef, setCurrentTime, currentTime]);
 };

@@ -5,6 +5,7 @@ import {
   AudioElement,
   MediaElement,
   TextElement,
+  TrackElement,
 } from "@/entities/media/types";
 import { ImageWithFade } from "./_component/ImageWithFade";
 
@@ -12,12 +13,11 @@ interface SequenceItemOptions {
   fps: number;
 }
 
+type SequenceItemType = "text" | "image" | "video" | "audio";
+
 export const SequenceItem: Record<
-  string,
-  (
-    item: TextElement | MediaElement,
-    options: SequenceItemOptions
-  ) => JSX.Element
+  SequenceItemType,
+  (item: TrackElement, options: SequenceItemOptions) => JSX.Element
 > = {
   text: (item, options: SequenceItemOptions) => {
     const textElement = item as TextElement;
@@ -97,8 +97,8 @@ export const SequenceItem: Record<
             pointerEvents: "none",
             top: 0,
             left: 0,
-            width: item.width || "100%", // Default width
-            height: item.height || "auto", // Default height
+            width: videoElement.width || "100%", // Default width
+            height: videoElement.height || "auto", // Default height
             position: "absolute",
           }}
         />
