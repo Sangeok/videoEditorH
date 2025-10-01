@@ -1,12 +1,12 @@
 import { JSX } from "react";
 import { AbsoluteFill, Sequence, Audio, OffthreadVideo } from "remotion";
-import DraggableText from "./DraggableText/ui/DraggableText";
+import DraggableText from "./_component/DraggableText/ui/DraggableText";
 import {
   AudioElement,
   MediaElement,
   TextElement,
 } from "@/entities/media/types";
-import { ImageWithFade } from "./ImageWithFade";
+import { ImageWithFade } from "./_component/ImageWithFade";
 
 interface SequenceItemOptions {
   fps: number;
