@@ -1,8 +1,7 @@
 import { useState } from "react";
 
 /**
- * 파일 드래그 앤 드롭 기능을 제공하는 공유 훅
- * Video, Image, Audio 업로드 컴포넌트에서 사용
+ * file drag and drop hook
  */
 export function useDragAndDrop() {
   const [dragActive, setDragActive] = useState(false);
@@ -17,10 +16,7 @@ export function useDragAndDrop() {
     }
   };
 
-  const handleDrop = (
-    e: React.DragEvent,
-    onFilesDropped: (files: FileList) => void
-  ) => {
+  const handleDrop = (e: React.DragEvent, onFilesDropped: (files: FileList) => void) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
