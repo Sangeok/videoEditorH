@@ -2,36 +2,37 @@
 
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
+import { PLAYER_CONFIG } from "@/features/editFeatures/ui/player/config/playerConfig";
 import { useState, useCallback, useEffect } from "react";
 
 interface DragState {
   isDragging: boolean;
-  startX: number;
-  startY: number;
-  startPosX: number;
-  startPosY: number;
+  initialClientX: number;
+  initialClientY: number;
+  initialCanvasX: number;
+  initialCanvasY: number;
 }
 
 const INITIAL_DRAG_STATE: DragState = {
   isDragging: false,
-  startX: 0,
-  startY: 0,
-  startPosX: 0,
-  startPosY: 0,
+  initialClientX: 0,
+  initialClientY: 0,
+  initialCanvasX: 0,
+  initialCanvasY: 0,
 };
 
 interface UseDragTextProps {
   elementId: string;
-  positionX: number;
-  positionY: number;
+  currentCanvasX: number;
+  currentCanvasY: number;
   isPlaying: boolean;
   isEditing: boolean;
 }
 
 export const useDragText = ({
   elementId,
-  positionX,
-  positionY,
+  currentCanvasX,
+  currentCanvasY,
   isPlaying,
   isEditing,
 }: UseDragTextProps) => {
@@ -57,28 +58,25 @@ export const useDragText = ({
 
       setDragState({
         isDragging: true,
-        startX: e.clientX,
-        startY: e.clientY,
-        startPosX: positionX,
-        startPosY: positionY,
+        initialClientX: e.clientX,
+        initialClientY: e.clientY,
+        initialCanvasX: currentCanvasX,
+        initialCanvasY: currentCanvasY,
       });
     },
-    [isPlaying, isEditing, positionX, positionY, handleSelect]
+    [isPlaying, isEditing, currentCanvasX, currentCanvasY, handleSelect]
   );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!dragState.isDragging || isEditing) return;
 
-      const deltaX = e.clientX - dragState.startX;
-      const deltaY = e.clientY - dragState.startY;
+      const deltaX = e.clientX - dragState.initialClientX;
+      const deltaY = e.clientY - dragState.initialClientY;
 
-      // Scale factors for coordinate conversion
-      const scaleX = 1080 / 225;
-      const scaleY = 1920 / ((225 * 1920) / 1080);
-
-      const newPosX = dragState.startPosX + deltaX * scaleX;
-      const newPosY = dragState.startPosY + deltaY * scaleY;
+      // Convert viewer coordinates to composition coordinates using centralized scale factors
+      const newPosX = dragState.initialCanvasX + deltaX * PLAYER_CONFIG.SCALE_X;
+      const newPosY = dragState.initialCanvasY + deltaY * PLAYER_CONFIG.SCALE_Y;
 
       updateTextElement(elementId, {
         positionX: newPosX,

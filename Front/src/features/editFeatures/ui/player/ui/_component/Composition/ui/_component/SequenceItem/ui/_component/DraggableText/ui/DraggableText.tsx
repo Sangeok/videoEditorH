@@ -29,8 +29,8 @@ export default function DraggableText({ element }: DraggableTextProps) {
   // Use drag hook with current editing state
   const { dragState, handleMouseDown } = useDragText({
     elementId: element.id,
-    positionX: element.positionX,
-    positionY: element.positionY,
+    currentCanvasX: element.positionX,
+    currentCanvasY: element.positionY,
     isPlaying,
     isEditing,
   });

@@ -99,6 +99,7 @@ ComponentName/
 ```
 
 **Key Principles:**
+
 - **Locality of Reference**: Component-specific types stay within the component's directory
 - **FSD Separation**: UI components in `ui/`, types/logic in `model/`
 - **Single Responsibility**: Each layer handles its specific concern
@@ -122,7 +123,28 @@ ComponentName/
 - TypeScript configuration uses `@/` imports pointing to `src/` directory
 
 # important-instruction-reminders
+
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+NEVER proactively create documentation files (\*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+## CRITICAL: File Editing on Windows
+
+### ⚠️ MANDATORY: Always Use Backslashes on Windows for File Paths
+
+**When using Edit or MultiEdit tools on Windows, you MUST use backslashes (`\`) in file paths, NOT forward slashes (`/`).**
+
+#### ❌ WRONG - Will cause errors:
+
+```
+Edit(file_path: "D:/repos/project/file.tsx", ...)
+MultiEdit(file_path: "D:/repos/project/file.tsx", ...)
+```
+
+#### ✅ CORRECT - Always works:
+
+```
+Edit(file_path: "D:\repos\project\file.tsx", ...)
+MultiEdit(file_path: "D:\repos\project\file.tsx", ...)
+```

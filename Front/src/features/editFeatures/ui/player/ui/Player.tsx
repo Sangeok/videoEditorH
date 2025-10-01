@@ -6,11 +6,11 @@ import Composition from "./_component/Composition/ui";
 import { usePlayerController } from "../model/hooks/usePlayerController";
 import { usePlayerSync } from "../model/hooks/usePlayerSync";
 import { PlayerService } from "../model/services/playerService";
+import { PLAYER_CONFIG } from "../config/playerConfig";
 
 export default function Player() {
-  const { media } = useMediaStore();
-  const fps = media.fps || 30;
-  const projectDuration = media.projectDuration || 0;
+  const fps = useMediaStore((state) => state.media.fps);
+  const projectDuration = useMediaStore((state) => state.media.projectDuration);
 
   const playerController = usePlayerController({ projectDuration });
 
@@ -35,11 +35,11 @@ export default function Player() {
       ref={playerController.playerRef}
       component={Composition}
       durationInFrames={durationInFrames}
-      compositionWidth={1080}
-      compositionHeight={1920}
+      compositionWidth={PLAYER_CONFIG.COMPOSITION_WIDTH}
+      compositionHeight={PLAYER_CONFIG.COMPOSITION_HEIGHT}
       fps={fps}
       style={{
-        width: "225px",
+        width: `${PLAYER_CONFIG.PLAYER_DISPLAY_WIDTH}px`,
         height: "100%",
         border: "2px solid #333",
         borderRadius: "10px",

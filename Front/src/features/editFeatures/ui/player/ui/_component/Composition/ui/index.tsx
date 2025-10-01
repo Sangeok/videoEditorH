@@ -1,10 +1,10 @@
 import { TextElement } from "@/entities/media/types";
-import { SequenceItem } from "./_component/SequenceItem";
+import { SequenceItem } from "./_component/SequenceItem/ui/SequenceItem";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 
 export default function Composition() {
-  const { media } = useMediaStore();
-  const fps = media.fps || 30;
+  const media = useMediaStore((state) => state.media);
+  const fps = media.fps;
 
   return (
     <>
