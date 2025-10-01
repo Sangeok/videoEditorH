@@ -1,8 +1,8 @@
 import Button from "@/shared/ui/atoms/Button/ui/Button";
-import { Upload, Music } from "lucide-react";
+import { Upload, Music, FileText } from "lucide-react";
 import { RefObject } from "react";
 
-type MediaType = "video" | "image" | "audio";
+type MediaType = "video" | "image" | "audio" | "caption";
 
 interface MediaFileUploadAreaProps {
   mediaType: MediaType;
@@ -36,6 +36,13 @@ const MEDIA_CONFIG = {
     text: "Drag & drop your audio files here",
     button: "Choose Audio Files",
     description: "Supports MP3, WAV, OGG, M4A",
+  },
+  caption: {
+    accept: ".srt",
+    icon: FileText,
+    text: "Drag & drop your SRT file here",
+    button: "Choose SRT File",
+    description: "Supports .srt subtitle files",
   },
 } as const;
 

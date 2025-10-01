@@ -1,22 +1,15 @@
-import { useState, useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
-import {
-  convertSRTToTextElements,
-  parseSRTContent,
-  readFileAsText,
-} from "@/shared/lib/srtUtils";
-import { UploadState } from "../types";
+import { convertSRTToTextElements, parseSRTContent, readFileAsText } from "@/shared/lib/srtUtils";
+import { useDragAndDrop } from "../../../../../model/hooks";
 
 export function useCaptionUpload() {
-  const [uploadState, setUploadState] = useState<UploadState>("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [uploadedCount, setUploadedCount] = useState<number>(0);
   const { addTextElement } = useMediaStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const dragAndDrop = useDragAndDrop();
 
   const validateSRTFile = useCallback((file: File): boolean => {
     if (!file.name.toLowerCase().endsWith(".srt")) {
-      setErrorMessage("Please select a valid SRT file");
-      setUploadState("error");
       return false;
     }
     return true;
@@ -25,9 +18,6 @@ export function useCaptionUpload() {
   const processSRTFile = useCallback(
     async (file: File): Promise<void> => {
       if (!validateSRTFile(file)) return;
-
-      setUploadState("uploading");
-      setErrorMessage("");
 
       try {
         const srtContent = await readFileAsText(file);
@@ -38,34 +28,46 @@ export function useCaptionUpload() {
         textElements.forEach((element) => {
           addTextElement(element, true);
         });
-
-        setUploadedCount(textElements.length);
-        setUploadState("success");
       } catch (error) {
         console.error("Error processing SRT file:", error);
-        setErrorMessage(
-          "Failed to parse SRT file. Please check the file format."
-        );
-        setUploadState("error");
       }
     },
     [addTextElement, validateSRTFile]
   );
 
+  const handleFileSelect = useCallback(
+    (files: FileList | null) => {
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      processSRTFile(file);
+    },
+    [processSRTFile]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      dragAndDrop.handleDrop(e, (files) => {
+        handleFileSelect(files);
+      });
+    },
+    [dragAndDrop, handleFileSelect]
+  );
+
   const resetUpload = useCallback(() => {
-    setUploadState("idle");
-    setErrorMessage("");
-    setUploadedCount(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }, []);
 
   return {
+    fileInputRef,
     state: {
-      uploadState,
-      errorMessage,
-      uploadedCount,
+      dragActive: dragAndDrop.dragActive,
     },
     actions: {
-      processSRTFile,
+      handleFileSelect,
+      handleDrag: dragAndDrop.handleDrag,
+      handleDrop,
       resetUpload,
     },
   };

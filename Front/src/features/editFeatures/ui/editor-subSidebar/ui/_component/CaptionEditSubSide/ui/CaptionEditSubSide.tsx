@@ -1,20 +1,14 @@
 "use client";
 
 import { useCaptionUpload } from "../model/hooks/useCaptionUpload";
-import { useFileHandler } from "../model/hooks/useFileHandler";
-import FileUploadArea from "./_components/FileUploadArea";
+import MediaFileUploadArea from "../../MediaFileUploadArea";
 import { useCallback, useMemo, useState } from "react";
-import type { RefObject } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import TextEdit from "./_components/TextEdit/ui";
 import ClockField from "./_components/TimeEdit/ui/ClockField";
 
 export default function CaptionEditSubSide() {
-  const { state, actions } = useCaptionUpload();
-  const { fileInputRef, actions: fileActions } = useFileHandler({
-    onFileSelect: actions.processSRTFile,
-    onReset: actions.resetUpload,
-  });
+  const { state, actions, fileInputRef } = useCaptionUpload();
   const { media, updateTextElement } = useMediaStore();
 
   // Inline edit state
@@ -121,12 +115,13 @@ export default function CaptionEditSubSide() {
     <div className="p-4 space-y-4 w-full">
       <h3 className="text-lg font-semibold text-white mb-4">Import Captions</h3>
 
-      <FileUploadArea
-        uploadState={state.uploadState}
-        errorMessage={state.errorMessage}
-        uploadedCount={state.uploadedCount}
-        fileInputRef={fileInputRef as RefObject<HTMLInputElement>}
-        actions={fileActions}
+      <MediaFileUploadArea
+        mediaType="caption"
+        fileInputRef={fileInputRef}
+        onFileSelect={actions.handleFileSelect}
+        onDrag={actions.handleDrag}
+        onDrop={actions.handleDrop}
+        dragActive={state.dragActive}
       />
 
       <div className="w-full">
