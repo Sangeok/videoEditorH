@@ -14,7 +14,6 @@ export const useTextEdit = ({
 }: UseTextEditProps) => {
   const { updateTextElement } = useMediaStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [editingText, setEditingText] = useState(initialText);
   const [isComposing, setIsComposing] = useState(false);
 
   const textRef = useRef<HTMLDivElement>(null);
@@ -80,9 +79,8 @@ export const useTextEdit = ({
 
       isEditingStartRef.current = true;
       setIsEditing(true);
-      setEditingText(initialText);
     },
-    [isPlaying, initialText]
+    [isPlaying]
   );
 
   const handleTextInput = useCallback(
@@ -92,7 +90,6 @@ export const useTextEdit = ({
       }
 
       const newText = (e.target as HTMLDivElement).textContent || "";
-      setEditingText(newText);
 
       if (!isComposing) {
         const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(newText);
@@ -161,7 +158,6 @@ export const useTextEdit = ({
 
         setIsEditing(false);
         isEditingStartRef.current = false;
-        setEditingText(initialText);
         if (textRef.current) {
           textRef.current.textContent = initialText;
         }
@@ -179,7 +175,6 @@ export const useTextEdit = ({
     (e: React.CompositionEvent<HTMLDivElement>) => {
       setIsComposing(false);
       const newText = (e.target as HTMLDivElement).textContent || "";
-      setEditingText(newText);
       updateTextElement(elementId, { text: newText });
     },
     [updateTextElement, elementId]
@@ -190,7 +185,7 @@ export const useTextEdit = ({
     if (isEditing && textRef.current && isEditingStartRef.current) {
       const element = textRef.current;
 
-      element.textContent = editingText;
+      element.textContent = initialText;
       element.focus();
 
       const selection = window.getSelection();
@@ -201,14 +196,7 @@ export const useTextEdit = ({
         selection?.addRange(range);
       }
     }
-  }, [isEditing, editingText]);
-
-  // Sync with external text changes
-  useEffect(() => {
-    if (!isEditing) {
-      setEditingText(initialText);
-    }
-  }, [initialText, isEditing]);
+  }, [isEditing, initialText]);
 
   // Cleanup
   useEffect(() => {
@@ -221,7 +209,6 @@ export const useTextEdit = ({
 
   return {
     isEditing,
-    editingText,
     textRef,
     handleDoubleClick,
     handleTextInput,
