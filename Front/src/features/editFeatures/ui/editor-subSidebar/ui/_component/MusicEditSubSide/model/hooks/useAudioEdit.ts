@@ -1,7 +1,7 @@
 "use client";
 
 import { useFileUpload } from "./useFileUpload";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDragAndDrop } from "../../../../../model/hooks";
 import { useAudioPreview } from "./useAudioPreview";
 import { useAudioFileProcessor } from "./useAudioFileProcessor";
 import { AudioEditState, AudioEditActions, UploadedAudio } from "../types";

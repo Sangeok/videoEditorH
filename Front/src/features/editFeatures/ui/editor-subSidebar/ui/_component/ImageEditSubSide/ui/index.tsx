@@ -1,7 +1,7 @@
 "use client";
 
+import MediaFileUploadArea from "../../MediaFileUploadArea";
 import { useImageEdit } from "../model/hooks/useImageEdit";
-import ImageFileUploadArea from "./_component/ImageFileUploadArea";
 import ImagePreviewArea from "./_component/ImagePreviewArea";
 
 export default function ImageEditSubSide() {
@@ -11,7 +11,14 @@ export default function ImageEditSubSide() {
     <div className="p-4 space-y-4 w-full">
       <h3 className="text-lg font-semibold text-white mb-4">Import Image</h3>
 
-      <ImageFileUploadArea fileInputRef={fileInputRef} actions={actions} dragActive={state.dragActive} />
+      <MediaFileUploadArea
+        mediaType="image"
+        fileInputRef={fileInputRef}
+        onFileSelect={actions.handleFileSelect}
+        onDrag={actions.handleDrag}
+        onDrop={actions.handleDrop}
+        dragActive={state.dragActive}
+      />
 
       <ImagePreviewArea
         uploadedImages={state.uploadedImages}

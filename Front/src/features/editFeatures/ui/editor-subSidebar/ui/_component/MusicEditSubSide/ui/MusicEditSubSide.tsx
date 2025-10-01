@@ -1,7 +1,7 @@
 "use client";
 
 import { useAudioEdit } from "../model/hooks/useAudioEdit";
-import AudioFileUploadArea from "./_component/AudioFileUploadArea";
+import MediaFileUploadArea from "../../MediaFileUploadArea";
 import AudioListArea from "./_component/AudioListArea";
 import AudioInstructions from "./_component/AudioInstructions";
 
@@ -12,9 +12,12 @@ export default function MusicEditSubSide() {
     <div className="p-4 space-y-4 w-full">
       <h3 className="text-lg font-semibold text-white mb-4">Import Audio</h3>
 
-      <AudioFileUploadArea
+      <MediaFileUploadArea
+        mediaType="audio"
         fileInputRef={fileInputRef}
-        actions={actions}
+        onFileSelect={actions.handleFileSelect}
+        onDrag={actions.handleDrag}
+        onDrop={actions.handleDrop}
         dragActive={state.dragActive}
         loading={state.loading}
       />
