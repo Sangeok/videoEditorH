@@ -1,12 +1,12 @@
 import { useFileUpload } from "./useFileUpload";
-import { useDragAndDrop } from "../../../../../model/hooks";
-import { useImageSelection } from "./useImageSelection";
+import { useDragAndDrop, useMediaSelection } from "../../../../../model/hooks";
 import { useImageProjectManagement } from "./useImageProjectManagement";
+import { MediaElement } from "@/entities/media/types";
 
 export function useImageEdit() {
   const fileUpload = useFileUpload();
   const dragAndDrop = useDragAndDrop();
-  const imageSelection = useImageSelection();
+  const mediaSelection = useMediaSelection<MediaElement>("image");
   const projectManagement = useImageProjectManagement();
 
   const handleFileSelect = (files: FileList | null) => {
@@ -21,8 +21,8 @@ export function useImageEdit() {
 
   const deleteImage = (imageId: string) => {
     projectManagement.deleteImage(imageId);
-    if (imageSelection.isImageSelected(imageId)) {
-      imageSelection.clearSelection();
+    if (mediaSelection.isSelected(imageId)) {
+      mediaSelection.clearSelection();
     }
   };
 
@@ -30,9 +30,9 @@ export function useImageEdit() {
     fileInputRef: fileUpload.fileInputRef,
     state: {
       uploadedImages: fileUpload.uploadedImages,
-      selectedImageId: imageSelection.selectedImageId,
+      selectedImageId: mediaSelection.selectedId,
       dragActive: dragAndDrop.dragActive,
-      selectedImage: imageSelection.selectedImage,
+      selectedImage: mediaSelection.selectedItem,
     },
     actions: {
       handleFileSelect,
@@ -40,7 +40,7 @@ export function useImageEdit() {
       handleDrag: dragAndDrop.handleDrag,
       handleDrop,
       removeImage: fileUpload.removeImage,
-      selectImage: imageSelection.selectImage,
+      selectImage: mediaSelection.select,
       updateImageSettings: projectManagement.updateImageSettings,
       deleteImage,
     },

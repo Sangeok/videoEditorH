@@ -1,12 +1,12 @@
 import { useFileUpload } from "./useFileUpload";
-import { useDragAndDrop } from "../../../../../model/hooks";
-import { useVideoSelection } from "./useVideoSelection";
+import { useDragAndDrop, useMediaSelection } from "../../../../../model/hooks";
 import { useVideoProjectManagement } from "./useVideoProjectManagement";
+import { MediaElement } from "@/entities/media/types";
 
 export function useVideoEdit() {
   const fileUpload = useFileUpload();
   const dragAndDrop = useDragAndDrop();
-  const videoSelection = useVideoSelection();
+  const mediaSelection = useMediaSelection<MediaElement>("video");
   const projectManagement = useVideoProjectManagement();
 
   const handleFileSelect = (files: FileList | null) => {
@@ -21,8 +21,8 @@ export function useVideoEdit() {
 
   const deleteVideo = (videoId: string) => {
     projectManagement.deleteVideo(videoId);
-    if (videoSelection.isVideoSelected(videoId)) {
-      videoSelection.clearSelection();
+    if (mediaSelection.isSelected(videoId)) {
+      mediaSelection.clearSelection();
     }
   };
 
@@ -30,16 +30,16 @@ export function useVideoEdit() {
     fileInputRef: fileUpload.fileInputRef,
     state: {
       uploadedVideos: fileUpload.uploadedVideos,
-      selectedVideoId: videoSelection.selectedVideoId,
+      selectedVideoId: mediaSelection.selectedId,
       dragActive: dragAndDrop.dragActive,
-      selectedVideo: videoSelection.selectedVideo,
+      selectedVideo: mediaSelection.selectedItem,
     },
     actions: {
       handleFileSelect,
       handleDrag: dragAndDrop.handleDrag,
       handleDrop,
       removeVideo: fileUpload.removeVideo,
-      selectVideo: videoSelection.selectVideo,
+      selectVideo: mediaSelection.select,
       updateVideoSettings: projectManagement.updateVideoSettings,
       deleteVideo,
       addVideoToTimeLine: projectManagement.addVideoToTimeLine,

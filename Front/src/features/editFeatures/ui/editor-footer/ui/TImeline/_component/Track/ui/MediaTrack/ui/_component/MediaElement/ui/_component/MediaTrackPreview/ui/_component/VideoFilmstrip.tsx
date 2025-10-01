@@ -215,6 +215,8 @@ export default function VideoFilmstrip({ src, startTime, endTime, isResizing }: 
 
   const thumbnailItemWidthPx = thumbnailCount ? Math.max(1, Math.floor(containerDimensions.w / thumbnailCount)) : 0;
 
+  console.log("thumbnailItemWidthPx", thumbnailItemWidthPx);
+
   return (
     <div ref={containerRef} className="w-full h-full overflow-hidden">
       <div className="flex h-full">
@@ -223,6 +225,9 @@ export default function VideoFilmstrip({ src, startTime, endTime, isResizing }: 
             key={index}
             src={thumbnail}
             alt=""
+            width={thumbnailItemWidthPx}
+            height={containerDimensions.h}
+            unoptimized
             className="h-full object-cover select-none pointer-events-none"
             draggable={false}
             style={{ width: `${thumbnailItemWidthPx}px` }}
