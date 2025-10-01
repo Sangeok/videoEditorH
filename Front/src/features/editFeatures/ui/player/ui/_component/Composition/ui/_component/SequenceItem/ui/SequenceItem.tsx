@@ -7,7 +7,7 @@ import {
   TextElement,
   TrackElement,
 } from "@/entities/media/types";
-import { ImageWithFade } from "./_component/ImageWithFade";
+import { ImageWithFade } from "./_component/ImageWithFade/ui/ImageWithFade";
 
 interface SequenceItemOptions {
   fps: number;
