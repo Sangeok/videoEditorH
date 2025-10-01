@@ -1,5 +1,5 @@
 import { useFileUpload } from "./useFileUpload";
-import { useDragAndDrop } from "./useDragAndDrop";
+import { useDragAndDrop } from "../../../../../model/hooks";
 import { useImageSelection } from "./useImageSelection";
 import { useImageProjectManagement } from "./useImageProjectManagement";
 
