@@ -3,6 +3,7 @@
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { PLAYER_CONFIG } from "@/features/editFeatures/ui/player/config/playerConfig";
+import { useSmartGuideStore } from "@/features/editFeatures/model/store/useSmartGuideStore";
 import { useState, useCallback, useEffect } from "react";
 
 interface DragState {
@@ -29,19 +30,12 @@ interface UseDragTextProps {
   isEditing: boolean;
 }
 
-export const useDragText = ({
-  elementId,
-  currentCanvasX,
-  currentCanvasY,
-  isPlaying,
-  isEditing,
-}: UseDragTextProps) => {
+export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlaying, isEditing }: UseDragTextProps) => {
   const { updateTextElement } = useMediaStore();
+  const { setBaseSmartGuides, clearBaseSmartGuides } = useSmartGuideStore();
   const [dragState, setDragState] = useState<DragState>(INITIAL_DRAG_STATE);
 
-  const setSelectedTrackAndId = useSelectedTrackStore(
-    (state) => state.setSelectedTrackAndId
-  );
+  const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
 
   const handleSelect = useCallback(() => {
     setSelectedTrackAndId("Text", elementId);
@@ -63,6 +57,8 @@ export const useDragText = ({
         initialCanvasX: currentCanvasX,
         initialCanvasY: currentCanvasY,
       });
+
+      setBaseSmartGuides(true);
     },
     [isPlaying, isEditing, currentCanvasX, currentCanvasY, handleSelect]
   );
@@ -88,7 +84,8 @@ export const useDragText = ({
 
   const handleMouseUp = useCallback(() => {
     setDragState(INITIAL_DRAG_STATE);
-  }, []);
+    clearBaseSmartGuides();
+  }, [clearBaseSmartGuides]);
 
   useEffect(() => {
     if (dragState.isDragging && !isEditing) {

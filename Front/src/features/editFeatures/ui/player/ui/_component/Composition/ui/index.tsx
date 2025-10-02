@@ -1,13 +1,14 @@
 import { TextElement } from "@/entities/media/types";
 import { SequenceItem } from "./_component/SequenceItem/ui/SequenceItem";
 import { useMediaStore } from "@/entities/media/useMediaStore";
+import SmartGuideOverlay from "../../SmartGuideOverlay/ui/SmartGuideOverlay";
 
 export default function Composition() {
   const media = useMediaStore((state) => state.media);
   const fps = media.fps;
 
   return (
-    <>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {media.textElement.map((textElement) => {
         if (!textElement) return null;
         const trackItem = { ...textElement } as TextElement;
@@ -21,6 +22,7 @@ export default function Composition() {
         if (!audioElement) return null;
         return SequenceItem["audio"](audioElement, { fps });
       })}
-    </>
+      <SmartGuideOverlay />
+    </div>
   );
 }
