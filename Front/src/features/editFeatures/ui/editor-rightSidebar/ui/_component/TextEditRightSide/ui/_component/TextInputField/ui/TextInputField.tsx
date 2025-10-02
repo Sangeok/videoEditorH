@@ -1,13 +1,7 @@
 "use client";
 
 import Input from "@/shared/ui/atoms/Input/ui/Input";
-
-interface TextInputFieldProps {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-}
+import { TextInputFieldProps } from "@/features/editFeatures/ui/editor-rightSidebar/ui/_component/TextEditRightSide/model/types";
 
 export default function TextInputField({ label, placeholder, value, onChange }: TextInputFieldProps) {
   return (
