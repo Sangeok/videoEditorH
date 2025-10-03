@@ -47,7 +47,6 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
             height: "100%",
             border: "5px solid blue",
             zIndex: 100,
-            pointerEvents: "none",
           }}
         >
           <ImageWithFade imageElement={imageElement} durationInFrames={durationInFrames} fps={options.fps} />

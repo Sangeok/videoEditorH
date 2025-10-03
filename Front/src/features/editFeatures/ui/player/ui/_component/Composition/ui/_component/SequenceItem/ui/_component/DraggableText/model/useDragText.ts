@@ -4,7 +4,7 @@ import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import { PLAYER_CONFIG } from "@/features/editFeatures/ui/player/config/playerConfig";
 import { useSmartGuideStore } from "@/features/editFeatures/model/store/useSmartGuideStore";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface DragState {
   isDragging: boolean;
@@ -32,8 +32,11 @@ interface UseDragTextProps {
 
 export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlaying, isEditing }: UseDragTextProps) => {
   const { updateTextElement } = useMediaStore();
-  const { setBaseSmartGuides, clearBaseSmartGuides } = useSmartGuideStore();
+  const { setIsDraggingText, clearSmartGuides } = useSmartGuideStore();
   const [dragState, setDragState] = useState<DragState>(INITIAL_DRAG_STATE);
+  const rafIdRef = useRef<number | null>(null);
+  const latestPosRef = useRef<{ x: number; y: number } | null>(null);
+  const lastAppliedPosRef = useRef<{ x: number; y: number } | null>(null);
 
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
 
@@ -58,7 +61,7 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
         initialCanvasY: currentCanvasY,
       });
 
-      setBaseSmartGuides(true);
+      setIsDraggingText(true);
     },
     [isPlaying, isEditing, currentCanvasX, currentCanvasY, handleSelect]
   );
@@ -70,22 +73,36 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
       const deltaX = e.clientX - dragState.initialClientX;
       const deltaY = e.clientY - dragState.initialClientY;
 
-      // Convert viewer coordinates to composition coordinates using centralized scale factors
       const newPosX = dragState.initialCanvasX + deltaX * PLAYER_CONFIG.SCALE_X;
       const newPosY = dragState.initialCanvasY + deltaY * PLAYER_CONFIG.SCALE_Y;
 
-      updateTextElement(elementId, {
-        positionX: newPosX,
-        positionY: newPosY,
-      });
+      // queue latest position and batch updates to one per frame
+      latestPosRef.current = { x: newPosX, y: newPosY };
+
+      if (rafIdRef.current == null) {
+        rafIdRef.current = requestAnimationFrame(() => {
+          const pos = latestPosRef.current;
+          rafIdRef.current = null;
+          if (!pos) return;
+
+          const last = lastAppliedPosRef.current;
+          if (last && last.x === pos.x && last.y === pos.y) return;
+
+          lastAppliedPosRef.current = pos;
+          updateTextElement(elementId, {
+            positionX: pos.x,
+            positionY: pos.y,
+          });
+        });
+      }
     },
     [dragState, updateTextElement, elementId, isEditing]
   );
 
   const handleMouseUp = useCallback(() => {
     setDragState(INITIAL_DRAG_STATE);
-    clearBaseSmartGuides();
-  }, [clearBaseSmartGuides]);
+    clearSmartGuides();
+  }, [clearSmartGuides]);
 
   useEffect(() => {
     if (dragState.isDragging && !isEditing) {
@@ -95,6 +112,10 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
+        if (rafIdRef.current != null) {
+          cancelAnimationFrame(rafIdRef.current);
+          rafIdRef.current = null;
+        }
       };
     }
   }, [dragState.isDragging, handleMouseMove, handleMouseUp, isEditing]);

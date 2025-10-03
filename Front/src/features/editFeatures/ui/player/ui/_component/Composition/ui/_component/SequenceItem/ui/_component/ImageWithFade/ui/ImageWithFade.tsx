@@ -1,5 +1,9 @@
+"use client";
+
 import { AbsoluteFill, Img, useCurrentFrame, interpolate } from "remotion";
+import { useRef, useCallback, useEffect } from "react";
 import { MediaElement } from "@/entities/media/types";
+import { useSmartGuideStore } from "@/features/editFeatures/model/store/useSmartGuideStore";
 
 interface ImageWithFadeProps {
   imageElement: MediaElement;
@@ -7,12 +11,22 @@ interface ImageWithFadeProps {
   fps: number;
 }
 
-export const ImageWithFade = ({
-  imageElement,
-  durationInFrames,
-  fps,
-}: ImageWithFadeProps) => {
+export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWithFadeProps) => {
   const frame = useCurrentFrame();
+  const isDraggingText = useSmartGuideStore((s) => s.isDraggingText);
+  const showObjectEdgeSmartGuide = useSmartGuideStore((s) => s.showObjectEdgeSmartGuide);
+  const setObjectEdgeSmartGuides = useSmartGuideStore((s) => s.setObjectEdgeSmartGuides);
+  const setNearObjEdge = useSmartGuideStore((s) => s.setNearObjEdge);
+  const nearObjEdge = useSmartGuideStore((s) => s.nearObjEdge);
+
+  console.log("showObjectEdgeSmartGuide", showObjectEdgeSmartGuide);
+
+  // 커서 근접 체크용
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const wasNearRef = useRef(false);
+  const lastEdgeRef = useRef<"left" | "right" | "top" | "bottom" | null>(null);
+  const EDGE_NEAR_PX = 8; // 가장자리 근접 임계값(px)
+  const EDGE_CODE = { left: 0, right: 1, top: 2, bottom: 3 } as const;
 
   let opacity = 1;
 
@@ -27,24 +41,86 @@ export const ImageWithFade = ({
 
   // Calculate fade out opacity
   if (imageElement.fadeOut) {
-    const fadeOutFrames = Math.floor(
-      (imageElement.fadeOutDuration || 0.5) * fps
-    );
+    const fadeOutFrames = Math.floor((imageElement.fadeOutDuration || 0.5) * fps);
     const fadeOutStartFrame = durationInFrames - fadeOutFrames;
-    const fadeOutOpacity = interpolate(
-      frame,
-      [fadeOutStartFrame, durationInFrames],
-      [1, 0],
-      {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      }
-    );
+    const fadeOutOpacity = interpolate(frame, [fadeOutStartFrame, durationInFrames], [1, 0], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
     opacity = Math.min(opacity, fadeOutOpacity);
   }
 
+  useEffect(() => {
+    if (!isDraggingText) return;
+
+    const onMove = (e: MouseEvent) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const img = container.querySelector("img") as HTMLImageElement | null;
+      if (!img) return;
+
+      const rect = img.getBoundingClientRect();
+      const { clientX: x, clientY: y } = e;
+
+      const insideRect = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+
+      let near = false as boolean;
+      let nearestEdge: "left" | "right" | "top" | "bottom" | null = null;
+
+      if (insideRect) {
+        const distToLeft = x - rect.left;
+        const distToRight = rect.right - x;
+        const distToTop = y - rect.top;
+        const distToBottom = rect.bottom - y;
+
+        const edges: Array<["left" | "right" | "top" | "bottom", number]> = [
+          ["left", distToLeft],
+          ["right", distToRight],
+          ["top", distToTop],
+          ["bottom", distToBottom],
+        ];
+        edges.sort((a, b) => a[1] - b[1]);
+
+        const [edgeKey, distance] = edges[0];
+        nearestEdge = edgeKey;
+        near = distance <= EDGE_NEAR_PX;
+      }
+
+      if (near) {
+        if (!wasNearRef.current) {
+          wasNearRef.current = true;
+          setObjectEdgeSmartGuides(true);
+        }
+        if (nearestEdge && lastEdgeRef.current !== nearestEdge) {
+          lastEdgeRef.current = nearestEdge;
+          setNearObjEdge(EDGE_CODE[nearestEdge]);
+        }
+      } else if (!near && wasNearRef.current) {
+        wasNearRef.current = false;
+        lastEdgeRef.current = null;
+        setNearObjEdge(null);
+        setObjectEdgeSmartGuides(false);
+      }
+    };
+
+    document.addEventListener("mousemove", onMove);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+    };
+  }, [isDraggingText, setObjectEdgeSmartGuides, setNearObjEdge]);
+
+  const handleMouseLeave = useCallback(() => {
+    wasNearRef.current = false;
+    lastEdgeRef.current = null;
+    setNearObjEdge(null);
+    setObjectEdgeSmartGuides(false);
+  }, [setNearObjEdge, setObjectEdgeSmartGuides]);
+
   return (
     <AbsoluteFill
+      ref={containerRef}
+      onMouseLeave={handleMouseLeave}
       className="h-full"
       style={{
         zIndex: 100,
@@ -53,6 +129,7 @@ export const ImageWithFade = ({
         justifyContent: "center",
         alignItems: "center",
         opacity,
+        pointerEvents: "auto",
       }}
     >
       <Img
@@ -62,6 +139,17 @@ export const ImageWithFade = ({
           maxWidth: "100%",
           maxHeight: "100%",
           objectFit: "contain",
+          ...(showObjectEdgeSmartGuide
+            ? nearObjEdge === 0
+              ? { borderLeft: "5px solid red" }
+              : nearObjEdge === 1
+              ? { borderRight: "5px solid red" }
+              : nearObjEdge === 2
+              ? { borderTop: "5px solid red" }
+              : nearObjEdge === 3
+              ? { borderBottom: "5px solid red" }
+              : { border: "5px solid red" }
+            : { border: "none" }),
         }}
         src={imageElement.url || ""}
         alt={"image"}
