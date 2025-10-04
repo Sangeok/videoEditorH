@@ -23,7 +23,7 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           from={fromFrame}
           durationInFrames={durationInFrames}
           name={`Text: ${textElement.text.substring(0, 20)}...`}
-          style={{ height: "100%", border: "5px solid red", overflow: "hidden" }}
+          style={{ height: "100%", overflow: "hidden" }}
         >
           <AbsoluteFill className="h-full">
             <DraggableText element={textElement} />
@@ -45,7 +45,6 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           name={`Image: ${imageElement.id}`}
           style={{
             height: "100%",
-            border: "5px solid blue",
             zIndex: 100,
           }}
         >
@@ -67,7 +66,6 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           name={`Video: ${videoElement.id}`}
           style={{
             height: "100%",
-            border: "5px solid green",
             zIndex: 100,
             pointerEvents: "none",
           }}

@@ -1,8 +1,8 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { memo, useEffect, useState, RefObject } from "react";
 import { useSmartGuideStore } from "@/features/editFeatures/model/store/useSmartGuideStore";
+import { PLAYER_CONFIG } from "@/features/editFeatures/ui/player/config/playerConfig";
 
 /**
  * Player 캔버스 중앙에 가이드라인을 표시하는 오버레이 컴포넌트
@@ -10,7 +10,11 @@ import { useSmartGuideStore } from "@/features/editFeatures/model/store/useSmart
  * - 수직 가이드: 캔버스 가로 중앙
  * - 수평 가이드: 캔버스 세로 중앙
  */
-const SmartGuideOverlay = memo(() => {
+interface SmartGuideOverlayProps {
+  containerRef?: RefObject<HTMLDivElement | null>;
+}
+
+const SmartGuideOverlay = memo(({ containerRef }: SmartGuideOverlayProps) => {
   const showObjectEdgeSmartGuide = useSmartGuideStore((state) => state.showObjectEdgeSmartGuide);
   const nearObjEdgeData = useSmartGuideStore((state) => state.nearObjEdgeData);
 
@@ -21,10 +25,27 @@ const SmartGuideOverlay = memo(() => {
 
   if (!isMounted) return null;
 
-  return createPortal(
+  const getRelativePos = (pos: number, axis: "x" | "y") => {
+    const rect = containerRef?.current?.getBoundingClientRect();
+    if (!rect) return pos;
+
+    // viewport delta from container's top/left
+    const deltaViewport = axis === "y" ? pos - rect.top : pos - rect.left;
+
+    // compute scale applied to composition (display size / composition size)
+    const scaleX = rect.width / PLAYER_CONFIG.COMPOSITION_WIDTH;
+    const scaleY = rect.height / PLAYER_CONFIG.COMPOSITION_HEIGHT;
+
+    // convert viewport-space delta to composition's local CSS coordinate
+    const scale = axis === "y" ? scaleY : scaleX;
+    if (scale === 0) return deltaViewport; // safety
+    return deltaViewport / scale;
+  };
+
+  return (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
@@ -39,11 +60,11 @@ const SmartGuideOverlay = memo(() => {
             <div
               style={{
                 position: "absolute",
-                top: nearObjEdgeData.edgeXorYPosition,
+                top: getRelativePos(nearObjEdgeData.edgeXorYPosition, "y"),
                 left: 0,
                 width: "100%",
                 height: 0,
-                borderTop: "1px solid #9370DB",
+                borderTop: "5px solid #9370DB",
                 boxShadow: "0 0 0 1px rgba(147,112,219,0.6)",
                 opacity: 0.9,
               }}
@@ -53,11 +74,11 @@ const SmartGuideOverlay = memo(() => {
             <div
               style={{
                 position: "absolute",
-                left: nearObjEdgeData.edgeXorYPosition,
+                left: getRelativePos(nearObjEdgeData.edgeXorYPosition, "x"),
                 top: 0,
                 width: 0,
                 height: "100%",
-                borderLeft: "1px solid #9370DB",
+                borderLeft: "5px solid #9370DB",
                 boxShadow: "0 0 0 1px rgba(147,112,219,0.6)",
                 opacity: 0.9,
               }}
@@ -183,8 +204,7 @@ const SmartGuideOverlay = memo(() => {
           }}
         />
       )} */}
-    </div>,
-    document.body
+    </div>
   );
 });
 
