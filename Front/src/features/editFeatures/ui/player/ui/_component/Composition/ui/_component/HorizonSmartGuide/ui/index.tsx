@@ -4,5 +4,21 @@ import { useSmartGuideStore } from "@/features/editFeatures/ui/player/model/hook
 
 export default function HorizonSmartGuide() {
   const nearObjEdgeData = useSmartGuideStore((state) => state.nearObjEdgeData);
-  return <div className="absolute top-0 left-0 w-full h-full">hihi</div>;
+
+  console.log("nearObjEdgeData", nearObjEdgeData);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: (nearObjEdgeData?.edgeXorYPosition ?? 0) - 2.5,
+        left: 0,
+        width: "100%",
+        height: 5,
+        zIndex: 999,
+        pointerEvents: "none",
+        backgroundColor: "red",
+      }}
+    />
+  );
 }

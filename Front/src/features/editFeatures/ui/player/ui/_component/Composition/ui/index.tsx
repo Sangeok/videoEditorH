@@ -15,7 +15,7 @@ export default function Composition() {
   const showHorizonSmartGuide = useSmartGuideStore((state) => state.showHorizonSmartGuide);
 
   return (
-    <div className="relative w-full h-full">
+    <div id="composition-container" className="relative w-full h-full">
       {media.textElement.map((textElement) => {
         if (!textElement) return null;
         const trackItem = { ...textElement } as TextElement;

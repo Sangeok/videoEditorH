@@ -29,6 +29,8 @@ interface SmartGuideActions {
   setSmartGuides: (showVerticalSmartGuide: boolean, showHorizonSmartGuide: boolean) => void;
   /** 객체 가장자리 가이드라인 위치 설정 */
   setNearObjEdgeData: (nearObjEdgeData: NearObjEdgeData | null) => void;
+  /** 가이드라인 초기화 */
+  clearSmartGuides: () => void;
 }
 
 export type SmartGuideStore = SmartGuideState & SmartGuideActions;
@@ -46,4 +48,5 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
   setShowHorizonSmartGuide: (showHorizonSmartGuide) => set({ showHorizonSmartGuide }),
   setIsDraggingText: (isDraggingText) => set({ isDraggingText }),
   setNearObjEdgeData: (nearObjEdgeData) => set({ nearObjEdgeData }),
+  clearSmartGuides: () => set({ showVerticalSmartGuide: false, showHorizonSmartGuide: false, nearObjEdgeData: null }),
 }));

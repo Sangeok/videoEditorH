@@ -42,10 +42,17 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
       const container = containerRef.current;
       if (!container) return;
 
+      const compositionContainer = document.getElementById("composition-container") as HTMLDivElement | null;
+      if (!compositionContainer) return;
+
       const img = container.querySelector("img") as HTMLImageElement | null;
       if (!img) return;
 
       const rect = img.getBoundingClientRect();
+      const compositionRect = compositionContainer.getBoundingClientRect();
+      // Remotion Player scales the composition; convert viewport deltas to composition CSS px
+      const scaleX = compositionRect.width / compositionContainer.offsetWidth || 1;
+      const scaleY = compositionRect.height / compositionContainer.offsetHeight || 1;
       const { clientX: x, clientY: y } = e;
 
       const insideRect = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
@@ -60,10 +67,10 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         const distToTop = y - rect.top;
         const distToBottom = rect.bottom - y;
 
-        const leftPosition = rect.left;
-        const rightPosition = rect.right;
-        const topPosition = rect.top;
-        const bottomPosition = rect.bottom;
+        const leftPosition = (rect.left - compositionRect.left) / scaleX;
+        const rightPosition = (rect.right - compositionRect.left) / scaleX;
+        const topPosition = (rect.top - compositionRect.top) / scaleY;
+        const bottomPosition = (rect.bottom - compositionRect.top) / scaleY;
 
         const edges = {
           left: { distance: distToLeft, position: leftPosition },
