@@ -16,10 +16,9 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
   const isDraggingText = useSmartGuideStore((s) => s.isDraggingText);
   const showObjectEdgeSmartGuide = useSmartGuideStore((s) => s.showObjectEdgeSmartGuide);
   const setObjectEdgeSmartGuides = useSmartGuideStore((s) => s.setObjectEdgeSmartGuides);
-  const setNearObjEdge = useSmartGuideStore((s) => s.setNearObjEdge);
-  const nearObjEdge = useSmartGuideStore((s) => s.nearObjEdge);
-
-  console.log("showObjectEdgeSmartGuide", showObjectEdgeSmartGuide);
+  const setNearObjEdgeData = useSmartGuideStore((s) => s.setNearObjEdgeData);
+  const nearObjEdgeData = useSmartGuideStore((s) => s.nearObjEdgeData);
+  const fkref = useRef<any>(null);
 
   // 커서 근접 체크용
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -67,6 +66,7 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
 
       let near = false as boolean;
       let nearestEdge: "left" | "right" | "top" | "bottom" | null = null;
+      let nearestEdgeData = null;
 
       if (insideRect) {
         const distToLeft = x - rect.left;
@@ -74,17 +74,30 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         const distToTop = y - rect.top;
         const distToBottom = rect.bottom - y;
 
-        const edges: Array<["left" | "right" | "top" | "bottom", number]> = [
-          ["left", distToLeft],
-          ["right", distToRight],
-          ["top", distToTop],
-          ["bottom", distToBottom],
-        ];
-        edges.sort((a, b) => a[1] - b[1]);
+        const leftPosition = rect.left;
+        const rightPosition = rect.right;
+        const topPosition = rect.top;
+        const bottomPosition = rect.bottom;
 
-        const [edgeKey, distance] = edges[0];
+        const edges = {
+          left: { distance: distToLeft, position: leftPosition },
+          right: { distance: distToRight, position: rightPosition },
+          top: { distance: distToTop, position: topPosition },
+          bottom: { distance: distToBottom, position: bottomPosition },
+        };
+
+        const edgeArray = Object.entries(edges).map(([key, value]) => ({
+          key: key as "left" | "right" | "top" | "bottom",
+          distance: value.distance,
+          position: value.position,
+        }));
+
+        edgeArray.sort((a, b) => a.distance - b.distance);
+
+        const { key: edgeKey, distance, position: edgeXorYPosition } = edgeArray[0];
         nearestEdge = edgeKey;
         near = distance <= EDGE_NEAR_PX;
+        nearestEdgeData = { edgeKey, distance, edgeXorYPosition };
       }
 
       if (near) {
@@ -94,12 +107,12 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         }
         if (nearestEdge && lastEdgeRef.current !== nearestEdge) {
           lastEdgeRef.current = nearestEdge;
-          setNearObjEdge(EDGE_CODE[nearestEdge]);
+          setNearObjEdgeData(nearestEdgeData);
         }
       } else if (!near && wasNearRef.current) {
         wasNearRef.current = false;
         lastEdgeRef.current = null;
-        setNearObjEdge(null);
+        setNearObjEdgeData(null);
         setObjectEdgeSmartGuides(false);
       }
     };
@@ -108,14 +121,14 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, [isDraggingText, setObjectEdgeSmartGuides, setNearObjEdge]);
+  }, [isDraggingText, setObjectEdgeSmartGuides, setNearObjEdgeData]);
 
   const handleMouseLeave = useCallback(() => {
     wasNearRef.current = false;
     lastEdgeRef.current = null;
-    setNearObjEdge(null);
+    setNearObjEdgeData(null);
     setObjectEdgeSmartGuides(false);
-  }, [setNearObjEdge, setObjectEdgeSmartGuides]);
+  }, [setNearObjEdgeData, setObjectEdgeSmartGuides]);
 
   return (
     <AbsoluteFill
@@ -139,17 +152,6 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
           maxWidth: "100%",
           maxHeight: "100%",
           objectFit: "contain",
-          ...(showObjectEdgeSmartGuide
-            ? nearObjEdge === 0
-              ? { borderLeft: "5px solid red" }
-              : nearObjEdge === 1
-              ? { borderRight: "5px solid red" }
-              : nearObjEdge === 2
-              ? { borderTop: "5px solid red" }
-              : nearObjEdge === 3
-              ? { borderBottom: "5px solid red" }
-              : { border: "5px solid red" }
-            : { border: "none" }),
         }}
         src={imageElement.url || ""}
         alt={"image"}
