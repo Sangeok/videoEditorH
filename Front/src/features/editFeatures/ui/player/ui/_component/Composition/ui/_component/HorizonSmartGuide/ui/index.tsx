@@ -5,8 +5,6 @@ import { useSmartGuideStore } from "@/features/editFeatures/ui/player/model/hook
 export default function HorizonSmartGuide() {
   const nearObjEdgeData = useSmartGuideStore((state) => state.nearObjEdgeData);
 
-  console.log("nearObjEdgeData", nearObjEdgeData);
-
   return (
     <div
       style={{
