@@ -17,6 +17,7 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
   const setShowVerticalSmartGuide = useSmartGuideStore((state) => state.setShowVerticalSmartGuide);
   const setShowHorizonSmartGuide = useSmartGuideStore((state) => state.setShowHorizonSmartGuide);
   const setSmartGuides = useSmartGuideStore((state) => state.setSmartGuides);
+  const setNearObjEdgeData = useSmartGuideStore((state) => state.setNearObjEdgeData);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const wasNearRef = useRef(false);
@@ -92,8 +93,10 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         if (nearestEdge && lastEdgeRef.current !== nearestEdge) {
           if (nearestEdge === "left" || nearestEdge === "right") {
             setShowVerticalSmartGuide(true);
+            setNearObjEdgeData(nearestEdgeData);
           } else if (nearestEdge === "top" || nearestEdge === "bottom") {
             setShowHorizonSmartGuide(true);
+            setNearObjEdgeData(nearestEdgeData);
           }
           lastEdgeRef.current = nearestEdge;
         }
@@ -101,6 +104,7 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         wasNearRef.current = false;
         lastEdgeRef.current = null;
         setSmartGuides(false, false);
+        setNearObjEdgeData(null);
       }
     };
 
@@ -114,7 +118,8 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
     wasNearRef.current = false;
     lastEdgeRef.current = null;
     setSmartGuides(false, false);
-  }, [setSmartGuides]);
+    setNearObjEdgeData(null);
+  }, [setSmartGuides, setNearObjEdgeData]);
 
   // Calculate fade out opacity
   if (imageElement.fadeOut) {

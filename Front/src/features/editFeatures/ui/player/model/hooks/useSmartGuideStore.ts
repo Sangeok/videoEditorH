@@ -1,5 +1,11 @@
 import { create } from "zustand";
 
+interface NearObjEdgeData {
+  edgeKey: "left" | "right" | "top" | "bottom";
+  distance: number;
+  edgeXorYPosition: number;
+}
+
 interface SmartGuideState {
   /** 수직 가이드라인 표시 여부 */
   showVerticalSmartGuide: boolean;
@@ -7,6 +13,9 @@ interface SmartGuideState {
   showHorizonSmartGuide: boolean;
 
   isDraggingText: boolean;
+
+  /** 객체 가장자리 가이드라인 위치 */
+  nearObjEdgeData: NearObjEdgeData | null;
 }
 
 interface SmartGuideActions {
@@ -18,6 +27,8 @@ interface SmartGuideActions {
   setIsDraggingText: (isDraggingText: boolean) => void;
 
   setSmartGuides: (showVerticalSmartGuide: boolean, showHorizonSmartGuide: boolean) => void;
+  /** 객체 가장자리 가이드라인 위치 설정 */
+  setNearObjEdgeData: (nearObjEdgeData: NearObjEdgeData | null) => void;
 }
 
 export type SmartGuideStore = SmartGuideState & SmartGuideActions;
@@ -26,6 +37,7 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
   showVerticalSmartGuide: false,
   showHorizonSmartGuide: false,
   isDraggingText: false,
+  nearObjEdgeData: null,
 
   setSmartGuides: (showVerticalSmartGuide, showHorizonSmartGuide) =>
     set({ showVerticalSmartGuide, showHorizonSmartGuide }),
@@ -33,4 +45,5 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
   setShowVerticalSmartGuide: (showVerticalSmartGuide) => set({ showVerticalSmartGuide }),
   setShowHorizonSmartGuide: (showHorizonSmartGuide) => set({ showHorizonSmartGuide }),
   setIsDraggingText: (isDraggingText) => set({ isDraggingText }),
+  setNearObjEdgeData: (nearObjEdgeData) => set({ nearObjEdgeData }),
 }));
