@@ -14,6 +14,7 @@ interface ImageWithFadeProps {
 export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWithFadeProps) => {
   const frame = useCurrentFrame();
   const isDraggingText = useSmartGuideStore((state) => state.isDraggingText);
+  const draggingTextRect = useSmartGuideStore((state) => state.draggingTextRect);
   const setShowVerticalSmartGuide = useSmartGuideStore((state) => state.setShowVerticalSmartGuide);
   const setShowHorizonSmartGuide = useSmartGuideStore((state) => state.setShowHorizonSmartGuide);
   const setSmartGuides = useSmartGuideStore((state) => state.setSmartGuides);
@@ -36,93 +37,98 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
   }
 
   useEffect(() => {
-    if (!isDraggingText) return;
-
-    const onMove = (e: MouseEvent) => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const compositionContainer = document.getElementById("composition-container") as HTMLDivElement | null;
-      if (!compositionContainer) return;
-
-      const img = container.querySelector("img") as HTMLImageElement | null;
-      if (!img) return;
-
-      const rect = img.getBoundingClientRect();
-      const compositionRect = compositionContainer.getBoundingClientRect();
-      // Remotion Player scales the composition; convert viewport deltas to composition CSS px
-      const scaleX = compositionRect.width / compositionContainer.offsetWidth || 1;
-      const scaleY = compositionRect.height / compositionContainer.offsetHeight || 1;
-      const { clientX: x, clientY: y } = e;
-
-      const insideRect = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
-
-      let near = false as boolean;
-      let nearestEdge: "left" | "right" | "top" | "bottom" | null = null;
-      let nearestEdgeData = null;
-
-      if (insideRect) {
-        const distToLeft = x - rect.left;
-        const distToRight = rect.right - x;
-        const distToTop = y - rect.top;
-        const distToBottom = rect.bottom - y;
-
-        const leftPosition = (rect.left - compositionRect.left) / scaleX;
-        const rightPosition = (rect.right - compositionRect.left) / scaleX;
-        const topPosition = (rect.top - compositionRect.top) / scaleY;
-        const bottomPosition = (rect.bottom - compositionRect.top) / scaleY;
-
-        const imageTop = topPosition;
-        const imageHeight = bottomPosition - topPosition;
-
-        const edges = {
-          left: { distance: distToLeft, position: leftPosition },
-          right: { distance: distToRight, position: rightPosition },
-          top: { distance: distToTop, position: topPosition },
-          bottom: { distance: distToBottom, position: bottomPosition },
-        };
-
-        const edgeArray = Object.entries(edges).map(([key, value]) => ({
-          key: key as "left" | "right" | "top" | "bottom",
-          distance: value.distance,
-          position: value.position,
-        }));
-
-        edgeArray.sort((a, b) => a.distance - b.distance);
-
-        const { key: edgeKey, distance, position: edgeXorYPosition } = edgeArray[0];
-        nearestEdge = edgeKey;
-        near = distance <= EDGE_NEAR_PX;
-        nearestEdgeData = { edgeKey, distance, edgeXorYPosition, top: imageTop, height: imageHeight };
-      }
-
-      if (near) {
-        if (!wasNearRef.current) {
-          wasNearRef.current = true;
-        }
-        if (nearestEdge && lastEdgeRef.current !== nearestEdge) {
-          if (nearestEdge === "left" || nearestEdge === "right") {
-            setShowVerticalSmartGuide(true);
-            setNearObjEdgeData(nearestEdgeData);
-          } else if (nearestEdge === "top" || nearestEdge === "bottom") {
-            setShowHorizonSmartGuide(true);
-            setNearObjEdgeData(nearestEdgeData);
-          }
-          lastEdgeRef.current = nearestEdge;
-        }
-      } else if (!near && wasNearRef.current) {
+    if (!isDraggingText || !draggingTextRect) {
+      if (wasNearRef.current) {
         wasNearRef.current = false;
         lastEdgeRef.current = null;
         setSmartGuides(false, false);
         setNearObjEdgeData(null);
       }
-    };
+      return;
+    }
 
-    document.addEventListener("mousemove", onMove);
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-    };
-  }, [isDraggingText]);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const compositionContainer = document.getElementById("composition-container") as HTMLDivElement | null;
+    if (!compositionContainer) return;
+
+    const img = container.querySelector("img") as HTMLImageElement | null;
+    if (!img) return;
+
+    const rect = img.getBoundingClientRect();
+    const compositionRect = compositionContainer.getBoundingClientRect();
+    const scaleX = compositionRect.width / compositionContainer.offsetWidth || 1;
+    const scaleY = compositionRect.height / compositionContainer.offsetHeight || 1;
+
+    const leftPosition = (rect.left - compositionRect.left) / scaleX;
+    const rightPosition = (rect.right - compositionRect.left) / scaleX;
+    const topPosition = (rect.top - compositionRect.top) / scaleY;
+    const bottomPosition = (rect.bottom - compositionRect.top) / scaleY;
+
+    const imageTop = topPosition;
+    const imageHeight = bottomPosition - topPosition;
+
+    const t = draggingTextRect;
+
+    const intersects = !(
+      t.right < leftPosition ||
+      t.left > rightPosition ||
+      t.bottom < topPosition ||
+      t.top > bottomPosition
+    );
+
+    const distToLeft = Math.min(Math.abs(t.left - leftPosition), Math.abs(t.right - leftPosition));
+    const distToRight = Math.min(Math.abs(t.left - rightPosition), Math.abs(t.right - rightPosition));
+    const distToTop = Math.min(Math.abs(t.top - topPosition), Math.abs(t.bottom - topPosition));
+    const distToBottom = Math.min(Math.abs(t.top - bottomPosition), Math.abs(t.bottom - bottomPosition));
+
+    const edges = {
+      left: { distance: distToLeft, position: leftPosition },
+      right: { distance: distToRight, position: rightPosition },
+      top: { distance: distToTop, position: topPosition },
+      bottom: { distance: distToBottom, position: bottomPosition },
+    } as const;
+
+    const edgeArray = Object.entries(edges).map(([key, value]) => ({
+      key: key as "left" | "right" | "top" | "bottom",
+      distance: value.distance,
+      position: value.position,
+    }));
+
+    edgeArray.sort((a, b) => a.distance - b.distance);
+
+    const { key: edgeKey, distance, position: edgeXorYPosition } = edgeArray[0];
+    const near = intersects && distance <= EDGE_NEAR_PX;
+
+    if (near) {
+      if (!wasNearRef.current) {
+        wasNearRef.current = true;
+      }
+      if (lastEdgeRef.current !== edgeKey) {
+        if (edgeKey === "left" || edgeKey === "right") {
+          setShowVerticalSmartGuide(true);
+          setNearObjEdgeData({ edgeKey, distance, edgeXorYPosition, top: imageTop, height: imageHeight });
+        } else {
+          setShowHorizonSmartGuide(true);
+          setNearObjEdgeData({ edgeKey, distance, edgeXorYPosition, top: imageTop, height: imageHeight });
+        }
+        lastEdgeRef.current = edgeKey;
+      }
+    } else if (wasNearRef.current) {
+      wasNearRef.current = false;
+      lastEdgeRef.current = null;
+      setSmartGuides(false, false);
+      setNearObjEdgeData(null);
+    }
+  }, [
+    isDraggingText,
+    draggingTextRect,
+    setShowVerticalSmartGuide,
+    setShowHorizonSmartGuide,
+    setSmartGuides,
+    setNearObjEdgeData,
+  ]);
 
   const handleMouseLeave = useCallback(() => {
     wasNearRef.current = false;

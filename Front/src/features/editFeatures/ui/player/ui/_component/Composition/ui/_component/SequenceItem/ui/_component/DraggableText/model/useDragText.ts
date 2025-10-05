@@ -102,7 +102,8 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
   const handleMouseUp = useCallback(() => {
     setDragState(INITIAL_DRAG_STATE);
     clearSmartGuides();
-  }, [clearSmartGuides]);
+    setIsDraggingText(false);
+  }, [clearSmartGuides, setIsDraggingText]);
 
   useEffect(() => {
     if (dragState.isDragging && !isEditing) {

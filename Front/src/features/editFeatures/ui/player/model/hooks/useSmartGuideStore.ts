@@ -8,6 +8,15 @@ interface NearObjEdgeData {
   height: number; // composition 좌표계 기준 이미지 높이(px)
 }
 
+interface DraggingTextRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
+}
+
 interface SmartGuideState {
   /** 수직 가이드라인 표시 여부 */
   showVerticalSmartGuide: boolean;
@@ -15,6 +24,9 @@ interface SmartGuideState {
   showHorizonSmartGuide: boolean;
 
   isDraggingText: boolean;
+
+  /** 드래그 중인 텍스트 요소의 composition 좌표계 박스 */
+  draggingTextRect: DraggingTextRect | null;
 
   /** 객체 가장자리 가이드라인 위치 */
   nearObjEdgeData: NearObjEdgeData | null;
@@ -31,6 +43,10 @@ interface SmartGuideActions {
   setSmartGuides: (showVerticalSmartGuide: boolean, showHorizonSmartGuide: boolean) => void;
   /** 객체 가장자리 가이드라인 위치 설정 */
   setNearObjEdgeData: (nearObjEdgeData: NearObjEdgeData | null) => void;
+
+  /** 드래그 텍스트 박스 설정/초기화 */
+  setDraggingTextRect: (rect: DraggingTextRect | null) => void;
+
   /** 가이드라인 초기화 */
   clearSmartGuides: () => void;
 }
@@ -41,6 +57,7 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
   showVerticalSmartGuide: false,
   showHorizonSmartGuide: false,
   isDraggingText: false,
+  draggingTextRect: null,
   nearObjEdgeData: null,
 
   setSmartGuides: (showVerticalSmartGuide, showHorizonSmartGuide) =>
@@ -50,5 +67,14 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
   setShowHorizonSmartGuide: (showHorizonSmartGuide) => set({ showHorizonSmartGuide }),
   setIsDraggingText: (isDraggingText) => set({ isDraggingText }),
   setNearObjEdgeData: (nearObjEdgeData) => set({ nearObjEdgeData }),
-  clearSmartGuides: () => set({ showVerticalSmartGuide: false, showHorizonSmartGuide: false, nearObjEdgeData: null }),
+
+  setDraggingTextRect: (rect) => set({ draggingTextRect: rect }),
+
+  clearSmartGuides: () =>
+    set({
+      showVerticalSmartGuide: false,
+      showHorizonSmartGuide: false,
+      nearObjEdgeData: null,
+      draggingTextRect: null,
+    }),
 }));
