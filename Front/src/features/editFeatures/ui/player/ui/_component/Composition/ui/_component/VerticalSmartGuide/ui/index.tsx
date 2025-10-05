@@ -12,7 +12,7 @@ export default function VerticalSmartGuide() {
         left: nearObjEdgeData?.edgeXorYPosition ?? 0,
         top: 0,
         width: 5,
-        height: "100%",
+        height: "50%",
         zIndex: 999,
         pointerEvents: "none",
         backgroundColor: "blue",
