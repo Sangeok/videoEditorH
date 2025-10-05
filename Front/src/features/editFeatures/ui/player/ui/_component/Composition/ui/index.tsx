@@ -6,13 +6,16 @@ import { useMediaStore } from "@/entities/media/useMediaStore";
 import HorizonSmartGuide from "./_component/HorizonSmartGuide/ui";
 import { useSmartGuideStore } from "../../../../model/hooks/useSmartGuideStore";
 import VerticalSmartGuide from "./_component/VerticalSmartGuide/ui";
+import BaseSmartGuide from "./_component/BaseSmartGuide/ui";
 
 export default function Composition() {
   const media = useMediaStore((state) => state.media);
   const fps = media.fps;
 
+  const isDraggingText = useSmartGuideStore((state) => state.isDraggingText);
   const showVerticalSmartGuide = useSmartGuideStore((state) => state.showVerticalSmartGuide);
   const showHorizonSmartGuide = useSmartGuideStore((state) => state.showHorizonSmartGuide);
+  const showBaseSmartGuide = isDraggingText && !showVerticalSmartGuide && !showHorizonSmartGuide;
 
   return (
     <div id="composition-container" className="relative w-full h-full">
@@ -29,6 +32,7 @@ export default function Composition() {
         if (!audioElement) return null;
         return SequenceItem["audio"](audioElement, { fps });
       })}
+      {showBaseSmartGuide && <BaseSmartGuide />}
       {showHorizonSmartGuide && <HorizonSmartGuide />}
       {showVerticalSmartGuide && <VerticalSmartGuide />}
     </div>

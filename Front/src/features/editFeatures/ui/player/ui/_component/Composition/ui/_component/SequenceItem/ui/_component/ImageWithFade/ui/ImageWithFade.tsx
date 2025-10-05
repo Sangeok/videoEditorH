@@ -23,7 +23,7 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
   const containerRef = useRef<HTMLDivElement | null>(null);
   const wasNearRef = useRef(false);
   const lastEdgeRef = useRef<"left" | "right" | "top" | "bottom" | null>(null);
-  const EDGE_NEAR_PX = 8; // 가장자리 근접 임계값(px)
+  const EDGE_NEAR_PX = 15; // 가장자리 근접 임계값(px)
 
   let opacity = 1;
 
