@@ -5,17 +5,19 @@ import { useSmartGuideStore } from "@/features/editFeatures/ui/player/model/hook
 export default function VerticalSmartGuide() {
   const nearObjEdgeData = useSmartGuideStore((state) => state.nearObjEdgeData);
 
+  console.log("nearObjEdgeData", nearObjEdgeData);
+
   return (
     <div
       style={{
         position: "absolute",
         left: nearObjEdgeData?.edgeXorYPosition ?? 0,
-        top: 0,
+        top: nearObjEdgeData?.top ?? 0,
         width: 5,
-        height: "50%",
+        height: nearObjEdgeData?.height ?? 0,
         zIndex: 999,
         pointerEvents: "none",
-        backgroundColor: "blue",
+        backgroundColor: "red",
       }}
     />
   );

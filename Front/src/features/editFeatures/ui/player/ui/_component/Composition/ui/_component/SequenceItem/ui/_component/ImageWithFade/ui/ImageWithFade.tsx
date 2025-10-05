@@ -72,6 +72,9 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         const topPosition = (rect.top - compositionRect.top) / scaleY;
         const bottomPosition = (rect.bottom - compositionRect.top) / scaleY;
 
+        const imageTop = topPosition;
+        const imageHeight = bottomPosition - topPosition;
+
         const edges = {
           left: { distance: distToLeft, position: leftPosition },
           right: { distance: distToRight, position: rightPosition },
@@ -90,7 +93,7 @@ export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWith
         const { key: edgeKey, distance, position: edgeXorYPosition } = edgeArray[0];
         nearestEdge = edgeKey;
         near = distance <= EDGE_NEAR_PX;
-        nearestEdgeData = { edgeKey, distance, edgeXorYPosition };
+        nearestEdgeData = { edgeKey, distance, edgeXorYPosition, top: imageTop, height: imageHeight };
       }
 
       if (near) {

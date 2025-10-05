@@ -4,6 +4,8 @@ interface NearObjEdgeData {
   edgeKey: "left" | "right" | "top" | "bottom";
   distance: number;
   edgeXorYPosition: number;
+  top: number; // composition 좌표계 기준 이미지 상단 위치(px)
+  height: number; // composition 좌표계 기준 이미지 높이(px)
 }
 
 interface SmartGuideState {
