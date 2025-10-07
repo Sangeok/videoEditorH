@@ -52,6 +52,7 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
   useEffect(() => {
     if (!isPlaying) return;
 
+    // update roughly every 33ms (~30Hz) for smoother ms precision without overloading
     const interval = setInterval(() => {
       if (playerRef.current) {
         const currentFrame = playerRef.current.getCurrentFrame();
@@ -64,7 +65,7 @@ export const usePlayerSync = ({ playerRef, fps }: UsePlayerSyncProps) => {
           setCurrentTime(roundedTime);
         }
       }
-    }, 100);
+    }, 33);
 
     return () => clearInterval(interval);
   }, [isPlaying, fps, playerRef, setCurrentTime, currentTime]);

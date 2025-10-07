@@ -15,25 +15,45 @@ export const useCaptionEdit = () => {
 
   const hasNoTextElement = sortedTextElements.length === 0;
 
-  // Parse time inputs like mm:ss or h:mm:ss into seconds
+  // Parse time inputs like mm:ss(.mmm) or h:mm:ss(.mmm) into seconds
   const parseClockTime = useCallback((value: string): number | null => {
     const trimmed = value.trim();
-    if (!/^\d{1,2}(:\d{2}){1,2}$/.test(trimmed)) {
-      // allow h:mm:ss or mm:ss (00 padded seconds required)
-      return null;
-    }
-    const parts = trimmed.split(":").map((p) => Number(p));
-    if (parts.some((n) => Number.isNaN(n))) return null;
+    if (!trimmed) return null;
+
+    const parts = trimmed.split(":");
+    if (parts.length !== 2 && parts.length !== 3) return null;
+
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
-    if (parts.length === 2) {
-      [minutes, seconds] = parts;
-    } else {
-      [hours, minutes, seconds] = parts;
+    let millis = 0;
+
+    // Extract seconds and optional millis from the last segment
+    const last = parts[parts.length - 1];
+    const lastSplit = last.split(".");
+    if (lastSplit.length > 2) return null;
+    seconds = Number(lastSplit[0]);
+    if (Number.isNaN(seconds)) return null;
+    if (lastSplit.length === 2) {
+      const msRaw = lastSplit[1];
+      if (!/^\d{1,3}$/.test(msRaw)) return null;
+      millis = Number(msRaw.padEnd(3, "0"));
     }
-    if (seconds > 59 || minutes > 59) return null;
-    return hours * 3600 + minutes * 60 + seconds;
+
+    if (parts.length === 2) {
+      // mm:ss(.mmm)
+      minutes = Number(parts[0]);
+    } else {
+      // h:mm:ss(.mmm)
+      hours = Number(parts[0]);
+      minutes = Number(parts[1]);
+    }
+
+    if ([minutes, seconds, hours].some((n) => Number.isNaN(n))) return null;
+    if (seconds > 59 || minutes > 59 || seconds < 0 || minutes < 0 || hours < 0) return null;
+
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds + millis / 1000;
+    return Math.round(totalSeconds * 1000) / 1000;
   }, []);
 
   const beginEdit = useCallback((id: string, field: "start" | "end") => {

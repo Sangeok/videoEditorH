@@ -3,7 +3,10 @@
  * zoom 레벨에 따라 적절한 시간 간격을 반환
  */
 export const getTimeIntervals = (zoom: number): number[] => {
-  if (zoom >= 8) {
+  if (zoom >= 9) {
+    // 초고 확대: 0.01s(10ms), 0.05s(50ms), 0.1s(100ms)
+    return [0.01, 0.05, 0.1];
+  } else if (zoom >= 6) {
     // 매우 높은 zoom: 0.1초 간격
     return [0.1, 0.5, 1];
   } else if (zoom >= 4) {
@@ -47,13 +50,24 @@ export const getMinorTickInterval = (zoom: number): number => {
  */
 export const formatTimelineTime = (seconds: number): string => {
   if (seconds < 1) {
-    return `${Math.round(seconds * 10) / 10}s`;
+    const ms = Math.round(seconds * 1000);
+    if (ms >= 100) return `${(ms / 1000).toFixed(1)}s`; // 0.1s 이상은 소수1자리
+    return `${ms}ms`;
   } else if (seconds < 60) {
-    return `${Math.round(seconds)}s`;
+    // 1초 이상 60초 미만: 소수점 3자리까지 표시
+    const s = Math.round(seconds * 1000) / 1000;
+    // .000이면 정수 표시
+    return Number.isInteger(s) ? `${s.toFixed(0)}s` : `${s.toFixed(3)}s`;
   } else {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.round(seconds % 60);
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+    const totalMillis = Math.round(seconds * 1000);
+    const minutes = Math.floor(totalMillis / 60000);
+    const remaining = totalMillis % 60000;
+    const secs = Math.floor(remaining / 1000);
+    const millis = remaining % 1000;
+    const mm = String(minutes).padStart(2, "0");
+    const ss = String(secs).padStart(2, "0");
+    if (millis === 0) return `${mm}:${ss}`;
+    return `${mm}:${ss}.${String(millis).padStart(3, "0")}`;
   }
 };
 
@@ -97,9 +111,7 @@ export const calculateTicks = (
 
   // 보조 눈금 생성 (주 눈금과 겹치지 않도록)
   for (let time = startMinorTick; time <= endTime; time += minorInterval) {
-    const isMajorTick = majorTicks.some(
-      (major) => Math.abs(major.time - time) < 0.01
-    );
+    const isMajorTick = majorTicks.some((major) => Math.abs(major.time - time) < 0.01);
     if (!isMajorTick) {
       minorTicks.push({
         time,
