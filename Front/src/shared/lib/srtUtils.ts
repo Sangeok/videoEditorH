@@ -68,7 +68,7 @@ export function convertSRTToTextElements(parsedEntries: ParsedSRTEntry[]): TextE
     textColor: "#ffffff",
     backgroundColor: "transparent",
     font: "Arial",
-    width: 300,
+    width: 900,
     height: 50,
     whiteSpace: "pre-wrap",
   }));

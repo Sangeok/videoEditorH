@@ -86,15 +86,17 @@ export default function DraggableText({ element }: DraggableTextProps) {
       ref={rootRef}
       style={{
         position: "absolute",
-        left: `${element.positionX}px`,
-        top: `${element.positionY}px`,
-        transform: "translateX(-50%)",
-        width: "100%",
+        left: 0,
+        top: 0,
+        transform: `translate(${element.positionX}px, ${element.positionY}px) translateX(-50%)`,
+        width: "fit-content",
+        maxWidth: element.maxWidth ?? "100%",
         height: "auto",
-        maxWidth: element?.maxWidth ?? "",
         display: "inline-block",
         padding: "5px",
-        whiteSpace: element?.whiteSpace ?? "nowrap", // pre-wrap에서 nowrap으로 변경
+        whiteSpace: element.whiteSpace ?? "pre-wrap",
+        overflowWrap: "break-word",
+        wordBreak: "break-word",
         borderRadius: "4px",
         boxSizing: "border-box",
         border: showBorder ? `1px solid ${borderColor}` : "1px solid transparent",
@@ -126,14 +128,18 @@ export default function DraggableText({ element }: DraggableTextProps) {
             outline: "none",
             background: "transparent",
             minWidth: "1ch",
-            whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
+            whiteSpace: element.whiteSpace ?? "pre-wrap",
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
           }}
           suppressContentEditableWarning={true}
         />
       ) : (
         <span
           style={{
-            whiteSpace: element?.whiteSpace ? element?.whiteSpace : "nowrap", // pre-wrap에서 nowrap으로 변경
+            whiteSpace: element.whiteSpace ?? "pre-wrap",
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
           }}
         >
           {element.text}
