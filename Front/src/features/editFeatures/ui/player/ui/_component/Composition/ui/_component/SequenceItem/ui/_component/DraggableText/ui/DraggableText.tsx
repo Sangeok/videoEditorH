@@ -39,6 +39,7 @@ export default function DraggableText({ element }: DraggableTextProps) {
 
   const setDraggingTextRect = useSmartGuideStore((s) => s.setDraggingTextRect);
 
+  // set dragging text rect for smart guide
   useEffect(() => {
     if (!dragState.isDragging) {
       setDraggingTextRect(null);

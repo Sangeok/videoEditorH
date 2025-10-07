@@ -1,14 +1,15 @@
 import { create } from "zustand";
 
+// if the object(text) is near the edge of the composition(image), the data is stored
 interface NearObjEdgeData {
   edgeKey: "left" | "right" | "top" | "bottom";
   distance: number;
   edgeXorYPosition: number;
-  top: number; // composition 좌표계 기준 이미지 상단 위치(px)
-  height: number; // composition 좌표계 기준 이미지 높이(px)
+  top: number;
+  height: number;
 }
 
-interface DraggingTextRect {
+export interface DraggingTextRect {
   left: number;
   top: number;
   right: number;
@@ -18,36 +19,26 @@ interface DraggingTextRect {
 }
 
 interface SmartGuideState {
-  /** 수직 가이드라인 표시 여부 */
   showVerticalSmartGuide: boolean;
-  /** 수평 가이드라인 표시 여부 */
   showHorizonSmartGuide: boolean;
 
   isDraggingText: boolean;
 
-  /** 드래그 중인 텍스트 요소의 composition 좌표계 박스 */
   draggingTextRect: DraggingTextRect | null;
 
-  /** 객체 가장자리 가이드라인 위치 */
   nearObjEdgeData: NearObjEdgeData | null;
 }
 
 interface SmartGuideActions {
-  /** 수직 가이드라인 표시 설정 */
   setShowVerticalSmartGuide: (showVerticalSmartGuide: boolean) => void;
-  /** 수평 가이드라인 표시 설정 */
   setShowHorizonSmartGuide: (showHorizonSmartGuide: boolean) => void;
-  /** 드래그 중인 텍스트 여부 설정 */
-  setIsDraggingText: (isDraggingText: boolean) => void;
 
   setSmartGuides: (showVerticalSmartGuide: boolean, showHorizonSmartGuide: boolean) => void;
-  /** 객체 가장자리 가이드라인 위치 설정 */
   setNearObjEdgeData: (nearObjEdgeData: NearObjEdgeData | null) => void;
 
-  /** 드래그 텍스트 박스 설정/초기화 */
+  setIsDraggingText: (isDraggingText: boolean) => void;
   setDraggingTextRect: (rect: DraggingTextRect | null) => void;
 
-  /** 가이드라인 초기화 */
   clearSmartGuides: () => void;
 }
 
