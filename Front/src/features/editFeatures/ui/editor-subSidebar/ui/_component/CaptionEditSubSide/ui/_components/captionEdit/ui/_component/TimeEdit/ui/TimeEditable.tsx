@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { formatPlaybackTime } from "@/features/editFeatures/ui/editor-footer/lib/formatTimelineTime";
 
-const CLOCK_ALLOWED_KEYS = new Set(["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Home", "End", ":"]);
+const CLOCK_ALLOWED_KEYS = new Set(["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Home", "End", ":", "."]);
 
 interface TimeEditableProps {
   valueSeconds: number;
@@ -12,7 +12,7 @@ interface TimeEditableProps {
   onCancel: () => void;
 }
 
-const sanitizeClockText = (text: string) => text.replace(/[^0-9:]/g, "");
+const sanitizeClockText = (text: string) => text.replace(/[^0-9:\.]/g, "");
 const focusNodeEnd = (node: HTMLElement) => {
   const range = document.createRange();
   range.selectNodeContents(node);
@@ -53,7 +53,7 @@ export default function TimeEditable({ valueSeconds, className, onCommit, onCanc
       onBeforeInput={(e) => {
         const native = e.nativeEvent as InputEvent;
         const data = (native as InputEvent).data as string | null | undefined;
-        if (data && /[^0-9:]/.test(data)) e.preventDefault();
+        if (data && /[^0-9:\.]/.test(data)) e.preventDefault();
       }}
       onCompositionUpdate={(e) => {
         const target = e.currentTarget as HTMLSpanElement;
