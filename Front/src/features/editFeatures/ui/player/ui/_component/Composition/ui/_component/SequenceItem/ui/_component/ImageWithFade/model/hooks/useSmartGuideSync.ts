@@ -98,7 +98,7 @@ export function useSmartGuideSync(
     } else if (wasNearRef.current) {
       clearSmartGuides();
     }
-  }, [isDraggingText, draggingTextRect, clearSmartGuides, handleNearEdge]);
+  }, [containerRef, isDraggingText, draggingTextRect, clearSmartGuides, handleNearEdge]);
 
   return { clearSmartGuides };
 }
