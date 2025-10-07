@@ -8,7 +8,7 @@ export const PlayerService = {
   },
 
   roundTime: (time: number): number => {
-    return Math.round(time * 100) / 100;
+    return Math.round(time * 1000) / 1000;
   },
 
   getDurationInFrames: (duration: number, fps: number): number => {
