@@ -1,23 +1,27 @@
 /**
- * format seconds to "mm:ss"
+ * format seconds to "mm:ss.SSS"
  * @param seconds - seconds
- * @returns "mm:ss" format string
+ * @param options - optional formatting options
+ * @returns "mm:ss.SSS" format string (always shows milliseconds)
  */
-export function formatPlaybackTime(seconds: number): string {
-  // handle negative or invalid values
+export function formatPlaybackTime(seconds: number, options?: { hideMillisIfZero?: boolean }): string {
   if (isNaN(seconds) || seconds < 0) {
-    return "00:00";
+    return "00:00.000";
   }
 
-  // remove decimal and convert to integer
-  const totalSeconds = Math.floor(seconds);
+  const totalMillis = Math.round(seconds * 1000);
+  const minutes = Math.floor(totalMillis / 60000);
+  const remaining = totalMillis % 60000;
+  const secs = Math.floor(remaining / 1000);
+  const millis = remaining % 1000;
 
-  const minutes = Math.floor(totalSeconds / 60);
-  const remainingSeconds = totalSeconds % 60;
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(secs).padStart(2, "0");
+  const SSS = String(millis).padStart(3, "0");
 
-  // pad with 2 digits
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-  const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+  if (options?.hideMillisIfZero && millis === 0) {
+    return `${mm}:${ss}`;
+  }
 
-  return `${formattedMinutes}:${formattedSeconds}`;
+  return `${mm}:${ss}.${SSS}`;
 }
