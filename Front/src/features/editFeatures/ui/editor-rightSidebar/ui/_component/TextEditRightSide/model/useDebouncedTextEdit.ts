@@ -98,7 +98,7 @@ export function useDebouncedTextEdit(
         isUserEditingRef.current = false;
       }, DEBOUNCE_DELAY);
     },
-    [selectedTrackId, updateTextElement]
+    [selectedTrackId, updateAllTextElement]
   );
 
   const handleTextChange = useCallback(
@@ -117,7 +117,7 @@ export function useDebouncedTextEdit(
         debouncedUpdateAllTextElement("fontSize", numericValue);
       }
     },
-    [debouncedUpdateTextElement]
+    [debouncedUpdateAllTextElement]
   );
 
   return {

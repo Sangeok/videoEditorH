@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import { EffectType, MediaElement } from "@/entities/media/types";
+import { EffectType } from "@/entities/media/types";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { DEFAULT_EFFECT_DURATION } from "../../constants";
 
-export function useImageEffects(imageElement: MediaElement) {
-  const { updateMediaElement, updateAllMediaElement } = useMediaStore();
+export function useImageEffects() {
+  const { updateAllMediaElement } = useMediaStore();
 
   const handleInEffectChange = useCallback(
     (inEffect: EffectType) => {
