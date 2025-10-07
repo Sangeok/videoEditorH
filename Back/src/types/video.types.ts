@@ -49,6 +49,8 @@ export interface AudioElement {
   url: string;
   volume: number;
   speed: number;
+  // Optional trim offset in seconds to start playback from within the source file
+  sourceStart?: number;
 }
 
 export interface VideoInputData extends Record<string, unknown> {

@@ -25,7 +25,7 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           name={`Text: ${textElement.text.substring(0, 20)}...`}
           style={{ height: "100%", overflow: "hidden" }}
         >
-          <AbsoluteFill className="h-full border-5 border-red-500">
+          <AbsoluteFill className="h-full">
             <DraggableText element={textElement} />
           </AbsoluteFill>
         </Sequence>
@@ -45,7 +45,6 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           name={`Image: ${imageElement.id}`}
           style={{
             height: "100%",
-            border: "5px solid blue",
             zIndex: 100,
             pointerEvents: "none",
           }}
@@ -68,7 +67,6 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
           name={`Video: ${videoElement.id}`}
           style={{
             height: "100%",
-            border: "5px solid green",
             zIndex: 100,
             pointerEvents: "none",
           }}

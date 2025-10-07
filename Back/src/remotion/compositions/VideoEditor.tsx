@@ -18,6 +18,12 @@ import type {
   VideoEditorProps,
 } from '../../types';
 
+const GlobalFonts: React.FC = () => (
+  <style>
+    {`@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&display=swap');`}
+  </style>
+);
+
 const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({
   textElement,
   fps,
@@ -33,26 +39,28 @@ const TextSequence: React.FC<{ textElement: TextElement; fps: number }> = ({
       from={fromFrame}
       durationInFrames={durationInFrames}
       name={`Text: ${textElement.text.substring(0, 20)}...`}
+      style={{ height: '100%', overflow: 'hidden' }}
     >
       <AbsoluteFill>
         <div
           style={{
             position: 'absolute',
-            left: `${textElement.positionX}px`,
-            top: `${textElement.positionY}px`,
+            left: 0,
+            top: 0,
+            transform: `translate(${textElement.positionX}px, ${textElement.positionY}px) translateX(-50%)`,
             width: 'fit-content',
+            maxWidth: textElement.maxWidth ?? '100%',
             height: 'auto',
-            maxWidth: textElement?.maxWidth ? textElement?.maxWidth : '',
             display: 'inline-block',
-            padding: '10px',
-            whiteSpace: textElement?.whiteSpace
-              ? textElement?.whiteSpace
-              : 'nowrap',
+            padding: '5px',
+            whiteSpace: textElement.whiteSpace ?? 'pre-wrap',
+            overflowWrap: 'break-word',
+            wordBreak: 'break-word',
             borderRadius: '4px',
             boxSizing: 'border-box',
             textAlign: 'center',
             fontSize: `${textElement.fontSize}px`,
-            fontFamily: textElement.font,
+            fontFamily: textElement.font || 'Roboto Condensed, sans-serif',
             color: textElement.textColor,
             backgroundColor: textElement.backgroundColor,
           }}
@@ -157,6 +165,7 @@ const VideoSequence: React.FC<{ mediaElement: MediaElement; fps: number }> = ({
       from={fromFrame}
       durationInFrames={durationInFrames}
       name={`Video: ${mediaElement.id}`}
+      style={{ height: '100%', zIndex: 100, pointerEvents: 'none' }}
     >
       <OffthreadVideo
         src={mediaElement.url || ''}
@@ -194,6 +203,7 @@ const AudioSequence: React.FC<{ audioElement: AudioElement; fps: number }> = ({
         <Audio
           src={audioElement.url || ''}
           volume={audioElement.volume || 100}
+          startFrom={Math.floor((audioElement.sourceStart ?? 0) * fps)}
         />
       </AbsoluteFill>
     </Sequence>
@@ -236,6 +246,7 @@ export const VideoEditor: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: 'black' }}>
+      <GlobalFonts />
       {/* 텍스트 요소 렌더링 */}
       {inputProps.media?.textElement?.map((textElement) => (
         <TextSequence
@@ -276,21 +287,6 @@ export const VideoEditor: React.FC = () => {
           fps={fps}
         />
       ))}
-
-      {/* 개발 정보 표시 */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 10,
-          left: 10,
-          color: 'white',
-          fontSize: 12,
-          opacity: 0.7,
-        }}
-      >
-        Frame: {frame} | Time: {currentTime.toFixed(2)}s | Project:{' '}
-        {inputProps.project?.name}
-      </div>
     </AbsoluteFill>
   );
 };
