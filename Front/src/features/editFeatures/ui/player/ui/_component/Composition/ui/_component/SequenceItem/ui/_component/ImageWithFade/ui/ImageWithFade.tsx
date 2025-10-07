@@ -1,5 +1,11 @@
-import { AbsoluteFill, Img, useCurrentFrame, interpolate } from "remotion";
+"use client";
+
+import { AbsoluteFill, Img, useCurrentFrame } from "remotion";
 import { MediaElement } from "@/entities/media/types";
+import { useCallback, useRef } from "react";
+import { useSmartGuideStore } from "@/features/editFeatures/ui/player/model/hooks/useSmartGuideStore";
+import { useSmartGuideSync } from "../model/hooks/useSmartGuideSync";
+import { CalculateFadeOpacity } from "../lib/calculateFadeOpacity";
 
 interface ImageWithFadeProps {
   imageElement: MediaElement;
@@ -7,44 +13,25 @@ interface ImageWithFadeProps {
   fps: number;
 }
 
-export const ImageWithFade = ({
-  imageElement,
-  durationInFrames,
-  fps,
-}: ImageWithFadeProps) => {
+export const ImageWithFade = ({ imageElement, durationInFrames, fps }: ImageWithFadeProps) => {
   const frame = useCurrentFrame();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  let opacity = 1;
+  const isDraggingText = useSmartGuideStore((state) => state.isDraggingText);
+  const draggingTextRect = useSmartGuideStore((state) => state.draggingTextRect);
 
-  // Calculate fade in opacity
-  if (imageElement.fadeIn) {
-    const fadeInFrames = Math.floor((imageElement.fadeInDuration || 0.5) * fps);
-    opacity = interpolate(frame, [0, fadeInFrames], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
-  }
+  // Custom hooks for separated concerns
+  const opacity = CalculateFadeOpacity(imageElement, durationInFrames, fps, frame);
+  const { clearSmartGuides } = useSmartGuideSync(containerRef, isDraggingText, draggingTextRect);
 
-  // Calculate fade out opacity
-  if (imageElement.fadeOut) {
-    const fadeOutFrames = Math.floor(
-      (imageElement.fadeOutDuration || 0.5) * fps
-    );
-    const fadeOutStartFrame = durationInFrames - fadeOutFrames;
-    const fadeOutOpacity = interpolate(
-      frame,
-      [fadeOutStartFrame, durationInFrames],
-      [1, 0],
-      {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      }
-    );
-    opacity = Math.min(opacity, fadeOutOpacity);
-  }
+  const handleMouseLeave = useCallback(() => {
+    clearSmartGuides();
+  }, [clearSmartGuides]);
 
   return (
     <AbsoluteFill
+      ref={containerRef}
+      onMouseLeave={handleMouseLeave}
       className="h-full"
       style={{
         zIndex: 100,
