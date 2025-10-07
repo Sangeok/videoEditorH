@@ -18,6 +18,7 @@ interface MediaStore {
   addTextElement: (textElement: TextElement, preserveTiming?: boolean) => void;
   deleteTextElement: (textElementId: string) => void;
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
+  updateTextElementPosition: (position: { x: number; y: number }) => void;
   updateTextBackgroundColor: (textElementId: string, style: { backgroundColor: string; textColor: string }) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
@@ -85,6 +86,21 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
           ...state.media,
           textElement: updatedTextElements,
           projectDuration: newProjectDuration,
+        },
+      };
+    }),
+  updateTextElementPosition: (position: { x: number; y: number }) =>
+    set((state) => {
+      const updatedTextElements = state.media.textElement.map((element) => ({
+        ...element,
+        positionX: position.x,
+        positionY: position.y,
+      }));
+
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
         },
       };
     }),

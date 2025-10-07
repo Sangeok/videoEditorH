@@ -31,7 +31,7 @@ interface UseDragTextProps {
 }
 
 export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlaying, isEditing }: UseDragTextProps) => {
-  const { updateTextElement } = useMediaStore();
+  const { updateTextElementPosition } = useMediaStore();
   const { setIsDraggingText, clearSmartGuides } = useSmartGuideStore();
   const [dragState, setDragState] = useState<DragState>(INITIAL_DRAG_STATE);
   const rafIdRef = useRef<number | null>(null);
@@ -63,7 +63,7 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
 
       setIsDraggingText(true);
     },
-    [isPlaying, isEditing, currentCanvasX, currentCanvasY, handleSelect]
+    [isPlaying, isEditing, currentCanvasX, currentCanvasY, handleSelect, setIsDraggingText]
   );
 
   const handleMouseMove = useCallback(
@@ -89,14 +89,11 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
           if (last && last.x === pos.x && last.y === pos.y) return;
 
           lastAppliedPosRef.current = pos;
-          updateTextElement(elementId, {
-            positionX: pos.x,
-            positionY: pos.y,
-          });
+          updateTextElementPosition({ x: pos.x, y: pos.y });
         });
       }
     },
-    [dragState, updateTextElement, elementId, isEditing]
+    [dragState, updateTextElementPosition, isEditing]
   );
 
   const handleMouseUp = useCallback(() => {

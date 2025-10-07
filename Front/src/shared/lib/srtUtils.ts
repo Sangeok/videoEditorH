@@ -60,7 +60,7 @@ export function convertSRTToTextElements(parsedEntries: ParsedSRTEntry[]): TextE
     endTime: entry.endSeconds,
     duration: entry.duration,
     text: entry.text,
-    positionX: 50, // Center horizontally
+    positionX: 540, // Center horizontally
     positionY: 80, // Bottom area for subtitles
     fontSize: 60,
     maxWidth: "90%",
@@ -68,7 +68,7 @@ export function convertSRTToTextElements(parsedEntries: ParsedSRTEntry[]): TextE
     textColor: "#ffffff",
     backgroundColor: "transparent",
     font: "Arial",
-    width: 300,
+    width: 900,
     height: 50,
     whiteSpace: "pre-wrap",
   }));
