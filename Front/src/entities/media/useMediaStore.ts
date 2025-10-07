@@ -18,12 +18,14 @@ interface MediaStore {
   addTextElement: (textElement: TextElement, preserveTiming?: boolean) => void;
   deleteTextElement: (textElementId: string) => void;
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
+  updateAllTextElement: (updates: Partial<TextElement>) => void;
   updateTextElementPosition: (position: { x: number; y: number }) => void;
-  updateTextBackgroundColor: (textElementId: string, style: { backgroundColor: string; textColor: string }) => void;
+  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
+  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) => void;
   updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
   addAudioElement: (audioElement: AudioElement) => void;
   deleteAudioElement: (audioElementId: string) => void;
@@ -104,6 +106,13 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
+  updateAllTextElement: (updates: Partial<TextElement>) =>
+    set((state) => {
+      const updatedTextElements = state.media.textElement.map((element) => ({ ...element, ...updates }));
+      return {
+        media: { ...state.media, textElement: updatedTextElements },
+      };
+    }),
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) =>
     set((state) => {
       const updatedTextElements = state.media.textElement.map((element) =>
@@ -152,19 +161,15 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
-  updateTextBackgroundColor: (textElementId: string, style: { backgroundColor: string; textColor: string }) =>
+  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) =>
     set((state) => ({
       media: {
         ...state.media,
-        textElement: state.media.textElement.map((element) =>
-          element.id === textElementId
-            ? {
-                ...element,
-                backgroundColor: style.backgroundColor,
-                textColor: style.textColor,
-              }
-            : element
-        ),
+        textElement: state.media.textElement.map((element) => ({
+          ...element,
+          backgroundColor: style.backgroundColor,
+          textColor: style.textColor,
+        })),
       },
     })),
 
@@ -237,6 +242,15 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
           mediaElement: updatedMediaElements,
           projectDuration: newProjectDuration,
         },
+      };
+    }),
+  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) =>
+    set((state) => {
+      const updatedMediaElements = state.media.mediaElement.map((element) =>
+        element.type === mediaType ? { ...element, ...updates } : element
+      );
+      return {
+        media: { ...state.media, mediaElement: updatedMediaElements },
       };
     }),
 

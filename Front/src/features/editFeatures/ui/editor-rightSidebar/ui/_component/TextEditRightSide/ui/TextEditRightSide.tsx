@@ -9,8 +9,7 @@ import { TextBackgroundColorItems } from "../constants";
 import TextInputField from "./_component/TextInputField/ui/TextInputField";
 
 export default function TextEditRightSide({ selectedTrackId }: TextEditRightSideProps) {
-  const { localText, localWidth, localFontSize, handleTextChange, handleWidthChange, handleFontSizeChange } =
-    useDebouncedTextEdit(selectedTrackId);
+  const { localText, localFontSize, handleTextChange, handleFontSizeChange } = useDebouncedTextEdit(selectedTrackId);
 
   const { isDropdownOpen, setIsDropdownOpen, selectedColor, handleColorChange, dropdownRef } =
     useBackgroundColor(selectedTrackId);
@@ -19,11 +18,19 @@ export default function TextEditRightSide({ selectedTrackId }: TextEditRightSide
     <div className="w-full h-full flex flex-col gap-2">
       <div className="flex flex-col items-center">
         <div className="flex flex-col gap-2 w-full">
-          <TextInputField label="Text Content" placeholder="Text Content" value={localText} onChange={handleTextChange} />
+          <TextInputField
+            label="Text Content"
+            placeholder="Text Content"
+            value={localText}
+            onChange={handleTextChange}
+          />
 
-          <TextInputField label="Text width" placeholder="Text width" value={localWidth} onChange={handleWidthChange} />
-
-          <TextInputField label="Font Size" placeholder="Font Size" value={localFontSize} onChange={handleFontSizeChange} />
+          <TextInputField
+            label="Font Size"
+            placeholder="Font Size"
+            value={localFontSize}
+            onChange={handleFontSizeChange}
+          />
 
           <h1>Text Background</h1>
           <Button className="w-full" variant="dark" onClick={() => setIsDropdownOpen(true)} ref={dropdownRef}>
