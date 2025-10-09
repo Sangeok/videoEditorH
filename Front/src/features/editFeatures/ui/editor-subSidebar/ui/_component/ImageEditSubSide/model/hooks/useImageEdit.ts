@@ -20,7 +20,7 @@ export function useImageEdit() {
   return {
     fileInputRef: fileUpload.fileInputRef,
     state: {
-      uploadedImages: fileUpload.uploadedImages,
+      uploadedImages: fileUpload.images,
       dragActive: dragAndDrop.dragActive,
     },
     actions: {

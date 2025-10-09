@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { calculateTicks } from "@/features/editFeatures/ui/editor-footer/lib/zoomUtils";
 import { useMediaStore } from "@/entities/media/useMediaStore";
@@ -10,29 +10,7 @@ export default function TimelineRuler() {
 
   const { media } = useMediaStore();
   const duration = media.projectDuration || 0;
-  const { zoom, pixelsPerSecond, viewportStartTime, viewportEndTime, setTimelineWidth, setCurrentTime } =
-    useTimelineStore();
-
-  // when component mounts, measure timeline width and store it
-  useEffect(() => {
-    if (rulerRef.current) {
-      const width = rulerRef.current.clientWidth;
-      setTimelineWidth(width);
-    }
-  }, [setTimelineWidth]);
-
-  // when window size changes, update timeline width
-  useEffect(() => {
-    const handleResize = () => {
-      if (rulerRef.current) {
-        const width = rulerRef.current.clientWidth;
-        setTimelineWidth(width);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [setTimelineWidth]);
+  const { zoom, pixelsPerSecond, viewportStartTime, viewportEndTime, setTimelineClick } = useTimelineStore();
 
   // calculate ticks(눈금)
   const { majorTicks, minorTicks } = calculateTicks(viewportStartTime, viewportEndTime, zoom, pixelsPerSecond);
@@ -47,7 +25,7 @@ export default function TimelineRuler() {
 
     // move only within duration range
     const clampedTime = Math.max(0, Math.min(clickedTime, duration));
-    setCurrentTime(clampedTime);
+    setTimelineClick(clampedTime);
   };
 
   return (

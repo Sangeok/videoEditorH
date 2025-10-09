@@ -96,7 +96,7 @@ function getElementClasses(isDragging: boolean, isMoveDragging?: boolean): strin
   const isAnyDragging = isDragging || Boolean(isMoveDragging);
 
   return clsx(
-    "absolute top-2 h-12 bg-gray-700 border-b-4 hover:bg-gray-800 border-1 border-gray-500 rounded transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium overflow-hidden select-none user-select-none",
+    "absolute top-2 h-12 bg-gray-700 border-b-4 hover:bg-gray-800 border-1 border-gray-500 rounded transition-colors duration-200 flex items-center justify-center text-white text-xs font-medium select-none user-select-none",
     {
       "cursor-grabbing": isAnyDragging,
       "cursor-grab hover:cursor-grab": !isAnyDragging,

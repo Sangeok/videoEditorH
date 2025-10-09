@@ -18,10 +18,17 @@ interface TimelineActions {
   setCurrentTime: (time: number) => void;
   setZoom: (zoom: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
+  setTimelineClick: (time: number) => void;
 
   // 뷰 관련 액션
   setTimelineWidth: (width: number) => void;
   updateViewport: () => void;
+  /**
+   * 스크롤 컨테이너의 상태로부터 뷰포트 범위를 계산/갱신
+   * @param scrollLeftPx 현재 가로 스크롤 위치(px)
+   * @param clientWidthPx 컨테이너 가시 영역 너비(px)
+   */
+  setViewportFromContainer: (scrollLeftPx: number, clientWidthPx: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
   resetZoom: () => void;
@@ -65,17 +72,35 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
   },
 
   updateViewport: () => {
-    const { zoom, timelineWidth } = get();
+    const { zoom, timelineWidth, viewportStartTime } = get();
     const basePixelsPerSecond = 20; // 1초 = 20px
     const pixelsPerSecond = basePixelsPerSecond * zoom; // zoom 적용된 밀도
 
     // 뷰포트에 표시될 시간 범위 계산
     const viewportDuration = timelineWidth / pixelsPerSecond;
-    const viewportStartTime = 0; // 현재는 항상 0부터 시작
-    const viewportEndTime = viewportDuration;
+    const viewportEndTime = viewportStartTime + viewportDuration;
 
     set({
       pixelsPerSecond,
+      viewportStartTime,
+      viewportEndTime,
+    });
+  },
+
+  setTimelineClick: (time: number) => {
+    set({ currentTime: Math.max(0, time), isPlaying: false });
+  },
+
+  setViewportFromContainer: (scrollLeftPx: number, clientWidthPx: number) => {
+    const { zoom } = get();
+    const basePixelsPerSecond = 20; // 1초 = 20px
+    const pixelsPerSecond = basePixelsPerSecond * zoom;
+    const viewportStartTime = Math.max(0, scrollLeftPx / pixelsPerSecond);
+    const viewportEndTime = viewportStartTime + clientWidthPx / pixelsPerSecond;
+
+    set({
+      pixelsPerSecond,
+      timelineWidth: clientWidthPx,
       viewportStartTime,
       viewportEndTime,
     });

@@ -10,14 +10,13 @@ const DEBOUNCE_DELAY = 300;
 export function useDebouncedTextEdit(
   selectedTrackId: string | null
 ): DebouncedTextEditState & DebouncedTextEditActions {
-  const { updateTextElement } = useMediaStore();
+  const { updateTextElement, updateAllTextElement } = useMediaStore();
   const textElement = useMediaStore((state) =>
     state.media.textElement.find((element) => element.id === selectedTrackId)
   );
 
   const [localState, setLocalState] = useState<DebouncedTextEditState>({
     localText: "",
-    localWidth: "",
     localFontSize: "",
   });
 
@@ -45,11 +44,7 @@ export function useDebouncedTextEdit(
 
     // Only update if values actually changed
     setLocalState((prevState) => {
-      if (
-        prevState.localText === newState.localText &&
-        prevState.localWidth === newState.localWidth &&
-        prevState.localFontSize === newState.localFontSize
-      ) {
+      if (prevState.localText === newState.localText && prevState.localFontSize === newState.localFontSize) {
         return prevState; // No change, return same reference
       }
       return newState;
@@ -86,21 +81,30 @@ export function useDebouncedTextEdit(
     [selectedTrackId, updateTextElement]
   );
 
+  const debouncedUpdateAllTextElement = useCallback(
+    (field: keyof TextElement, value: number | string) => {
+      if (!selectedTrackId) return;
+
+      // Mark that user is editing
+      isUserEditingRef.current = true;
+
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        updateAllTextElement({ [field]: value });
+        // Mark editing complete after update
+        isUserEditingRef.current = false;
+      }, DEBOUNCE_DELAY);
+    },
+    [selectedTrackId, updateAllTextElement]
+  );
+
   const handleTextChange = useCallback(
     (value: string) => {
       setLocalState((prev) => ({ ...prev, localText: value }));
       debouncedUpdateTextElement("text", value);
-    },
-    [debouncedUpdateTextElement]
-  );
-
-  const handleWidthChange = useCallback(
-    (value: string) => {
-      setLocalState((prev) => ({ ...prev, localWidth: value }));
-      const numericValue = parseNumericValue(value);
-      if (numericValue !== null) {
-        debouncedUpdateTextElement("width", numericValue);
-      }
     },
     [debouncedUpdateTextElement]
   );
@@ -110,16 +114,15 @@ export function useDebouncedTextEdit(
       setLocalState((prev) => ({ ...prev, localFontSize: value }));
       const numericValue = parseNumericValue(value);
       if (numericValue !== null) {
-        debouncedUpdateTextElement("fontSize", numericValue);
+        debouncedUpdateAllTextElement("fontSize", numericValue);
       }
     },
-    [debouncedUpdateTextElement]
+    [debouncedUpdateAllTextElement]
   );
 
   return {
     ...localState,
     handleTextChange,
-    handleWidthChange,
     handleFontSizeChange,
   };
 }

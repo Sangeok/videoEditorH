@@ -1,18 +1,14 @@
-
-
 export interface TextEditRightSideProps {
   selectedTrackId: string | null;
 }
 
 export interface DebouncedTextEditState {
   localText: string;
-  localWidth: string;
   localFontSize: string;
 }
 
 export interface DebouncedTextEditActions {
   handleTextChange: (value: string) => void;
-  handleWidthChange: (value: string) => void;
   handleFontSizeChange: (value: string) => void;
 }
 

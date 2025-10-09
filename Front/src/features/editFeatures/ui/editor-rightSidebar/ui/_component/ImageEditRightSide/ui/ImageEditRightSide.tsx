@@ -8,15 +8,12 @@ interface ImageEditRightSideProps {
   selectedTrackId: string | null;
 }
 
-export default function ImageEditRightSide({
-  selectedTrackId,
-}: ImageEditRightSideProps) {
+export default function ImageEditRightSide({ selectedTrackId }: ImageEditRightSideProps) {
   const imageElement = useMediaStore((state) =>
     state.media.mediaElement.find((element) => element.id === selectedTrackId)
   ) as MediaElement;
 
-  const { handleInEffectChange, handleOutEffectChange, handleFadeDurationChange } =
-    useImageEffects(imageElement);
+  const { handleInEffectChange, handleOutEffectChange, handleFadeDurationChange } = useImageEffects();
 
   if (!imageElement || imageElement.type !== "image") {
     return <div>No image selected</div>;

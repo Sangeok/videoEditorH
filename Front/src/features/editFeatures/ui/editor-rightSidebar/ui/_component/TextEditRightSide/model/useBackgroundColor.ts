@@ -23,7 +23,7 @@ export function useBackgroundColor(selectedTrackId: string | null) {
 
       // Handle valid color configurations
       if (config && selectedTrackId) {
-        updateTextBackgroundColor(selectedTrackId, config);
+        updateTextBackgroundColor(config);
         setSelectedColor(colorName);
       }
     },

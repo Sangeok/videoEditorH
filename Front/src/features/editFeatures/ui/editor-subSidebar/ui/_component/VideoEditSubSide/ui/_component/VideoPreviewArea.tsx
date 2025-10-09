@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { UploadedVideo } from "../../model/hooks/useFileUpload";
+import { UploadedVideo } from "../../model/type";
 
 interface VideoPreviewAreaProps {
   uploadedVideos: UploadedVideo[];

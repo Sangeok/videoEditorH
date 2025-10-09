@@ -1,16 +1,12 @@
 "use client";
 
-import { MediaElement } from "@/entities/media/types";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 
-export const useImageEffectsDetails = (imageElement: MediaElement) => {
-  const { updateMediaElement } = useMediaStore();
+export const useImageEffectsDetails = () => {
+  const { updateAllMediaElement } = useMediaStore();
 
-  const handleFadeDurationChange = (
-    value: number,
-    field: "fadeInDuration" | "fadeOutDuration"
-  ) => {
-    updateMediaElement(imageElement.id, { [field]: value });
+  const handleFadeDurationChange = (value: number, field: "fadeInDuration" | "fadeOutDuration") => {
+    updateAllMediaElement("image", { [field]: value });
   };
 
   return { handleFadeDurationChange };

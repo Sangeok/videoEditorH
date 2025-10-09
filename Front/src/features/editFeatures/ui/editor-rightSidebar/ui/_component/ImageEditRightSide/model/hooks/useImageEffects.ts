@@ -1,42 +1,42 @@
 "use client";
 
 import { useCallback } from "react";
-import { EffectType, MediaElement } from "@/entities/media/types";
+import { EffectType } from "@/entities/media/types";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { DEFAULT_EFFECT_DURATION } from "../../constants";
 
-export function useImageEffects(imageElement: MediaElement) {
-  const { updateMediaElement } = useMediaStore();
+export function useImageEffects() {
+  const { updateAllMediaElement } = useMediaStore();
 
   const handleInEffectChange = useCallback(
     (inEffect: EffectType) => {
       if (inEffect === "fadeIn") {
-        updateMediaElement(imageElement.id, {
+        updateAllMediaElement("image", {
           fadeIn: true,
           fadeInDuration: DEFAULT_EFFECT_DURATION,
         });
       }
     },
-    [imageElement.id, updateMediaElement]
+    [updateAllMediaElement]
   );
 
   const handleOutEffectChange = useCallback(
     (outEffect: EffectType) => {
       if (outEffect === "fadeOut") {
-        updateMediaElement(imageElement.id, {
+        updateAllMediaElement("image", {
           fadeOut: true,
           fadeOutDuration: DEFAULT_EFFECT_DURATION,
         });
       }
     },
-    [imageElement.id, updateMediaElement]
+    [updateAllMediaElement]
   );
 
   const handleFadeDurationChange = useCallback(
     (value: number, field: "fadeInDuration" | "fadeOutDuration") => {
-      updateMediaElement(imageElement.id, { [field]: value });
+      updateAllMediaElement("image", { [field]: value });
     },
-    [imageElement.id, updateMediaElement]
+    [updateAllMediaElement]
   );
 
   return {

@@ -59,7 +59,7 @@ export function useAudioEdit(): {
   return {
     fileInputRef: fileUpload.fileInputRef,
     state: {
-      uploadedAudios: fileUpload.uploadedAudios,
+      uploadedAudios: fileUpload.audios,
       dragActive: dragAndDrop.dragActive,
       loading: fileUpload.loading,
       previewAudio: audioPreview.previewAudio,
