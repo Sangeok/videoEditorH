@@ -18,6 +18,7 @@ interface TimelineActions {
   setCurrentTime: (time: number) => void;
   setZoom: (zoom: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
+  setTimelineClick: (time: number) => void;
 
   // 뷰 관련 액션
   setTimelineWidth: (width: number) => void;
@@ -84,6 +85,10 @@ const useTimelineStore = create<TimelineStore>((set, get) => ({
       viewportStartTime,
       viewportEndTime,
     });
+  },
+
+  setTimelineClick: (time: number) => {
+    set({ currentTime: Math.max(0, time), isPlaying: false });
   },
 
   setViewportFromContainer: (scrollLeftPx: number, clientWidthPx: number) => {

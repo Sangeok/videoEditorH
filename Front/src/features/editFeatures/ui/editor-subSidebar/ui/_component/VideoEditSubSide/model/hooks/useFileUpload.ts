@@ -1,17 +1,12 @@
-import { useRef, useState } from "react";
+"use client";
 
-export interface UploadedVideo {
-  id: string;
-  file: File;
-  url: string;
-  duration: number;
-  width: number;
-  height: number;
-}
+import { useRef } from "react";
+import { UploadedVideo } from "../type";
+import { useUploadedVideoStore } from "../store/useUploadedVideoStore";
 
 export function useFileUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedVideos, setUploadedVideos] = useState<UploadedVideo[]>([]);
+  const { videos, addVideo, removeVideo } = useUploadedVideoStore();
 
   const handleFileSelect = async (
     files: FileList | null,
@@ -43,7 +38,7 @@ export function useFileUpload() {
             ...videoData,
           };
 
-          setUploadedVideos((prev) => [...prev, uploadedVideo]);
+          addVideo(uploadedVideo);
           addVideoToTimeLine(videoData);
           resolve();
         };
@@ -51,19 +46,9 @@ export function useFileUpload() {
     }
   };
 
-  const removeVideo = (index: number) => {
-    setUploadedVideos((prev) => {
-      const videoToRemove = prev[index];
-      if (videoToRemove) {
-        URL.revokeObjectURL(videoToRemove.url);
-      }
-      return prev.filter((_, i) => i !== index);
-    });
-  };
-
   return {
     fileInputRef,
-    uploadedVideos,
+    videos,
     handleFileSelect,
     removeVideo,
   };

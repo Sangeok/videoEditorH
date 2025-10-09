@@ -1,16 +1,19 @@
-import { useState, useRef } from "react";
+"use client";
+
+import { useRef } from "react";
+import { useUploadedImageStore } from "../store/useUploadedImageStore";
 
 export function useFileUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const { images, addImage, removeImage } = useUploadedImageStore();
 
   const processImageFile = (file: File, onImageProcessed: (imageUrl: string) => void) => {
     if (!file.type.startsWith("image/")) return;
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageUrl = e.target?.result as string;
-      setUploadedImages((prev) => [...prev, imageUrl]);
+      addImage(imageUrl);
       onImageProcessed(imageUrl);
     };
     reader.readAsDataURL(file);
@@ -24,13 +27,9 @@ export function useFileUpload() {
     });
   };
 
-  const removeImage = (index: number) => {
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
   return {
     fileInputRef,
-    uploadedImages,
+    images,
     handleFileSelect,
     removeImage,
   };

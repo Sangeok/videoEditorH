@@ -1,23 +1,12 @@
 import { useState, useRef } from "react";
-import { UploadedAudio } from "../types";
+import { useUploadedAudioStore } from "../store/useUploadedAudioStore";
 
 export function useFileUpload() {
-  const [uploadedAudios, setUploadedAudios] = useState<UploadedAudio[]>([]);
+  const { audios, addAudio, removeAudio } = useUploadedAudioStore();
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const removeAudio = (index: number) => {
-    setUploadedAudios((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const addAudio = (audio: UploadedAudio) => {
-    setUploadedAudios((prev) => [...prev, audio]);
-  };
-
-  const handleFileSelect = (
-    files: FileList | null,
-    onProcessFile: (file: File) => void
-  ) => {
+  const handleFileSelect = (files: FileList | null, onProcessFile: (file: File) => void) => {
     if (!files) return;
 
     Array.from(files).forEach((file) => {
@@ -30,7 +19,7 @@ export function useFileUpload() {
   };
 
   return {
-    uploadedAudios,
+    audios,
     loading,
     setLoading,
     fileInputRef,

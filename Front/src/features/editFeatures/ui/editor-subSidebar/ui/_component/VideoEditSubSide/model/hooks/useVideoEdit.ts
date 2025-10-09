@@ -20,7 +20,7 @@ export function useVideoEdit() {
   return {
     fileInputRef: fileUpload.fileInputRef,
     state: {
-      uploadedVideos: fileUpload.uploadedVideos,
+      uploadedVideos: fileUpload.videos,
       dragActive: dragAndDrop.dragActive,
     },
     actions: {
