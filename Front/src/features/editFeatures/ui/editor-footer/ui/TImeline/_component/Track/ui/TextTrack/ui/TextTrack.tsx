@@ -13,14 +13,16 @@ import TextElement from "./_component/TextElement";
 export default function TextTrack({ laneId }: { laneId: string }) {
   const { media, updateTextElement, deleteTextElement, updateMultipleTextElements } = useMediaStore();
 
+  const elementsInLane = media.textElement.filter((el) => (el.laneId ?? "text-0") === laneId);
+
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
-    SelectedElements: media.textElement,
+    SelectedElements: elementsInLane,
     updateSelectedElements: updateTextElement,
     updateMultipleSelectedElements: updateMultipleTextElements,
   });
 
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
-    SelectedElements: media.textElement,
+    SelectedElements: elementsInLane,
     updateSelectedElements: updateTextElement,
   });
 
@@ -28,7 +30,6 @@ export default function TextTrack({ laneId }: { laneId: string }) {
     deleteSelectedElements: deleteTextElement,
   });
 
-  const elementsInLane = media.textElement.filter((el) => (el.laneId ?? "text-0") === laneId);
   const hasTextElements = elementsInLane.length > 0;
 
   return (

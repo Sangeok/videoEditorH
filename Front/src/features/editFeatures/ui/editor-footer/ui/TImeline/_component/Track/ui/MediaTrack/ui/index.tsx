@@ -14,21 +14,21 @@ import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 export default function MediaTrack({ laneId }: { laneId: string }) {
   const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
 
+  const elementsInLane = media.mediaElement.filter((el) => (el.laneId ?? "media-0") === laneId);
+
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
-    SelectedElements: media.mediaElement,
+    SelectedElements: elementsInLane,
     updateSelectedElements: updateMediaElement,
     updateMultipleSelectedElements: updateMultipleMediaElements,
   });
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
-    SelectedElements: media.mediaElement,
+    SelectedElements: elementsInLane,
     updateSelectedElements: updateMediaElement,
   });
   const { handleTrackElementClick } = useTrackElementInteraction({
     deleteSelectedElements: deleteMediaElement,
   });
 
-  // Filter by lane
-  const elementsInLane = media.mediaElement.filter((el) => (el.laneId ?? "media-0") === laneId);
   const hasMediaElements = elementsInLane.length > 0;
 
   return (

@@ -12,16 +12,16 @@ import AudioElement from "./_component/AudioElement/ui/AudioElement";
 export default function AudioTrack({ laneId }: { laneId: string }) {
   const { media, updateAudioElement, deleteAudioElement } = useMediaStore();
 
+  const elementsInLane = media.audioElement.filter((el) => (el.laneId ?? "audio-0") === laneId);
+
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
-    SelectedElements: media.audioElement,
+    SelectedElements: elementsInLane,
     updateSelectedElements: updateAudioElement,
   });
 
   const { handleTrackElementClick } = useTrackElementInteraction({
     deleteSelectedElements: deleteAudioElement,
   });
-
-  const elementsInLane = media.audioElement.filter((el) => (el.laneId ?? "audio-0") === laneId);
   const hasAudioElements = elementsInLane.length > 0;
 
   return (

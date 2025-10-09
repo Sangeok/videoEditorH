@@ -89,7 +89,7 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
           if (last && last.x === pos.x && last.y === pos.y) return;
 
           lastAppliedPosRef.current = pos;
-          updateTextElementPosition({ x: pos.x, y: pos.y });
+          updateTextElementPosition(elementId, { x: pos.x, y: pos.y });
         });
       }
     },

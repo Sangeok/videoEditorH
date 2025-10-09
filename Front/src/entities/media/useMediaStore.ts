@@ -20,7 +20,7 @@ interface MediaStore {
   deleteTextElement: (textElementId: string) => void;
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
   updateAllTextElement: (updates: Partial<TextElement>) => void;
-  updateTextElementPosition: (position: { x: number; y: number }) => void;
+  updateTextElementPosition: (elementId: string, position: { x: number; y: number }) => void;
   updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   splitTextElement: (textElementId: string, splitTime: number) => void;
@@ -43,27 +43,19 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   setFps: (fps) => set({ media: { ...get().media, fps } }),
   addTextElement: (textElement: TextElement, preserveTiming = false) =>
     set((state) => {
-      const currentTextElements = state.media.textElement;
-      let newTextElement: TextElement;
+      const all = state.media.textElement;
+      const laneId = textElement.laneId ?? "text-0";
+      const inLane = all.filter((el) => (el.laneId ?? "text-0") === laneId);
 
-      if (currentTextElements.length === 0 || preserveTiming) {
-        // if first element or preserveTiming is true, keep original timing
-        newTextElement = { ...textElement };
-      } else {
-        // if normal text element, arrange continuously
-        const lastElement = currentTextElements[currentTextElements.length - 1];
-        const currentElementDuration = textElement.duration;
-
-        newTextElement = {
-          ...textElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + currentElementDuration,
-        };
+      let newTextElement: TextElement = { ...textElement };
+      if (!preserveTiming && inLane.length > 0) {
+        const lastInLane = inLane[inLane.length - 1];
+        const dur = textElement.duration;
+        newTextElement.startTime = lastInLane.endTime;
+        newTextElement.endTime = lastInLane.endTime + dur;
       }
 
-      const updatedTextElements = [...currentTextElements, newTextElement];
-
-      // update projectDuration to the endTime of the last element
+      const updatedTextElements = [...all, newTextElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newTextElement.endTime);
 
       return {
@@ -95,13 +87,17 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateTextElementPosition: (position: { x: number; y: number }) =>
+  updateTextElementPosition: (elementId: string, position: { x: number; y: number }) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.map((element) => ({
-        ...element,
-        positionX: position.x,
-        positionY: position.y,
-      }));
+      const target = state.media.textElement.find((el) => el.id === elementId);
+      if (!target) {
+        return { media: state.media };
+      }
+      const laneId = target.laneId ?? "text-0";
+      const updatedTextElements = state.media.textElement.map((element) => {
+        const sameLane = (element.laneId ?? "text-0") === laneId;
+        return sameLane ? { ...element, positionX: position.x, positionY: position.y } : element;
+      });
 
       return {
         media: {
@@ -226,23 +222,18 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
   addMediaElement: (mediaElement: MediaElement) =>
     set((state) => {
-      const currentMediaElements = state.media.mediaElement;
+      const all = state.media.mediaElement;
+      const laneId = mediaElement.laneId ?? "media-0";
+      const inLane = all.filter((el) => (el.laneId ?? "media-0") === laneId);
 
-      let newMediaElement: MediaElement;
-
-      if (currentMediaElements.length === 0) {
-        newMediaElement = { ...mediaElement };
-      } else {
-        const lastElement = currentMediaElements[currentMediaElements.length - 1];
-        newMediaElement = {
-          ...mediaElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + mediaElement.duration,
-        };
+      let newMediaElement: MediaElement = { ...mediaElement };
+      if (inLane.length > 0) {
+        const lastInLane = inLane[inLane.length - 1];
+        newMediaElement.startTime = lastInLane.endTime;
+        newMediaElement.endTime = lastInLane.endTime + mediaElement.duration;
       }
 
-      const updatedMediaElements = [...currentMediaElements, newMediaElement];
-
+      const updatedMediaElements = [...all, newMediaElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newMediaElement.endTime);
 
       return {
@@ -379,30 +370,23 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
 
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
-      const currentAudioElements = state.media.audioElement;
+      const all = state.media.audioElement;
+      const laneId = audioElement.laneId ?? "audio-0";
+      const inLane = all.filter((el) => (el.laneId ?? "audio-0") === laneId);
+
       let newAudioElement: AudioElement;
-
-      if (currentAudioElements.length === 0) {
-        // if first audio element
-        newAudioElement = {
-          ...audioElement,
-          startTime: 0,
-          endTime: audioElement.duration,
-        };
+      if (inLane.length === 0) {
+        newAudioElement = { ...audioElement, startTime: 0, endTime: audioElement.duration };
       } else {
-        // if existing audio elements, arrange after the last element
-        const lastElement = currentAudioElements[currentAudioElements.length - 1];
-
+        const lastInLane = inLane[inLane.length - 1];
         newAudioElement = {
           ...audioElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + audioElement.duration,
+          startTime: lastInLane.endTime,
+          endTime: lastInLane.endTime + audioElement.duration,
         };
       }
 
-      const updatedAudioElements = [...currentAudioElements, newAudioElement];
-
-      // update projectDuration to include the endTime of the audio element
+      const updatedAudioElements = [...all, newAudioElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newAudioElement.endTime);
 
       return {
