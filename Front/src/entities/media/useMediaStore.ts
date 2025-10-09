@@ -19,9 +19,12 @@ interface MediaStore {
   addTextElement: (textElement: TextElement, preserveTiming?: boolean) => void;
   deleteTextElement: (textElementId: string) => void;
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
-  updateAllTextElement: (updates: Partial<TextElement>) => void;
+  updateSameLaneTextElement: (sourceTextElementId: string, updates: Partial<TextElement>) => void;
   updateTextElementPosition: (elementId: string, position: { x: number; y: number }) => void;
-  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) => void;
+  updateTextBackgroundColor: (
+    sourceTextElementId: string,
+    style: { backgroundColor: string; textColor: string }
+  ) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   splitTextElement: (textElementId: string, splitTime: number) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
@@ -103,9 +106,18 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateAllTextElement: (updates: Partial<TextElement>) =>
+  updateSameLaneTextElement: (sourceTextElementId: string, updates: Partial<TextElement>) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.map((element) => ({ ...element, ...updates }));
+      const source = state.media.textElement.find((el) => el.id === sourceTextElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Text-0";
+
+      const updatedTextElements = state.media.textElement.map((element) =>
+        (element.laneId ?? "Text-0") === laneId ? { ...element, ...updates } : element
+      );
+
       return {
         media: { ...state.media, textElement: updatedTextElements },
       };
@@ -205,17 +217,24 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
-  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) =>
-    set((state) => ({
-      media: {
-        ...state.media,
-        textElement: state.media.textElement.map((element) => ({
-          ...element,
-          backgroundColor: style.backgroundColor,
-          textColor: style.textColor,
-        })),
-      },
-    })),
+  updateTextBackgroundColor: (sourceTextElementId: string, style: { backgroundColor: string; textColor: string }) =>
+    set((state) => {
+      const source = state.media.textElement.find((el) => el.id === sourceTextElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Text-0";
+
+      const updatedTextElements = state.media.textElement.map((element) =>
+        (element.laneId ?? "Text-0") === laneId
+          ? { ...element, backgroundColor: style.backgroundColor, textColor: style.textColor }
+          : element
+      );
+
+      return {
+        media: { ...state.media, textElement: updatedTextElements },
+      };
+    }),
 
   addMediaElement: (mediaElement: MediaElement) =>
     set((state) => {
