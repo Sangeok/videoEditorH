@@ -10,7 +10,7 @@ import { DropIndicator } from "../../_component/DropIndicator";
 import { DropPreview, MoveDragState } from "../../../model/types";
 import TextElement from "./_component/TextElement";
 
-export default function TextTrack() {
+export default function TextTrack({ laneId }: { laneId: string }) {
   const { media, updateTextElement, deleteTextElement, updateMultipleTextElements } = useMediaStore();
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
@@ -28,13 +28,14 @@ export default function TextTrack() {
     deleteSelectedElements: deleteTextElement,
   });
 
-  const hasTextElements = media.textElement.length > 0;
+  const elementsInLane = media.textElement.filter((el) => (el.laneId ?? "text-0") === laneId);
+  const hasTextElements = elementsInLane.length > 0;
 
   return (
     <div className="relative w-full h-full bg-zinc-900">
       {hasTextElements && (
         <TextElementsContainer
-          textElements={media.textElement}
+          textElements={elementsInLane}
           dragState={dragState}
           moveDragState={moveDragState}
           dropPreview={dropPreview}

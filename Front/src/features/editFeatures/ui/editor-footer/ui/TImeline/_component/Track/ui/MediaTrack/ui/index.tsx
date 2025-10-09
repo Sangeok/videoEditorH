@@ -11,7 +11,7 @@ import { EmptyState } from "../../_component/EmptyState";
 import { DropIndicator } from "../../_component/DropIndicator";
 import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 
-export default function MediaTrack() {
+export default function MediaTrack({ laneId }: { laneId: string }) {
   const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
@@ -27,14 +27,15 @@ export default function MediaTrack() {
     deleteSelectedElements: deleteMediaElement,
   });
 
-  // Check if media elements exist
-  const hasMediaElements = media.mediaElement.length > 0;
+  // Filter by lane
+  const elementsInLane = media.mediaElement.filter((el) => (el.laneId ?? "media-0") === laneId);
+  const hasMediaElements = elementsInLane.length > 0;
 
   return (
     <div className="relative w-full h-full bg-zinc-900">
       {hasMediaElements && (
         <MediaElementsContainer
-          mediaElements={media.mediaElement}
+          mediaElements={elementsInLane}
           dragState={dragState}
           moveDragState={moveDragState}
           dropPreview={dropPreview}

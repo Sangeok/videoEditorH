@@ -9,7 +9,7 @@ import { DropPreview, MoveDragState } from "../../../model/types";
 import { DropIndicator } from "../../_component/DropIndicator";
 import AudioElement from "./_component/AudioElement/ui/AudioElement";
 
-export default function AudioTrack() {
+export default function AudioTrack({ laneId }: { laneId: string }) {
   const { media, updateAudioElement, deleteAudioElement } = useMediaStore();
 
   const { moveDragState, dropPreview, handleMoveStart } = useTrackElementMove({
@@ -21,13 +21,14 @@ export default function AudioTrack() {
     deleteSelectedElements: deleteAudioElement,
   });
 
-  const hasAudioElements = media.audioElement.length > 0;
+  const elementsInLane = media.audioElement.filter((el) => (el.laneId ?? "audio-0") === laneId);
+  const hasAudioElements = elementsInLane.length > 0;
 
   return (
     <div className="relative w-full h-full bg-zinc-900">
       {hasAudioElements && (
         <AudioElementsContainer
-          audioElements={media.audioElement}
+          audioElements={elementsInLane}
           moveDragState={moveDragState}
           dropPreview={dropPreview}
           onMoveStart={handleMoveStart}
