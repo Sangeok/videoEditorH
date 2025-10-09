@@ -6,9 +6,6 @@ interface TimelineToolStore {
 
   isClone: boolean;
   setIsClone: (isClone: boolean) => void;
-
-  isSplit: boolean;
-  setIsSplit: (isSplit: boolean) => void;
 }
 
 export const useTimelineToolStore = create<TimelineToolStore>((set) => ({
@@ -17,7 +14,4 @@ export const useTimelineToolStore = create<TimelineToolStore>((set) => ({
 
   isClone: false,
   setIsClone: (isClone) => set({ isClone }),
-
-  isSplit: false,
-  setIsSplit: (isSplit) => set({ isSplit }),
 }));

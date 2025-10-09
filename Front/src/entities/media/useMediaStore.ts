@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { AudioElement, Media, MediaElement, TextElement } from "./types";
+import { roundTime } from "@/shared/lib/timeConversion";
 
 export const initialMedia: Media = {
   // video duration
@@ -22,15 +23,18 @@ interface MediaStore {
   updateTextElementPosition: (position: { x: number; y: number }) => void;
   updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
+  splitTextElement: (textElementId: string, splitTime: number) => void;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
   updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) => void;
   updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
+  splitMediaElement: (mediaElementId: string, splitTime: number) => void;
   addAudioElement: (audioElement: AudioElement) => void;
   deleteAudioElement: (audioElementId: string) => void;
   updateAudioElement: (audioElementId: string, updates: Partial<AudioElement>) => void;
   updateMultipleAudioElements: (updates: Array<{ id: string; updates: Partial<AudioElement> }>) => void;
+  splitAudioElement: (audioElementId: string, splitTime: number) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -126,6 +130,53 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       ];
 
       const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
+  splitTextElement: (textElementId: string, splitTime: number) =>
+    set((state) => {
+      const elementIndex = state.media.textElement.findIndex((el) => el.id === textElementId);
+      if (elementIndex === -1) {
+        return { media: state.media };
+      }
+      const originalTextElement = state.media.textElement[elementIndex];
+      const originalStartTime = originalTextElement.startTime;
+      const originalEndTime = originalTextElement.endTime;
+      const splitTimeRounded = roundTime(splitTime);
+      if (splitTimeRounded <= originalStartTime || splitTimeRounded >= originalEndTime) {
+        return { media: state.media };
+      }
+
+      const leftTextElement: TextElement = {
+        ...originalTextElement,
+        endTime: splitTimeRounded,
+        duration: roundTime(splitTimeRounded - originalStartTime),
+      };
+
+      const rightTextElement: TextElement = {
+        ...originalTextElement,
+        id: crypto.randomUUID(),
+        startTime: splitTimeRounded,
+        duration: roundTime(originalEndTime - splitTimeRounded),
+      };
+
+      const updatedTextElements = state.media.textElement.slice();
+      updatedTextElements[elementIndex] = leftTextElement;
+      updatedTextElements.splice(elementIndex + 1, 0, rightTextElement);
+
+      const allTrackEndTimes = [
+        ...state.media.mediaElement.map((el) => el.endTime),
+        ...updatedTextElements.map((el) => el.endTime),
+        ...state.media.audioElement.map((el) => el.endTime),
+      ];
+      const newProjectDuration = allTrackEndTimes.length > 0 ? Math.max(...allTrackEndTimes) : 0;
 
       return {
         media: {
@@ -279,6 +330,53 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
+  splitMediaElement: (mediaElementId: string, splitTime: number) =>
+    set((state) => {
+      const elementIndex = state.media.mediaElement.findIndex((el) => el.id === mediaElementId);
+      if (elementIndex === -1) {
+        return { media: state.media };
+      }
+      const originalMediaElement = state.media.mediaElement[elementIndex];
+      const originalStartTime = originalMediaElement.startTime;
+      const originalEndTime = originalMediaElement.endTime;
+      const splitTimeRounded = roundTime(splitTime);
+      if (splitTimeRounded <= originalStartTime || splitTimeRounded >= originalEndTime) {
+        return { media: state.media };
+      }
+
+      const leftMediaElement: MediaElement = {
+        ...originalMediaElement,
+        endTime: splitTimeRounded,
+        duration: roundTime(splitTimeRounded - originalStartTime),
+      };
+
+      const rightMediaElement: MediaElement = {
+        ...originalMediaElement,
+        id: crypto.randomUUID(),
+        startTime: splitTimeRounded,
+        duration: roundTime(originalEndTime - splitTimeRounded),
+      };
+
+      const updatedMediaElements = state.media.mediaElement.slice();
+      updatedMediaElements[elementIndex] = leftMediaElement;
+      updatedMediaElements.splice(elementIndex + 1, 0, rightMediaElement);
+
+      const allTrackEndTimes = [
+        ...updatedMediaElements.map((el) => el.endTime),
+        ...state.media.textElement.map((el) => el.endTime),
+        ...state.media.audioElement.map((el) => el.endTime),
+      ];
+      const newProjectDuration = allTrackEndTimes.length > 0 ? Math.max(...allTrackEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          mediaElement: updatedMediaElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
       const currentAudioElements = state.media.audioElement;
@@ -377,6 +475,55 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       ];
 
       const newProjectDuration = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 0;
+
+      return {
+        media: {
+          ...state.media,
+          audioElement: updatedAudioElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    }),
+
+  splitAudioElement: (audioElementId: string, splitTime: number) =>
+    set((state) => {
+      const elementIndex = state.media.audioElement.findIndex((el) => el.id === audioElementId);
+      if (elementIndex === -1) {
+        return { media: state.media };
+      }
+      const originalAudioElement = state.media.audioElement[elementIndex];
+      const originalStartTime = originalAudioElement.startTime;
+      const originalEndTime = originalAudioElement.endTime;
+      const splitTimeRounded = roundTime(splitTime);
+      if (splitTimeRounded <= originalStartTime || splitTimeRounded >= originalEndTime) {
+        return { media: state.media };
+      }
+
+      const leftAudioElement: AudioElement = {
+        ...originalAudioElement,
+        endTime: splitTimeRounded,
+        duration: roundTime(splitTimeRounded - originalStartTime),
+      };
+
+      const originalSourceStartOffsetSeconds = originalAudioElement.sourceStart ?? 0;
+      const rightAudioElement: AudioElement = {
+        ...originalAudioElement,
+        id: crypto.randomUUID(),
+        startTime: splitTimeRounded,
+        duration: roundTime(originalEndTime - splitTimeRounded),
+        sourceStart: roundTime(originalSourceStartOffsetSeconds + (splitTimeRounded - originalStartTime)),
+      };
+
+      const updatedAudioElements = state.media.audioElement.slice();
+      updatedAudioElements[elementIndex] = leftAudioElement;
+      updatedAudioElements.splice(elementIndex + 1, 0, rightAudioElement);
+
+      const allTrackEndTimes = [
+        ...state.media.mediaElement.map((el) => el.endTime),
+        ...state.media.textElement.map((el) => el.endTime),
+        ...updatedAudioElements.map((el) => el.endTime),
+      ];
+      const newProjectDuration = allTrackEndTimes.length > 0 ? Math.max(...allTrackEndTimes) : 0;
 
       return {
         media: {
