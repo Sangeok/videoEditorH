@@ -105,13 +105,13 @@ export default function ToolButton() {
                   setSelectedAddTrackItem(label);
                   if (label === "Add Text Track") {
                     const id = addTextLane();
-                    setActiveLane("text", id);
+                    setActiveLane("Text", id);
                   } else if (label === "Add Media Track") {
                     const id = addMediaLane();
-                    setActiveLane("media", id);
+                    setActiveLane("Media", id);
                   } else if (label === "Add Audio Track") {
                     const id = addAudioLane();
-                    setActiveLane("audio", id);
+                    setActiveLane("Audio", id);
                   }
                 }}
               />

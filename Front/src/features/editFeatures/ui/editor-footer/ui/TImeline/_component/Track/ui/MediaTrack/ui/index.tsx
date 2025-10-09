@@ -14,7 +14,7 @@ import { MediaElement } from "./_component/MediaElement/ui/MediaElement";
 export default function MediaTrack({ laneId }: { laneId: string }) {
   const { media, updateMediaElement, deleteMediaElement, updateMultipleMediaElements } = useMediaStore();
 
-  const elementsInLane = media.mediaElement.filter((el) => (el.laneId ?? "media-0") === laneId);
+  const elementsInLane = media.mediaElement.filter((el) => (el.laneId ?? "Media-0") === laneId);
 
   const { dragState, handleResizeStart } = useTrackElementResizeDrag({
     SelectedElements: elementsInLane,

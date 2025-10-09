@@ -16,7 +16,10 @@ import { useMediaStore } from "@/entities/media/useMediaStore";
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { media } = useMediaStore();
-  const { textLanes, mediaLanes, audioLanes } = useTrackLaneStore();
+
+  const textLanes = useTrackLaneStore((s) => s.textLanes);
+  const mediaLanes = useTrackLaneStore((s) => s.mediaLanes);
+  const audioLanes = useTrackLaneStore((s) => s.audioLanes);
 
   const { pixelsPerSecond, timelineWidth, setTimelineWidth, setViewportFromContainer } = useTimelineStore();
 

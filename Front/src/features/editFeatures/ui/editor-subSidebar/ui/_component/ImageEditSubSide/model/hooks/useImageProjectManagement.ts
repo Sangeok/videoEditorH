@@ -5,10 +5,10 @@ import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackL
 
 export function useImageProjectManagement() {
   const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
-  const { activeLaneByType } = useTrackLaneStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const addImageToTimeLine = (imageUrl: string) => {
-    const laneId = activeLaneByType.media;
+    const laneId = activeLaneByType.Media;
     const imageElement = createImageElement(imageUrl, laneId);
 
     const existingImage = media.mediaElement.find((el) => el.url === imageUrl);

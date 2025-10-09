@@ -6,7 +6,7 @@ import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackL
 
 export function useCaptionUpload() {
   const { addTextElement } = useMediaStore();
-  const { activeLaneByType } = useTrackLaneStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dragAndDrop = useDragAndDrop();
 
@@ -27,7 +27,7 @@ export function useCaptionUpload() {
         const parsedEntries = parseSRTContent(srtContent);
         const textElements = convertSRTToTextElements(parsedEntries).map((el) => ({
           ...el,
-          laneId: activeLaneByType.text,
+          laneId: activeLaneByType.Text,
         }));
 
         textElements.forEach((element) => {

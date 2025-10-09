@@ -5,7 +5,7 @@ import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackL
 
 export function useAudioFileProcessor() {
   const { media, addAudioElement } = useMediaStore();
-  const { activeLaneByType } = useTrackLaneStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const processAudioFile = (
     file: File,
@@ -28,7 +28,7 @@ export function useAudioFileProcessor() {
       onSuccess(uploadedAudio);
 
       try {
-        const laneId = activeLaneByType.audio;
+        const laneId = activeLaneByType.Audio;
         const audioElement = await createAudioElement(audioUrl, laneId);
         addAudioElement(audioElement);
       } catch (error: unknown) {
@@ -39,7 +39,7 @@ export function useAudioFileProcessor() {
           startTime: media.projectDuration,
           endTime: media.projectDuration + 30,
           duration: 30,
-          laneId: activeLaneByType.audio,
+          laneId: activeLaneByType.Audio,
           url: audioUrl,
           volume: 100,
           speed: 1,

@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
-type LaneKind = "text" | "media" | "audio";
+export type LaneKind = "Text" | "Media" | "Audio";
 
 interface TrackLaneState {
   textLanes: string[];
   mediaLanes: string[];
   audioLanes: string[];
-  activeLaneByType: { text: string; media: string; audio: string };
+  activeLaneByType: { Text: string; Media: string; Audio: string };
   addTextLane: () => string;
   addMediaLane: () => string;
   addAudioLane: () => string;
@@ -16,32 +16,32 @@ interface TrackLaneState {
 const generateLaneId = (prefix: LaneKind, index: number): string => `${prefix}-${index}`;
 
 export const useTrackLaneStore = create<TrackLaneState>((set, get) => ({
-  textLanes: ["text-0"],
-  mediaLanes: ["media-0"],
-  audioLanes: ["audio-0"],
-  activeLaneByType: { text: "text-0", media: "media-0", audio: "audio-0" },
+  textLanes: ["Text-0"],
+  mediaLanes: ["Media-0"],
+  audioLanes: ["Audio-0"],
+  activeLaneByType: { Text: "Text-0", Media: "Media-0", Audio: "Audio-0" },
 
   addTextLane: () => {
     const { textLanes } = get();
-    const nextId = generateLaneId("text", textLanes.length);
+    const nextId = generateLaneId("Text", textLanes.length);
     const nextLanes = [...textLanes, nextId];
-    set({ textLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, text: nextId } });
+    set({ textLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, Text: nextId } });
     return nextId;
   },
 
   addMediaLane: () => {
     const { mediaLanes } = get();
-    const nextId = generateLaneId("media", mediaLanes.length);
+    const nextId = generateLaneId("Media", mediaLanes.length);
     const nextLanes = [...mediaLanes, nextId];
-    set({ mediaLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, media: nextId } });
+    set({ mediaLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, Media: nextId } });
     return nextId;
   },
 
   addAudioLane: () => {
     const { audioLanes } = get();
-    const nextId = generateLaneId("audio", audioLanes.length);
+    const nextId = generateLaneId("Audio", audioLanes.length);
     const nextLanes = [...audioLanes, nextId];
-    set({ audioLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, audio: nextId } });
+    set({ audioLanes: nextLanes, activeLaneByType: { ...get().activeLaneByType, Audio: nextId } });
     return nextId;
   },
 

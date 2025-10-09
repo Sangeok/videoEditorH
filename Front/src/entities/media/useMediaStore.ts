@@ -44,15 +44,15 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   addTextElement: (textElement: TextElement, preserveTiming = false) =>
     set((state) => {
       const all = state.media.textElement;
-      const laneId = textElement.laneId ?? "text-0";
-      const inLane = all.filter((el) => (el.laneId ?? "text-0") === laneId);
+      const laneId = textElement.laneId ?? "Text-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Text-0") === laneId);
 
       let newTextElement: TextElement = { ...textElement };
       if (!preserveTiming && inLane.length > 0) {
         const lastInLane = inLane[inLane.length - 1];
-        const dur = textElement.duration;
+        const addedElementDuration = textElement.duration;
         newTextElement.startTime = lastInLane.endTime;
-        newTextElement.endTime = lastInLane.endTime + dur;
+        newTextElement.endTime = lastInLane.endTime + addedElementDuration;
       }
 
       const updatedTextElements = [...all, newTextElement];
@@ -76,9 +76,6 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const newProjectDuration =
         allElements.length > 0 ? Math.max(...allElements.map((element) => element.endTime)) : 0;
 
-      console.log("allElements", allElements);
-      console.log("newProjectDuration", newProjectDuration);
-
       return {
         media: {
           ...state.media,
@@ -93,9 +90,9 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       if (!target) {
         return { media: state.media };
       }
-      const laneId = target.laneId ?? "text-0";
+      const laneId = target.laneId ?? "Text-0";
       const updatedTextElements = state.media.textElement.map((element) => {
-        const sameLane = (element.laneId ?? "text-0") === laneId;
+        const sameLane = (element.laneId ?? "Text-0") === laneId;
         return sameLane ? { ...element, positionX: position.x, positionY: position.y } : element;
       });
 
@@ -223,8 +220,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   addMediaElement: (mediaElement: MediaElement) =>
     set((state) => {
       const all = state.media.mediaElement;
-      const laneId = mediaElement.laneId ?? "media-0";
-      const inLane = all.filter((el) => (el.laneId ?? "media-0") === laneId);
+      const laneId = mediaElement.laneId ?? "Media-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Media-0") === laneId);
 
       let newMediaElement: MediaElement = { ...mediaElement };
       if (inLane.length > 0) {
@@ -371,8 +368,8 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
       const all = state.media.audioElement;
-      const laneId = audioElement.laneId ?? "audio-0";
-      const inLane = all.filter((el) => (el.laneId ?? "audio-0") === laneId);
+      const laneId = audioElement.laneId ?? "Audio-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Audio-0") === laneId);
 
       let newAudioElement: AudioElement;
       if (inLane.length === 0) {

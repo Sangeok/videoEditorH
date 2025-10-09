@@ -15,7 +15,8 @@ export function useAudioEdit(): {
   fileInputRef: React.RefObject<HTMLInputElement | null>;
 } {
   const { media, addAudioElement } = useMediaStore();
-  const { activeLaneByType } = useTrackLaneStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
+
   const fileUpload = useFileUpload();
   const dragAndDrop = useDragAndDrop();
   const audioPreview = useAudioPreview();
@@ -49,7 +50,7 @@ export function useAudioEdit(): {
       return;
     }
 
-    const laneId = activeLaneByType.audio;
+    const laneId = activeLaneByType.Audio;
     const audioElement = await createAudioElement(audio.url, laneId);
     addAudioElement(audioElement);
   };

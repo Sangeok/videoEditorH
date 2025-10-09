@@ -12,10 +12,10 @@ interface VideoData {
 
 export function useVideoProjectManagement() {
   const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
-  const { activeLaneByType } = useTrackLaneStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const addVideoToTimeLine = (videoData: VideoData) => {
-    const laneId = activeLaneByType.media;
+    const laneId = activeLaneByType.Media;
     const videoElement = createVideoElement(videoData, laneId);
 
     const existingVideo = media.mediaElement.find((el) => el.url === videoData.url);

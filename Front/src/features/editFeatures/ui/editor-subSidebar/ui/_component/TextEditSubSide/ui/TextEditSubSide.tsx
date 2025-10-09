@@ -3,14 +3,20 @@ import Button from "@/shared/ui/atoms/Button/ui/Button";
 import TextArea from "@/shared/ui/atoms/TextArea/ui/TextArea";
 import { useState } from "react";
 import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
+import LaneSelector from "../../SelectTextTrack";
 
 export default function TextEditSubSide() {
   const [text, setText] = useState<string>("");
   const { addTextElement } = useMediaStore();
-  const { textLanes, activeLaneByType, setActiveLane, addTextLane } = useTrackLaneStore();
+
+  const textLanes = useTrackLaneStore((s) => s.textLanes);
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
+
+  const setActiveLane = useTrackLaneStore((s) => s.setActiveLane);
+  const addTextLane = useTrackLaneStore((s) => s.addTextLane);
 
   const handleAddText = () => {
-    const laneId = activeLaneByType.text ?? textLanes[0] ?? "text-0";
+    const laneId = activeLaneByType.Text ?? textLanes[0] ?? "Text-0";
     const newText = {
       id: crypto.randomUUID(),
       type: "text",
@@ -37,29 +43,13 @@ export default function TextEditSubSide() {
     <div className="flex w-full flex-col items-center justify-center gap-4">
       <h1>Text</h1>
       {/* Lane selector */}
-      <div className="flex items-center gap-2 w-full">
-        <label className="text-xs text-gray-400">Text Track:</label>
-        <select
-          className="flex-1 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-sm text-white"
-          value={activeLaneByType.text}
-          onChange={(e) => setActiveLane("text", e.target.value)}
-        >
-          {textLanes.map((id) => (
-            <option key={id} value={id}>
-              {id}
-            </option>
-          ))}
-        </select>
-        <button
-          className="px-2 py-1 text-xs border border-zinc-700 rounded text-white hover:bg-zinc-800"
-          onClick={() => {
-            const id = addTextLane();
-            setActiveLane("text", id);
-          }}
-        >
-          + New Lane
-        </button>
-      </div>
+      <LaneSelector
+        title="Text"
+        addLane={addTextLane}
+        activeLaneByType={activeLaneByType}
+        setActiveLane={setActiveLane}
+        lanes={textLanes}
+      />
       <TextArea value={text} onChange={(e) => setText(e.target.value)} />
       <Button onClick={handleAddText}>Add Text</Button>
     </div>
