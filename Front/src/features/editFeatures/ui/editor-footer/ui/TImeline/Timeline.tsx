@@ -26,8 +26,8 @@ export default function Timeline() {
   // total timeline pixel length (content width)
   const contentWidth = useMemo(() => {
     const duration = media.projectDuration || 0;
-    const totalPx = duration * pixelsPerSecond;
-    // container can be shorter, so ensure minimum value
+    const padSeconds = duration > 55 ? 10 : 0; // 55s 초과 시 최소 +10s 확장
+    const totalPx = (duration + padSeconds) * pixelsPerSecond;
     return Math.max(totalPx, timelineWidth);
   }, [media.projectDuration, pixelsPerSecond, timelineWidth]);
 
@@ -66,7 +66,7 @@ export default function Timeline() {
         <TimelineRuler />
 
         {/* main timeline area */}
-        <div className="flex-1 min-h-0 bg-black overflow-y-auto">
+        <div className="flex-1 min-h-0 bg-black overflow-y-auto overflow-x-hidden">
           {/* area for timeline tracks */}
           <div className="relative flex flex-col min-h-[100px]">
             {textLanes.map((id) => (
