@@ -7,7 +7,6 @@ import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSe
 import { ResizeDragState, ResizeDragType, MoveDragState } from "../../../../../../model/types";
 import { ResizeHandle } from "../../../../../_component/ResizeHandle";
 import { calculateTimelinePosition, calculateElementWidth, isElementDragging } from "../../../../../../lib/timelineLib";
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import MediaTrackPreview from "./_component/MediaTrackPreview/ui";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { generateElementTitle } from "../../../../../../lib/generateElementTitle";
@@ -18,7 +17,6 @@ interface MediaElementProps {
   moveDragState?: MoveDragState;
   onResizeStart: (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (trackElementId: string) => void;
 }
 
 export function MediaElement({
@@ -27,13 +25,10 @@ export function MediaElement({
   moveDragState,
   onResizeStart,
   onMoveStart,
-  onClick,
-}: // onClick,
-MediaElementProps) {
+}: MediaElementProps) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
-  const isDelete = useTimelineToolStore((state) => state.isDelete);
   const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
 
   // Calculate position and dimensions
@@ -59,16 +54,13 @@ MediaElementProps) {
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
     // Check if this is a move drag (not clicking on resize handles)
-    if (!isDelete && onMoveStart && !e.defaultPrevented) {
+    if (onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
       onMoveStart(e, mediaElement.id);
 
       const clickedTrack = mediaElement.type === "video" ? "Video" : "Image";
       setSelectedTrackAndId(clickedTrack, mediaElement.id);
-    } else if (!e.defaultPrevented) {
-      // Regular click - don't prevent default to allow normal interactions
-      onClick(mediaElement.id);
     }
   };
 
@@ -76,6 +68,7 @@ MediaElementProps) {
     <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
       {/* Left resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === mediaElement.id}
         position="left"
         isVisible={isSelected}
         onMouseDown={(e) => {
@@ -93,6 +86,7 @@ MediaElementProps) {
 
       {/* Right resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === mediaElement.id}
         position="right"
         isVisible={isSelected}
         onMouseDown={(e) => {

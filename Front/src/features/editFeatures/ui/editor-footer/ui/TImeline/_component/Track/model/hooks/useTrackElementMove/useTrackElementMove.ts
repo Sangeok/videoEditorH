@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import { TrackElement } from "@/entities/media/types";
 import { createElementPositioner } from "./_internal/elementPositioning";
 import { useDragState } from "./_internal/useDragState";
@@ -19,7 +18,6 @@ export function useTrackElementMove<T extends TrackElement>({
   updateSelectedElements,
 }: UseTrackElementMoveProps<T>) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
-  const isDeleteMode = useTimelineToolStore((state) => state.isDelete);
   const { updateSnapGuide, clearSnapGuide } = useSnapGuide(pixelsPerSecond);
 
   const { moveDragState, dropPreview, isDraggingElement, startDragging, updateDragPositions, resetDragState } =
@@ -32,7 +30,7 @@ export function useTrackElementMove<T extends TrackElement>({
       e.stopPropagation();
 
       const element = SelectedElements.find((el) => el.id === elementId);
-      if (!element || isDeleteMode) return;
+      if (!element) return;
 
       const elementStartTime = roundTime(element.startTime);
       const elementEndTime = roundTime(element.endTime);
@@ -40,7 +38,7 @@ export function useTrackElementMove<T extends TrackElement>({
 
       startDragging(elementId, e.clientX, elementStartTime, elementEndTime, initialGhostPosition);
     },
-    [SelectedElements, pixelsPerSecond, isDeleteMode, startDragging]
+    [SelectedElements, pixelsPerSecond, startDragging]
   );
 
   const handleMouseMove = useCallback(

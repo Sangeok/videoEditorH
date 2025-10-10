@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="h-screen flex flex-col bg-black text-white">
       {/* Header */}
-      <div className="h-15 shrink-0">
+      <div className="shrink-0 h-[64px]">
         <EditorHeader />
       </div>
 
@@ -20,16 +20,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 flex justify-center items-center min-w-0">
-          {children}
-        </main>
+        <main className="flex-1 flex justify-center items-center min-w-0">{children}</main>
 
         <aside className="shrink-0">
           <EditorRightSidebar />
         </aside>
       </div>
 
-      <div className="h-65 shrink-0">
+      <div className="shrink-0 h-[260px]">
         <EditorFooter />
       </div>
     </div>

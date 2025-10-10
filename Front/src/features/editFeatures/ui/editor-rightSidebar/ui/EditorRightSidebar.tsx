@@ -17,7 +17,7 @@ export default function EditorRightSidebar() {
       case "Video":
         return <VideoEditRightSide />;
       case "Audio":
-        return <AudioEditRightSide />;
+        return <AudioEditRightSide selectedTrackId={selectedTrackId} />;
       case "Image":
         return <ImageEditRightSide selectedTrackId={selectedTrackId} />;
       default:

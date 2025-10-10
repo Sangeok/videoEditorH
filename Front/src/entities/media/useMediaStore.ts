@@ -19,22 +19,32 @@ interface MediaStore {
   addTextElement: (textElement: TextElement, preserveTiming?: boolean) => void;
   deleteTextElement: (textElementId: string) => void;
   updateTextElement: (textElementId: string, updates: Partial<TextElement>) => void;
-  updateAllTextElement: (updates: Partial<TextElement>) => void;
-  updateTextElementPosition: (position: { x: number; y: number }) => void;
-  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) => void;
+  updateSameLaneTextElement: (sourceTextElementId: string, updates: Partial<TextElement>) => void;
+  updateTextElementPosition: (elementId: string, position: { x: number; y: number }) => void;
+  updateTextBackgroundColor: (
+    sourceTextElementId: string,
+    style: { backgroundColor: string; textColor: string }
+  ) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   splitTextElement: (textElementId: string, splitTime: number) => void;
+  cloneTextElement: (textElementId: string) => string | null;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
-  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) => void;
+  updateAllMediaElement: (
+    sourceMediaElementId: string,
+    mediaType: "image" | "video",
+    updates: Partial<MediaElement>
+  ) => void;
   updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
   splitMediaElement: (mediaElementId: string, splitTime: number) => void;
+  cloneMediaElement: (mediaElementId: string) => string | null;
   addAudioElement: (audioElement: AudioElement) => void;
   deleteAudioElement: (audioElementId: string) => void;
   updateAudioElement: (audioElementId: string, updates: Partial<AudioElement>) => void;
   updateMultipleAudioElements: (updates: Array<{ id: string; updates: Partial<AudioElement> }>) => void;
   splitAudioElement: (audioElementId: string, splitTime: number) => void;
+  cloneAudioElement: (audioElementId: string) => string | null;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -43,27 +53,19 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   setFps: (fps) => set({ media: { ...get().media, fps } }),
   addTextElement: (textElement: TextElement, preserveTiming = false) =>
     set((state) => {
-      const currentTextElements = state.media.textElement;
-      let newTextElement: TextElement;
+      const all = state.media.textElement;
+      const laneId = textElement.laneId ?? "Text-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Text-0") === laneId);
 
-      if (currentTextElements.length === 0 || preserveTiming) {
-        // if first element or preserveTiming is true, keep original timing
-        newTextElement = { ...textElement };
-      } else {
-        // if normal text element, arrange continuously
-        const lastElement = currentTextElements[currentTextElements.length - 1];
-        const currentElementDuration = textElement.duration;
-
-        newTextElement = {
-          ...textElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + currentElementDuration,
-        };
+      const newTextElement: TextElement = { ...textElement };
+      if (!preserveTiming && inLane.length > 0) {
+        const lastInLane = inLane[inLane.length - 1];
+        const addedElementDuration = textElement.duration;
+        newTextElement.startTime = lastInLane.endTime;
+        newTextElement.endTime = lastInLane.endTime + addedElementDuration;
       }
 
-      const updatedTextElements = [...currentTextElements, newTextElement];
-
-      // update projectDuration to the endTime of the last element
+      const updatedTextElements = [...all, newTextElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newTextElement.endTime);
 
       return {
@@ -84,9 +86,6 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const newProjectDuration =
         allElements.length > 0 ? Math.max(...allElements.map((element) => element.endTime)) : 0;
 
-      console.log("allElements", allElements);
-      console.log("newProjectDuration", newProjectDuration);
-
       return {
         media: {
           ...state.media,
@@ -95,13 +94,17 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateTextElementPosition: (position: { x: number; y: number }) =>
+  updateTextElementPosition: (elementId: string, position: { x: number; y: number }) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.map((element) => ({
-        ...element,
-        positionX: position.x,
-        positionY: position.y,
-      }));
+      const target = state.media.textElement.find((el) => el.id === elementId);
+      if (!target) {
+        return { media: state.media };
+      }
+      const laneId = target.laneId ?? "Text-0";
+      const updatedTextElements = state.media.textElement.map((element) => {
+        const sameLane = (element.laneId ?? "Text-0") === laneId;
+        return sameLane ? { ...element, positionX: position.x, positionY: position.y } : element;
+      });
 
       return {
         media: {
@@ -110,9 +113,18 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateAllTextElement: (updates: Partial<TextElement>) =>
+  updateSameLaneTextElement: (sourceTextElementId: string, updates: Partial<TextElement>) =>
     set((state) => {
-      const updatedTextElements = state.media.textElement.map((element) => ({ ...element, ...updates }));
+      const source = state.media.textElement.find((el) => el.id === sourceTextElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Text-0";
+
+      const updatedTextElements = state.media.textElement.map((element) =>
+        (element.laneId ?? "Text-0") === laneId ? { ...element, ...updates } : element
+      );
+
       return {
         media: { ...state.media, textElement: updatedTextElements },
       };
@@ -212,37 +224,72 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
-  updateTextBackgroundColor: (style: { backgroundColor: string; textColor: string }) =>
-    set((state) => ({
-      media: {
-        ...state.media,
-        textElement: state.media.textElement.map((element) => ({
-          ...element,
-          backgroundColor: style.backgroundColor,
-          textColor: style.textColor,
-        })),
-      },
-    })),
+  updateTextBackgroundColor: (sourceTextElementId: string, style: { backgroundColor: string; textColor: string }) =>
+    set((state) => {
+      const source = state.media.textElement.find((el) => el.id === sourceTextElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Text-0";
+
+      const updatedTextElements = state.media.textElement.map((element) =>
+        (element.laneId ?? "Text-0") === laneId
+          ? { ...element, backgroundColor: style.backgroundColor, textColor: style.textColor }
+          : element
+      );
+
+      return {
+        media: { ...state.media, textElement: updatedTextElements },
+      };
+    }),
+
+  cloneTextElement: (textElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.textElement.find((el) => el.id === textElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Text-0";
+      const inLane = state.media.textElement.filter((el) => (el.laneId ?? "Text-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: TextElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedTextElements = [...state.media.textElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
 
   addMediaElement: (mediaElement: MediaElement) =>
     set((state) => {
-      const currentMediaElements = state.media.mediaElement;
+      const all = state.media.mediaElement;
+      const laneId = mediaElement.laneId ?? "Media-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Media-0") === laneId);
 
-      let newMediaElement: MediaElement;
-
-      if (currentMediaElements.length === 0) {
-        newMediaElement = { ...mediaElement };
-      } else {
-        const lastElement = currentMediaElements[currentMediaElements.length - 1];
-        newMediaElement = {
-          ...mediaElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + mediaElement.duration,
-        };
+      const newMediaElement: MediaElement = { ...mediaElement };
+      if (inLane.length > 0) {
+        const lastInLane = inLane[inLane.length - 1];
+        newMediaElement.startTime = lastInLane.endTime;
+        newMediaElement.endTime = lastInLane.endTime + mediaElement.duration;
       }
 
-      const updatedMediaElements = [...currentMediaElements, newMediaElement];
-
+      const updatedMediaElements = [...all, newMediaElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newMediaElement.endTime);
 
       return {
@@ -295,11 +342,18 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) =>
+  updateAllMediaElement: (sourceMediaElementId: string, mediaType: "image" | "video", updates: Partial<MediaElement>) =>
     set((state) => {
+      const source = state.media.mediaElement.find((el) => el.id === sourceMediaElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Media-0";
+
       const updatedMediaElements = state.media.mediaElement.map((element) =>
-        element.type === mediaType ? { ...element, ...updates } : element
+        element.type === mediaType && (element.laneId ?? "Media-0") === laneId ? { ...element, ...updates } : element
       );
+
       return {
         media: { ...state.media, mediaElement: updatedMediaElements },
       };
@@ -377,32 +431,58 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
+  cloneMediaElement: (mediaElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.mediaElement.find((el) => el.id === mediaElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Media-0";
+      const inLane = state.media.mediaElement.filter((el) => (el.laneId ?? "Media-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: MediaElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedMediaElements = [...state.media.mediaElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          mediaElement: updatedMediaElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
+
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
-      const currentAudioElements = state.media.audioElement;
+      const all = state.media.audioElement;
+      const laneId = audioElement.laneId ?? "Audio-0";
+      const inLane = all.filter((el) => (el.laneId ?? "Audio-0") === laneId);
+
       let newAudioElement: AudioElement;
-
-      if (currentAudioElements.length === 0) {
-        // if first audio element
-        newAudioElement = {
-          ...audioElement,
-          startTime: 0,
-          endTime: audioElement.duration,
-        };
+      if (inLane.length === 0) {
+        newAudioElement = { ...audioElement, startTime: 0, endTime: audioElement.duration };
       } else {
-        // if existing audio elements, arrange after the last element
-        const lastElement = currentAudioElements[currentAudioElements.length - 1];
-
+        const lastInLane = inLane[inLane.length - 1];
         newAudioElement = {
           ...audioElement,
-          startTime: lastElement.endTime,
-          endTime: lastElement.endTime + audioElement.duration,
+          startTime: lastInLane.endTime,
+          endTime: lastInLane.endTime + audioElement.duration,
         };
       }
 
-      const updatedAudioElements = [...currentAudioElements, newAudioElement];
-
-      // update projectDuration to include the endTime of the audio element
+      const updatedAudioElements = [...all, newAudioElement];
       const newProjectDuration = Math.max(state.media.projectDuration, newAudioElement.endTime);
 
       return {
@@ -533,4 +613,37 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
+
+  cloneAudioElement: (audioElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.audioElement.find((el) => el.id === audioElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Audio-0";
+      const inLane = state.media.audioElement.filter((el) => (el.laneId ?? "Audio-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: AudioElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedAudioElements = [...state.media.audioElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          audioElement: updatedAudioElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
 }));
