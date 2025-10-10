@@ -30,7 +30,11 @@ interface MediaStore {
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
-  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) => void;
+  updateAllMediaElement: (
+    sourceMediaElementId: string,
+    mediaType: "image" | "video",
+    updates: Partial<MediaElement>
+  ) => void;
   updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
   splitMediaElement: (mediaElementId: string, splitTime: number) => void;
   addAudioElement: (audioElement: AudioElement) => void;
@@ -302,11 +306,18 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
-  updateAllMediaElement: (mediaType: "image" | "video", updates: Partial<MediaElement>) =>
+  updateAllMediaElement: (sourceMediaElementId: string, mediaType: "image" | "video", updates: Partial<MediaElement>) =>
     set((state) => {
+      const source = state.media.mediaElement.find((el) => el.id === sourceMediaElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+      const laneId = source.laneId ?? "Media-0";
+
       const updatedMediaElements = state.media.mediaElement.map((element) =>
-        element.type === mediaType ? { ...element, ...updates } : element
+        element.type === mediaType && (element.laneId ?? "Media-0") === laneId ? { ...element, ...updates } : element
       );
+
       return {
         media: { ...state.media, mediaElement: updatedMediaElements },
       };
