@@ -10,7 +10,7 @@ import { DropPreview, MoveDragState } from "../../../model/types";
 import TextElement from "./_component/TextElement";
 
 export default function TextTrack({ laneId }: { laneId: string }) {
-  const { media, updateTextElement, deleteTextElement, updateMultipleTextElements } = useMediaStore();
+  const { media, updateTextElement, updateMultipleTextElements } = useMediaStore();
 
   const elementsInLane = media.textElement.filter((el) => (el.laneId ?? "Text-0") === laneId);
 
