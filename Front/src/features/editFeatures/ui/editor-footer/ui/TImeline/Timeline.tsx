@@ -8,6 +8,7 @@ import SnapGuideIndicator from "./_component/SnapGuide/SnapGuideIndicator";
 import TextTrack from "./_component/Track/ui/TextTrack/ui/TextTrack";
 import MediaTrack from "./_component/Track/ui/MediaTrack/ui";
 import AudioTrack from "./_component/Track/ui/AudioTrack/ui/AudioTrack";
+import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 import DeleteSelectedElementListener from "./_component/DeleteSelectedElementListener";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
@@ -16,13 +17,17 @@ export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { media } = useMediaStore();
 
+  const textLanes = useTrackLaneStore((s) => s.textLanes);
+  const mediaLanes = useTrackLaneStore((s) => s.mediaLanes);
+  const audioLanes = useTrackLaneStore((s) => s.audioLanes);
+
   const { pixelsPerSecond, timelineWidth, setTimelineWidth, setViewportFromContainer } = useTimelineStore();
 
   // total timeline pixel length (content width)
   const contentWidth = useMemo(() => {
     const duration = media.projectDuration || 0;
-    const totalPx = duration * pixelsPerSecond;
-    // container can be shorter, so ensure minimum value
+    const padSeconds = duration > 55 ? 10 : 0; // 55s 초과 시 최소 +10s 확장
+    const totalPx = (duration + padSeconds) * pixelsPerSecond;
     return Math.max(totalPx, timelineWidth);
   }, [media.projectDuration, pixelsPerSecond, timelineWidth]);
 
@@ -53,7 +58,7 @@ export default function Timeline() {
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 flex flex-col border border-gray-700 overflow-x-auto"
+      className="relative flex-1 min-h-0 flex flex-col border border-gray-700 overflow-x-auto overflow-y-hidden"
       data-timeline-container="true"
     >
       <div className="relative flex h-full flex-col" style={{ width: `${contentWidth}px` }}>
@@ -61,18 +66,24 @@ export default function Timeline() {
         <TimelineRuler />
 
         {/* main timeline area */}
-        <div className="flex-1 bg-black rounded-b">
+        <div className="flex-1 min-h-0 bg-black overflow-y-auto overflow-x-hidden">
           {/* area for timeline tracks */}
-          <div className="h-full min-h-[100px] relative flex flex-col overflow-y-auto overflow-hidden">
-            <div className="flex-1">
-              <TextTrack />
-            </div>
-            <div className="flex-1">
-              <MediaTrack />
-            </div>
-            <div className="flex-1">
-              <AudioTrack />
-            </div>
+          <div className="relative flex flex-col min-h-[100px]">
+            {textLanes.map((id) => (
+              <div key={`text-${id}`} className="shrink-0" style={{ height: `${55}px` }}>
+                <TextTrack laneId={id} />
+              </div>
+            ))}
+            {mediaLanes.map((id) => (
+              <div key={`media-${id}`} className="shrink-0" style={{ height: `${55}px` }}>
+                <MediaTrack laneId={id} />
+              </div>
+            ))}
+            {audioLanes.map((id) => (
+              <div key={`audio-${id}`} className="shrink-0" style={{ height: `${55}px` }}>
+                <AudioTrack laneId={id} />
+              </div>
+            ))}
             {/* future timeline track components will be rendered here */}
           </div>
         </div>

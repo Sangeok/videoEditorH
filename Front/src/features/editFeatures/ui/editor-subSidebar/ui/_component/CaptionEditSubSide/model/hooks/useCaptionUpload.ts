@@ -2,9 +2,11 @@ import { useCallback, useRef } from "react";
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { convertSRTToTextElements, parseSRTContent, readFileAsText } from "@/shared/lib/srtUtils";
 import { useDragAndDrop } from "../../../../../model/hooks";
+import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 
 export function useCaptionUpload() {
   const { addTextElement } = useMediaStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dragAndDrop = useDragAndDrop();
 
@@ -23,7 +25,10 @@ export function useCaptionUpload() {
         const srtContent = await readFileAsText(file);
 
         const parsedEntries = parseSRTContent(srtContent);
-        const textElements = convertSRTToTextElements(parsedEntries);
+        const textElements = convertSRTToTextElements(parsedEntries).map((el) => ({
+          ...el,
+          laneId: activeLaneByType.Text,
+        }));
 
         textElements.forEach((element) => {
           addTextElement(element, true);
@@ -32,7 +37,7 @@ export function useCaptionUpload() {
         console.error("Error processing SRT file:", error);
       }
     },
-    [addTextElement, validateSRTFile]
+    [addTextElement, validateSRTFile, activeLaneByType]
   );
 
   const handleFileSelect = useCallback(

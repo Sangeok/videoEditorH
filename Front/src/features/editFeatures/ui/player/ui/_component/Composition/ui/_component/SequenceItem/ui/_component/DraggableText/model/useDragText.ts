@@ -89,18 +89,17 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
           if (last && last.x === pos.x && last.y === pos.y) return;
 
           lastAppliedPosRef.current = pos;
-          updateTextElementPosition({ x: pos.x, y: pos.y });
+          updateTextElementPosition(elementId, { x: pos.x, y: pos.y });
         });
       }
     },
-    [dragState, updateTextElementPosition, isEditing]
+    [dragState, updateTextElementPosition, isEditing, elementId]
   );
 
   const handleMouseUp = useCallback(() => {
     setDragState(INITIAL_DRAG_STATE);
     clearSmartGuides();
-    setIsDraggingText(false);
-  }, [clearSmartGuides, setIsDraggingText]);
+  }, [clearSmartGuides]);
 
   useEffect(() => {
     if (dragState.isDragging && !isEditing) {
