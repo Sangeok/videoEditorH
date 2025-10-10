@@ -27,6 +27,7 @@ interface MediaStore {
   ) => void;
   updateMultipleTextElements: (updates: Array<{ id: string; updates: Partial<TextElement> }>) => void;
   splitTextElement: (textElementId: string, splitTime: number) => void;
+  cloneTextElement: (textElementId: string) => string | null;
   addMediaElement: (mediaElement: MediaElement) => void;
   deleteMediaElement: (mediaElementId: string) => void;
   updateMediaElement: (mediaElementId: string, updates: Partial<MediaElement>) => void;
@@ -37,11 +38,13 @@ interface MediaStore {
   ) => void;
   updateMultipleMediaElements: (updates: Array<{ id: string; updates: Partial<MediaElement> }>) => void;
   splitMediaElement: (mediaElementId: string, splitTime: number) => void;
+  cloneMediaElement: (mediaElementId: string) => string | null;
   addAudioElement: (audioElement: AudioElement) => void;
   deleteAudioElement: (audioElementId: string) => void;
   updateAudioElement: (audioElementId: string, updates: Partial<AudioElement>) => void;
   updateMultipleAudioElements: (updates: Array<{ id: string; updates: Partial<AudioElement> }>) => void;
   splitAudioElement: (audioElementId: string, splitTime: number) => void;
+  cloneAudioElement: (audioElementId: string) => string | null;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -240,6 +243,39 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
+  cloneTextElement: (textElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.textElement.find((el) => el.id === textElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Text-0";
+      const inLane = state.media.textElement.filter((el) => (el.laneId ?? "Text-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: TextElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedTextElements = [...state.media.textElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          textElement: updatedTextElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
+
   addMediaElement: (mediaElement: MediaElement) =>
     set((state) => {
       const all = state.media.mediaElement;
@@ -395,6 +431,39 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       };
     }),
 
+  cloneMediaElement: (mediaElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.mediaElement.find((el) => el.id === mediaElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Media-0";
+      const inLane = state.media.mediaElement.filter((el) => (el.laneId ?? "Media-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: MediaElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedMediaElements = [...state.media.mediaElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          mediaElement: updatedMediaElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
+
   addAudioElement: (audioElement: AudioElement) =>
     set((state) => {
       const all = state.media.audioElement;
@@ -544,4 +613,37 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
         },
       };
     }),
+
+  cloneAudioElement: (audioElementId: string) => {
+    let createdId: string | null = null;
+    set((state) => {
+      const source = state.media.audioElement.find((el) => el.id === audioElementId);
+      if (!source) {
+        return { media: state.media };
+      }
+
+      const laneId = source.laneId ?? "Audio-0";
+      const inLane = state.media.audioElement.filter((el) => (el.laneId ?? "Audio-0") === laneId);
+      const lastInLane = inLane[inLane.length - 1];
+
+      const newId = crypto.randomUUID();
+      const startTime = lastInLane ? lastInLane.endTime : 0;
+      const endTime = startTime + source.duration;
+
+      const cloned: AudioElement = { ...source, id: newId, startTime, endTime };
+
+      const updatedAudioElements = [...state.media.audioElement, cloned];
+      const newProjectDuration = Math.max(state.media.projectDuration, cloned.endTime);
+
+      createdId = newId;
+      return {
+        media: {
+          ...state.media,
+          audioElement: updatedAudioElements,
+          projectDuration: newProjectDuration,
+        },
+      };
+    });
+    return createdId;
+  },
 }));

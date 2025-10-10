@@ -18,6 +18,7 @@ export default function ToolButton() {
 
   const selectedTrack = useSelectedTrackStore((s) => s.selectedTrack);
   const selectedTrackId: string | null = useSelectedTrackStore((s) => s.selectedTrackId);
+  const setSelectedTrackAndId = useSelectedTrackStore((s) => s.setSelectedTrackAndId);
   const currentTime = useTimelineStore((s) => s.currentTime);
 
   const {
@@ -27,6 +28,9 @@ export default function ToolButton() {
     deleteTextElement,
     deleteMediaElement,
     deleteAudioElement,
+    cloneTextElement,
+    cloneMediaElement,
+    cloneAudioElement,
   } = useMediaStore();
 
   const handleSplit = () => {
@@ -69,6 +73,33 @@ export default function ToolButton() {
     }
   };
 
+  const handleClone = () => {
+    if (!selectedTrackId || !selectedTrack) {
+      alert("Please select an element to clone in timeline");
+      return;
+    }
+
+    let newId: string | null = null;
+    switch (selectedTrack) {
+      case "Text":
+        newId = cloneTextElement(selectedTrackId);
+        break;
+      case "Video":
+      case "Image":
+        newId = cloneMediaElement(selectedTrackId);
+        break;
+      case "Audio":
+        newId = cloneAudioElement(selectedTrackId);
+        break;
+      default:
+        break;
+    }
+
+    if (newId) {
+      setSelectedTrackAndId(selectedTrack, newId);
+    }
+  };
+
   const FooterItems = [
     {
       label: "Delete",
@@ -91,7 +122,9 @@ export default function ToolButton() {
     {
       label: "Clone",
       icon: <Copy size={15} />,
-      onClick: () => {},
+      onClick: () => {
+        handleClone();
+      },
       isActive: false,
       isDropdown: false,
     },
