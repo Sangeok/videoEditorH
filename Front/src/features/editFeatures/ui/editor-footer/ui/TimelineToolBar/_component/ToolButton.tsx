@@ -1,6 +1,5 @@
 "use client";
 
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
 import { Copy, Music, Plus, Split, Trash, Type, Video } from "lucide-react";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
@@ -11,7 +10,6 @@ import { useState } from "react";
 import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 
 export default function ToolButton() {
-  const { isDelete, isClone, setIsDelete, setIsClone } = useTimelineToolStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const addTextLane = useTrackLaneStore((s) => s.addTextLane);
   const addMediaLane = useTrackLaneStore((s) => s.addMediaLane);
@@ -19,12 +17,17 @@ export default function ToolButton() {
   const setActiveLane = useTrackLaneStore((s) => s.setActiveLane);
 
   const selectedTrack = useSelectedTrackStore((s) => s.selectedTrack);
-  const selectedTrackId = useSelectedTrackStore((s) => s.selectedTrackId);
+  const selectedTrackId: string | null = useSelectedTrackStore((s) => s.selectedTrackId);
   const currentTime = useTimelineStore((s) => s.currentTime);
 
-  const splitTextElement = useMediaStore((s) => s.splitTextElement);
-  const splitMediaElement = useMediaStore((s) => s.splitMediaElement);
-  const splitAudioElement = useMediaStore((s) => s.splitAudioElement);
+  const {
+    splitTextElement,
+    splitMediaElement,
+    splitAudioElement,
+    deleteTextElement,
+    deleteMediaElement,
+    deleteAudioElement,
+  } = useMediaStore();
 
   const handleSplit = () => {
     if (!selectedTrackId || !selectedTrack) {
@@ -48,12 +51,32 @@ export default function ToolButton() {
     }
   };
 
+  const handleDelete = () => {
+    if (!selectedTrackId || !selectedTrack || selectedTrackId === null) {
+      alert("Please select an element to delete in timeline");
+    }
+
+    switch (selectedTrack) {
+      case "Text":
+        deleteTextElement(selectedTrackId as string);
+        break;
+      case "Video":
+        deleteMediaElement(selectedTrackId as string);
+        break;
+      case "Audio":
+        deleteAudioElement(selectedTrackId as string);
+        break;
+    }
+  };
+
   const FooterItems = [
     {
       label: "Delete",
       icon: <Trash size={15} />,
-      onClick: () => setIsDelete(!isDelete),
-      isActive: isDelete,
+      onClick: () => {
+        handleDelete();
+      },
+      isActive: false,
       isDropdown: false,
     },
     {
@@ -68,8 +91,8 @@ export default function ToolButton() {
     {
       label: "Clone",
       icon: <Copy size={15} />,
-      onClick: () => setIsClone(!isClone),
-      isActive: isClone,
+      onClick: () => {},
+      isActive: false,
       isDropdown: false,
     },
     {

@@ -4,7 +4,6 @@ import { useMediaStore } from "@/entities/media/useMediaStore";
 import { useTrackElementResizeDrag } from "../../../model/hooks/useTrackElementResizeDrag/useTrackElementResizeDrag";
 import { useTrackElementMove } from "../../../model/hooks/useTrackElementMove/useTrackElementMove";
 import { EmptyState } from "../../_component/EmptyState";
-import { useTrackElementInteraction } from "../../../model/hooks/useTrackElementInteraction";
 import { TextElement as TextElementType } from "@/entities/media/types";
 import { DropIndicator } from "../../_component/DropIndicator";
 import { DropPreview, MoveDragState } from "../../../model/types";
@@ -26,10 +25,6 @@ export default function TextTrack({ laneId }: { laneId: string }) {
     updateSelectedElements: updateTextElement,
   });
 
-  const { handleTrackElementClick } = useTrackElementInteraction({
-    deleteSelectedElements: deleteTextElement,
-  });
-
   const hasTextElements = elementsInLane.length > 0;
 
   return (
@@ -42,7 +37,6 @@ export default function TextTrack({ laneId }: { laneId: string }) {
           dropPreview={dropPreview}
           onResizeStart={handleResizeStart}
           onMoveStart={handleMoveStart}
-          onTrackElementClick={handleTrackElementClick}
         />
       )}
       {!hasTextElements && <EmptyState message="There is no text element." />}
@@ -58,7 +52,6 @@ function TextElementsContainer({
   dropPreview,
   onResizeStart,
   onMoveStart,
-  onTrackElementClick,
 }: {
   textElements: TextElementType[];
   dragState: MoveDragState;
@@ -66,7 +59,6 @@ function TextElementsContainer({
   dropPreview: DropPreview;
   onResizeStart: (e: React.MouseEvent, elementId: string, dragType: "left" | "right") => void;
   onMoveStart: (e: React.MouseEvent, elementId: string) => void;
-  onTrackElementClick: (trackElementId: string) => void;
 }) {
   return (
     <div className="relative h-full">
@@ -82,7 +74,6 @@ function TextElementsContainer({
           moveDragState={moveDragState}
           onResizeStart={onResizeStart}
           onMoveStart={onMoveStart}
-          onClick={onTrackElementClick}
         />
       ))}
     </div>

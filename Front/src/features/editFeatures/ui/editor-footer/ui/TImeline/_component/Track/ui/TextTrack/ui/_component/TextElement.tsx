@@ -2,7 +2,6 @@ import { TextElement as TextElementType } from "@/entities/media/types";
 import { clsx } from "clsx";
 import { MoveDragState, ResizeDragType } from "../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import { calculateElementWidth, calculateTimelinePosition, isElementDragging } from "../../../../lib/timelineLib";
 import { ResizeHandle } from "../../../_component/ResizeHandle";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
@@ -14,7 +13,6 @@ interface TextElementProps {
   moveDragState?: MoveDragState;
   onResizeStart: (e: React.MouseEvent, elementId: string, dragType: ResizeDragType) => void;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (selectedElements: string) => void;
 }
 
 export default function TextElement({
@@ -23,10 +21,8 @@ export default function TextElement({
   moveDragState,
   onResizeStart,
   onMoveStart,
-  onClick,
 }: TextElementProps) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
-  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
   const selectedTrackId = useSelectedTrackStore((state) => state.selectedTrackId);
@@ -53,15 +49,12 @@ export default function TextElement({
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
     // Check if this is a move drag (not clicking on resize handles)
-    if (!isDelete && onMoveStart && !e.defaultPrevented) {
+    if (onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
       onMoveStart(e, textElement.id);
 
       setSelectedTrackAndId("Text", textElement.id);
-    } else if (!e.defaultPrevented) {
-      // Regular click - don't prevent default to allow normal interactions
-      onClick(textElement.id);
     }
   };
 
