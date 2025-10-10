@@ -93,7 +93,7 @@ export const useDragText = ({ elementId, currentCanvasX, currentCanvasY, isPlayi
         });
       }
     },
-    [dragState, updateTextElementPosition, isEditing]
+    [dragState, updateTextElementPosition, isEditing, elementId]
   );
 
   const handleMouseUp = useCallback(() => {

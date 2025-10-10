@@ -37,7 +37,7 @@ export function useCaptionUpload() {
         console.error("Error processing SRT file:", error);
       }
     },
-    [addTextElement, validateSRTFile]
+    [addTextElement, validateSRTFile, activeLaneByType]
   );
 
   const handleFileSelect = useCallback(

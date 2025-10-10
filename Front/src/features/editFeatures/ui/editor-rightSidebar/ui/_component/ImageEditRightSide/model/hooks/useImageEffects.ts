@@ -19,7 +19,7 @@ export function useImageEffects() {
         });
       }
     },
-    [updateAllMediaElement]
+    [updateAllMediaElement, selectedTrackId]
   );
 
   const handleOutEffectChange = useCallback(
@@ -31,14 +31,14 @@ export function useImageEffects() {
         });
       }
     },
-    [updateAllMediaElement]
+    [updateAllMediaElement, selectedTrackId]
   );
 
   const handleFadeDurationChange = useCallback(
     (value: number, field: "fadeInDuration" | "fadeOutDuration") => {
       updateAllMediaElement(selectedTrackId as string, "image", { [field]: value });
     },
-    [updateAllMediaElement]
+    [updateAllMediaElement, selectedTrackId]
   );
 
   return {

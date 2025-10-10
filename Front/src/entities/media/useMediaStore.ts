@@ -54,7 +54,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const laneId = textElement.laneId ?? "Text-0";
       const inLane = all.filter((el) => (el.laneId ?? "Text-0") === laneId);
 
-      let newTextElement: TextElement = { ...textElement };
+      const newTextElement: TextElement = { ...textElement };
       if (!preserveTiming && inLane.length > 0) {
         const lastInLane = inLane[inLane.length - 1];
         const addedElementDuration = textElement.duration;
@@ -246,7 +246,7 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       const laneId = mediaElement.laneId ?? "Media-0";
       const inLane = all.filter((el) => (el.laneId ?? "Media-0") === laneId);
 
-      let newMediaElement: MediaElement = { ...mediaElement };
+      const newMediaElement: MediaElement = { ...mediaElement };
       if (inLane.length > 0) {
         const lastInLane = inLane[inLane.length - 1];
         newMediaElement.startTime = lastInLane.endTime;

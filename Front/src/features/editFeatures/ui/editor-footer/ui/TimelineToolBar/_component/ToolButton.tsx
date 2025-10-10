@@ -2,7 +2,7 @@
 
 import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import IconButton from "@/shared/ui/atoms/Button/ui/IconButton";
-import { Copy, Image, Music, Plus, Split, Trash, Type, Video } from "lucide-react";
+import { Copy, Music, Plus, Split, Trash, Type, Video } from "lucide-react";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
 import { useMediaStore } from "@/entities/media/useMediaStore";
@@ -13,7 +13,6 @@ import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackL
 export default function ToolButton() {
   const { isDelete, isClone, setIsDelete, setIsClone } = useTimelineToolStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedAddTrackItem, setSelectedAddTrackItem] = useState<string>("");
   const addTextLane = useTrackLaneStore((s) => s.addTextLane);
   const addMediaLane = useTrackLaneStore((s) => s.addMediaLane);
   const addAudioLane = useTrackLaneStore((s) => s.addAudioLane);
@@ -102,7 +101,6 @@ export default function ToolButton() {
                 setIsOpen={setIsDropdownOpen}
                 dropdownItems={item.dropdownItems || []}
                 handleSelectEvent={(label) => {
-                  setSelectedAddTrackItem(label);
                   if (label === "Add Text Track") {
                     const id = addTextLane();
                     setActiveLane("Text", id);
