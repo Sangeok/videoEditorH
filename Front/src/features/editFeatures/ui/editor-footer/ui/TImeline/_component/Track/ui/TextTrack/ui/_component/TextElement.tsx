@@ -69,6 +69,7 @@ export default function TextElement({
     <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
       {/* Left resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === textElement.id}
         position="left"
         isVisible={isSelected}
         onMouseDown={(e) => {
@@ -81,6 +82,7 @@ export default function TextElement({
 
       {/* Right resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === textElement.id}
         position="right"
         isVisible={isSelected}
         onMouseDown={(e) => {

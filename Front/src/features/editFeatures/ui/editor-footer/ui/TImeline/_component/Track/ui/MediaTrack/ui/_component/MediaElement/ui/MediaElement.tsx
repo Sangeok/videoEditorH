@@ -76,6 +76,7 @@ MediaElementProps) {
     <div className={elementClasses} onMouseDown={handleMouseDown} style={elementStyles} title={title}>
       {/* Left resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === mediaElement.id}
         position="left"
         isVisible={isSelected}
         onMouseDown={(e) => {
@@ -93,6 +94,7 @@ MediaElementProps) {
 
       {/* Right resize handle */}
       <ResizeHandle
+        canResize={selectedTrackId === mediaElement.id}
         position="right"
         isVisible={isSelected}
         onMouseDown={(e) => {
