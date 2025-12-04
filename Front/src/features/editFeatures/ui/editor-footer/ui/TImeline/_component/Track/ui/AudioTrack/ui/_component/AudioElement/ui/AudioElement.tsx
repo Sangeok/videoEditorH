@@ -2,7 +2,6 @@ import { AudioElement as AudioElementType } from "@/entities/media/types";
 import { clsx } from "clsx";
 import { MoveDragState } from "../../../../../../model/types";
 import { useSelectedTrackStore } from "@/features/editFeatures/model/store/useSelectedTrackStore";
-import { useTimelineToolStore } from "@/features/editFeatures/model/store/useTimelieToolStore";
 import { calculateElementWidth, calculateTimelinePosition } from "../../../../../../lib/timelineLib";
 import Waveform from "@/features/editFeatures/ui/editor-footer/ui/TImeline/_component/Track/ui/AudioTrack/ui/_component/AudioElement/ui/_component/Waveform";
 import useTimelineStore from "@/features/editFeatures/model/store/useTimelineStore";
@@ -12,14 +11,12 @@ interface TextElementProps {
   audioElement: AudioElementType;
   moveDragState?: MoveDragState;
   onMoveStart?: (e: React.MouseEvent, elementId: string) => void;
-  onClick: (selectedElements: string) => void;
 }
 
-export default function AudioElement({ audioElement, moveDragState, onMoveStart, onClick }: TextElementProps) {
+export default function AudioElement({ audioElement, moveDragState, onMoveStart }: TextElementProps) {
   const pixelsPerSecond = useTimelineStore((state) => state.pixelsPerSecond);
 
   const setSelectedTrackAndId = useSelectedTrackStore((state) => state.setSelectedTrackAndId);
-  const isDelete = useTimelineToolStore((state) => state.isDelete);
 
   // Calculate position and dimensions
   const leftPosition = calculateTimelinePosition(audioElement.startTime, pixelsPerSecond);
@@ -40,15 +37,12 @@ export default function AudioElement({ audioElement, moveDragState, onMoveStart,
   // Handle move drag start on element body
   const handleMouseDown = (e: React.MouseEvent) => {
     // Check if this is a move drag (not clicking on resize handles)
-    if (!isDelete && onMoveStart && !e.defaultPrevented) {
+    if (onMoveStart && !e.defaultPrevented) {
       // Prevent text selection during move drag
       e.preventDefault();
       onMoveStart(e, audioElement.id);
 
       setSelectedTrackAndId("Audio", audioElement.id);
-    } else if (!e.defaultPrevented) {
-      // Regular click - don't prevent default to allow normal interactions
-      onClick(audioElement.id);
     }
   };
 

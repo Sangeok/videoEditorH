@@ -63,6 +63,7 @@ export const useSmartGuideStore = create<SmartGuideStore>((set) => ({
 
   clearSmartGuides: () =>
     set({
+      isDraggingText: false,
       showVerticalSmartGuide: false,
       showHorizonSmartGuide: false,
       nearObjEdgeData: null,

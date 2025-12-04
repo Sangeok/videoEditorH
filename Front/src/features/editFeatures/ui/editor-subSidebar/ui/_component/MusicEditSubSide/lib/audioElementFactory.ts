@@ -1,7 +1,7 @@
 import { AudioElement } from "@/entities/media/types";
 import { v4 as uuidv4 } from "uuid";
 
-export function createAudioElement(audioUrl: string): Promise<AudioElement> {
+export function createAudioElement(audioUrl: string, laneId: string): Promise<AudioElement> {
   return new Promise((resolve, reject) => {
     const audio = new Audio(audioUrl);
     audio.addEventListener("loadedmetadata", () => {
@@ -12,6 +12,7 @@ export function createAudioElement(audioUrl: string): Promise<AudioElement> {
         startTime: 0,
         endTime: duration,
         duration: duration,
+        laneId,
         url: audioUrl,
         volume: 1,
         speed: 1,

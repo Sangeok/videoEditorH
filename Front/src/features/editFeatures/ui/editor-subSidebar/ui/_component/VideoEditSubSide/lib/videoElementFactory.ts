@@ -14,10 +14,11 @@ interface VideoData {
   height: number;
 }
 
-export function createVideoElement(videoData: VideoData): MediaElement {
+export function createVideoElement(videoData: VideoData, laneId: string): MediaElement {
   return {
     id: generateVideoId(),
     type: "video",
+    laneId,
     startTime: 0,
     endTime: videoData.duration,
     duration: videoData.duration,

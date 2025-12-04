@@ -10,7 +10,7 @@ const DEBOUNCE_DELAY = 300;
 export function useDebouncedTextEdit(
   selectedTrackId: string | null
 ): DebouncedTextEditState & DebouncedTextEditActions {
-  const { updateTextElement, updateAllTextElement } = useMediaStore();
+  const { updateTextElement, updateSameLaneTextElement } = useMediaStore();
   const textElement = useMediaStore((state) =>
     state.media.textElement.find((element) => element.id === selectedTrackId)
   );
@@ -81,7 +81,7 @@ export function useDebouncedTextEdit(
     [selectedTrackId, updateTextElement]
   );
 
-  const debouncedUpdateAllTextElement = useCallback(
+  const debouncedUpdateSameLaneTextElement = useCallback(
     (field: keyof TextElement, value: number | string) => {
       if (!selectedTrackId) return;
 
@@ -93,12 +93,12 @@ export function useDebouncedTextEdit(
       }
 
       debounceTimeoutRef.current = setTimeout(() => {
-        updateAllTextElement({ [field]: value });
+        updateSameLaneTextElement(selectedTrackId, { [field]: value });
         // Mark editing complete after update
         isUserEditingRef.current = false;
       }, DEBOUNCE_DELAY);
     },
-    [selectedTrackId, updateAllTextElement]
+    [selectedTrackId, updateSameLaneTextElement]
   );
 
   const handleTextChange = useCallback(
@@ -114,10 +114,10 @@ export function useDebouncedTextEdit(
       setLocalState((prev) => ({ ...prev, localFontSize: value }));
       const numericValue = parseNumericValue(value);
       if (numericValue !== null) {
-        debouncedUpdateAllTextElement("fontSize", numericValue);
+        debouncedUpdateSameLaneTextElement("fontSize", numericValue);
       }
     },
-    [debouncedUpdateAllTextElement]
+    [debouncedUpdateSameLaneTextElement]
   );
 
   return {

@@ -3,16 +3,23 @@ import { useRef, useEffect, ReactNode } from "react";
 type DropdownPosition = "top" | "bottom" | "left" | "right";
 type DropdownSize = "sm" | "md" | "lg";
 
-interface DropdownItem {
+interface DropdownItem1 {
   id: string | number;
   name: string;
   icon?: ReactNode;
 }
 
+interface DropdownItem2 {
+  label: string;
+  icon?: ReactNode;
+}
+
+type DropdownItem = DropdownItem1 | DropdownItem2;
+
 interface DropdownProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  dropdownItems: DropdownItem[];
+  dropdownItems: readonly DropdownItem[];
   handleSelectEvent?: (item: string) => void;
   position?: DropdownPosition; // 위치 옵션 추가
   size?: DropdownSize;
@@ -79,21 +86,26 @@ export default function Dropdown({
             size
           )} bg-black dark-border z-50 shadow-lg rounded-md overflow-hidden`}
         >
-          {dropdownItems.map((item) => (
-            <div
-              onClick={() => {
-                setIsOpen(false);
-                handleSelectEvent?.(item.name);
-              }}
-              key={item.id}
-              className="text-white py-2 px-2 cursor-pointer transition-colors duration-200 text-sm"
-            >
-              <div className="flex gap-2 py-2 px-4 dark-button-hover rounded-md">
-                {item.icon}
-                {item.name}
+          {dropdownItems.map((item, index) => {
+            const label = "name" in item ? item.name : item.label;
+            const key = "id" in item ? item.id : label ?? index;
+
+            return (
+              <div
+                onClick={() => {
+                  setIsOpen(false);
+                  handleSelectEvent?.(label);
+                }}
+                key={key}
+                className="text-white py-2 px-2 cursor-pointer transition-colors duration-200 text-sm"
+              >
+                <div className="flex gap-2 py-2 px-4 dark-button-hover rounded-md">
+                  {item.icon}
+                  {label}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

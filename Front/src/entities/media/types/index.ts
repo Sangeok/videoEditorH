@@ -4,6 +4,7 @@ export interface TextElement {
   startTime: number;
   endTime: number;
   duration: number;
+  laneId?: string;
 
   text: string;
   positionX: number;
@@ -26,6 +27,7 @@ export interface MediaElement {
   endTime: number;
   duration: number;
   type: "video" | "image" | "audio";
+  laneId?: string;
 
   url?: string;
   width?: number;
@@ -53,6 +55,7 @@ export interface AudioElement {
   endTime: number;
   duration: number;
   type: "audio";
+  laneId?: string;
 
   url: string;
   volume: number;

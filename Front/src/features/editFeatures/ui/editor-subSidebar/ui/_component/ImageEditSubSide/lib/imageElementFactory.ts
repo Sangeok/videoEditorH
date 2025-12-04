@@ -10,10 +10,11 @@ const DEFAULT_POSITION = "50%";
 const DEFAULT_VOLUME = 0;
 const DEFAULT_SPEED = 1;
 
-export function createImageElement(imageUrl: string): MediaElement {
+export function createImageElement(imageUrl: string, laneId: string): MediaElement {
   return {
     id: generateImageId(),
     type: "image",
+    laneId,
     startTime: 0,
     endTime: DEFAULT_IMAGE_DURATION,
     duration: DEFAULT_IMAGE_DURATION,

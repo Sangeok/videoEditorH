@@ -1,6 +1,7 @@
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { createVideoElement } from "../../lib/videoElementFactory";
 import { MediaElement } from "@/entities/media/types";
+import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 
 interface VideoData {
   url: string;
@@ -11,9 +12,11 @@ interface VideoData {
 
 export function useVideoProjectManagement() {
   const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const addVideoToTimeLine = (videoData: VideoData) => {
-    const videoElement = createVideoElement(videoData);
+    const laneId = activeLaneByType.Media;
+    const videoElement = createVideoElement(videoData, laneId);
 
     const existingVideo = media.mediaElement.find((el) => el.url === videoData.url);
     if (existingVideo) {

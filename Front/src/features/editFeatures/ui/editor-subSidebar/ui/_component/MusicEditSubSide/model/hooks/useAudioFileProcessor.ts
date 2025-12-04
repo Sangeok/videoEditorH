@@ -1,9 +1,11 @@
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { createAudioElement } from "../../lib/audioElementFactory";
 import { UploadedAudio } from "../types";
+import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 
 export function useAudioFileProcessor() {
   const { media, addAudioElement } = useMediaStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const processAudioFile = (
     file: File,
@@ -26,7 +28,8 @@ export function useAudioFileProcessor() {
       onSuccess(uploadedAudio);
 
       try {
-        const audioElement = await createAudioElement(audioUrl);
+        const laneId = activeLaneByType.Audio;
+        const audioElement = await createAudioElement(audioUrl, laneId);
         addAudioElement(audioElement);
       } catch (error: unknown) {
         console.error("Error uploading audio element:", error);
@@ -36,6 +39,7 @@ export function useAudioFileProcessor() {
           startTime: media.projectDuration,
           endTime: media.projectDuration + 30,
           duration: 30,
+          laneId: activeLaneByType.Audio,
           url: audioUrl,
           volume: 100,
           speed: 1,

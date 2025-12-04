@@ -1,12 +1,15 @@
 import { useMediaStore } from "@/entities/media/useMediaStore";
 import { createImageElement } from "../../lib/imageElementFactory";
 import { MediaElement } from "@/entities/media/types";
+import { useTrackLaneStore } from "@/features/editFeatures/model/store/useTrackLaneStore";
 
 export function useImageProjectManagement() {
   const { media, addMediaElement, updateMediaElement, deleteMediaElement } = useMediaStore();
+  const activeLaneByType = useTrackLaneStore((s) => s.activeLaneByType);
 
   const addImageToTimeLine = (imageUrl: string) => {
-    const imageElement = createImageElement(imageUrl);
+    const laneId = activeLaneByType.Media;
+    const imageElement = createImageElement(imageUrl, laneId);
 
     const existingImage = media.mediaElement.find((el) => el.url === imageUrl);
     if (existingImage) {

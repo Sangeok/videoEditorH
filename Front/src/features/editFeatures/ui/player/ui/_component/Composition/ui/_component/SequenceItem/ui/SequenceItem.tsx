@@ -19,10 +19,10 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
 
       return (
         <Sequence
-          key={textElement.id}
+          key={`${textElement.laneId ?? "Text-0"}:${textElement.id}`}
           from={fromFrame}
           durationInFrames={durationInFrames}
-          name={`Text: ${textElement.text.substring(0, 20)}...`}
+          name={`Text(${textElement.laneId ?? "Text-0"}): ${textElement.text.substring(0, 20)}...`}
           style={{ height: "100%", overflow: "hidden" }}
         >
           <AbsoluteFill className="h-full">
@@ -39,10 +39,10 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
 
       return (
         <Sequence
-          key={imageElement.id}
+          key={`${imageElement.laneId ?? "Media-0"}:${imageElement.id}`}
           from={fromFrame}
           durationInFrames={durationInFrames}
-          name={`Image: ${imageElement.id}`}
+          name={`Image(${imageElement.laneId ?? "Media-0"}): ${imageElement.id}`}
           style={{
             height: "100%",
             zIndex: 100,
@@ -61,10 +61,10 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
 
       return (
         <Sequence
-          key={videoElement.id}
+          key={`${videoElement.laneId ?? "Media-0"}:${videoElement.id}`}
           from={fromFrame}
           durationInFrames={durationInFrames}
-          name={`Video: ${videoElement.id}`}
+          name={`Video(${videoElement.laneId ?? "Media-0"}): ${videoElement.id}`}
           style={{
             height: "100%",
             zIndex: 100,
@@ -96,10 +96,10 @@ export const SequenceItem: Record<SequenceItemType, (item: TrackElement, options
 
       return (
         <Sequence
-          key={audioElement.id}
+          key={`${audioElement.laneId ?? "audio-0"}:${audioElement.id}`}
           from={fromFrame}
           durationInFrames={durationInFrames}
-          name={`Audio: ${audioElement.id}`}
+          name={`Audio(${audioElement.laneId ?? "Audio-0"}): ${audioElement.id}`}
         >
           <AbsoluteFill>
             <Audio
