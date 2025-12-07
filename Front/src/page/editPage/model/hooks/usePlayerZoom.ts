@@ -21,21 +21,18 @@ interface UsePlayerZoomReturn {
 }
 
 /**
- * Player 컨테이너 zoom 관리 훅
- * - Ctrl + 마우스 휠로 zoom 조절 (0.5x ~ 2x)
- * - playerContainerRef를 반환하여 컨테이너에 연결
- * - 수동 zoom 컨트롤 제공 (zoomIn, zoomOut, resetZoom)
+ * Control Player Container Zoom
  */
 export function usePlayerZoom(): UsePlayerZoomReturn {
   const [zoom, setZoom] = useState<number>(1);
   const playerContainerRef = useRef<HTMLDivElement>(null);
 
-  // Zoom 값을 범위 내로 제한
+  // Clamp Zoom Value
   const clampZoom = useCallback((value: number): number => {
     return Math.max(PLAYER_ZOOM.MIN, Math.min(PLAYER_ZOOM.MAX, value));
   }, []);
 
-  // Wheel 이벤트 핸들러 (Ctrl + 휠)
+  // Wheel Event Handler (Ctrl + Wheel)
   const handleZoomWheel = useCallback(
     (event: WheelEvent) => {
       if (!event.ctrlKey) {
@@ -56,7 +53,7 @@ export function usePlayerZoom(): UsePlayerZoomReturn {
     [clampZoom]
   );
 
-  // 수동 zoom 컨트롤
+  // Manual Zoom Control
   const zoomIn = useCallback(() => {
     setZoom((prev) => clampZoom(prev + PLAYER_ZOOM.STEP));
   }, [clampZoom]);
@@ -69,7 +66,7 @@ export function usePlayerZoom(): UsePlayerZoomReturn {
     setZoom(1);
   }, []);
 
-  // Wheel 이벤트 리스너 등록/해제
+  // Wheel Event Listener Register/Unregister
   useEffect(() => {
     window.addEventListener("wheel", handleZoomWheel, { passive: false });
 
